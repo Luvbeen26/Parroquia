@@ -14,3 +14,8 @@ class RegisterUser(UserBase):
 class LoginUser(BaseModel):
     correo: EmailStr
     contra: str
+
+class ChangePassword(BaseModel):
+    correo: EmailStr
+    password: str
+    confirm_pswd: str
