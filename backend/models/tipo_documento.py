@@ -7,4 +7,6 @@ class TipoDocumento(Base):
     __tablename__ = 'tipo_documento'
     id_tipo_documento = Column(Integer, primary_key=True,index=True)
     descripcion = Column(String, nullable=False)
-    
+
+    ##
+    documento=relationship("Documento",back_populates="tipo_documento")

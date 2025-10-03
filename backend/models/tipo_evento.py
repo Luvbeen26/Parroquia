@@ -9,3 +9,6 @@ class TipoEvento(Base):
     descripcion = Column(String, nullable=False)
     costo_impresion=Column(Float, nullable=False)
     costo_programar=Column(Float, nullable=False)
+
+    ##
+    evento=relationship("Evento",back_populates="tipo_evento")

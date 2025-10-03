@@ -5,7 +5,7 @@ from sqlalchemy.orm import sessionmaker
 
 
 #URL DE CONEXION
-Url_DB = settings.DATABASE_URL
+Url_DB = settings.BD_URL
 
 #motor de sqlalchemy
 engine = create_engine(Url_DB)
@@ -15,3 +15,11 @@ Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 #clase base para nuestros modelos
 Base = declarative_base()
+
+
+def get_db():
+    db = Session()  # crea la sesión
+    try:
+        yield db         # la pasa al endpoint
+    finally:
+        db.close()       # cierra la sesión al terminar el request
