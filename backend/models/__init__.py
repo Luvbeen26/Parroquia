@@ -8,5 +8,5 @@ from .publicacion import Publicacion
 from .rol import Rol
 from .tipo_documento import TipoDocumento
 from .tipo_evento import TipoEvento
-from .users import User
+from .codigo_verificacion import CodigoVerificacion
 
