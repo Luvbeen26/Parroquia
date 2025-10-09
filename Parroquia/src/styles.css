@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+:root{
+    --color-principal:#1D293D;
+    --color-background:#F7F9FB;
+    --color-option:#FFFF;
+    --color-option-selected:#F8DF00;
+    --color-principal-button:#4F46E5;
+    --color-lines:#E1E1E1;
+    --color-lines2:#263A4C;
+    --color-hover-options:#314158;
+    
+
+}
+
+*{
+    margin: 0;
+}

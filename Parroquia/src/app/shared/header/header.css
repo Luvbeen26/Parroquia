@@ -1,0 +1,53 @@
+.header{
+    background-color: var(--color-principal);
+    
+    font-weight: 700;
+    height: 3.75rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+}
+
+.logo{
+    height: 3.75rem;
+    margin-left: 2rem;
+}
+
+.notif{
+    height: 2.5rem;
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+.Another-options, .Select-Options{
+    display: flex;
+    align-items: center;
+}
+
+.options:hover{
+    background-color: var(--color-hover-options);
+    border-radius: 10px;
+}
+
+.options {
+    color:var(--color-option);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding-inline:7px;
+    padding-block: 10px;
+    margin-inline: 20px;
+    gap: .5rem;
+}
+
+.Another-options .options{
+ 
+    border: 2px solid var(--color-hover-options);
+    border-radius: .313rem;
+}
+
+.hide{
+    display: none;
+}

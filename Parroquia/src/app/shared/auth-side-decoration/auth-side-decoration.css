@@ -1,0 +1,31 @@
+    .decoration{
+        border-block:2px solid var(--color-lines2);
+        background-color: var(--color-principal);    
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        
+    }
+    .decoration img{
+        width: 50vh;
+    }
+
+
+
+
+@media (min-width:1000px){
+    .decoration img{
+        width: 60vh;
+    }
+}
+
+@media (min-width:1200px){
+    .decoration img{
+        width: 70vh;
+    }
+}
+
+
+
+
