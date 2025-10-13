@@ -1,0 +1,154 @@
+.register-body{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    font-size: 17px;
+}
+
+app-auth-side-decoration{
+    visibility: hidden;
+    width: 0%;
+    
+}
+
+h1{
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 32px;
+}
+
+.side-form{
+    display: flex;
+    width: 100%;
+    height: 130vh;
+    box-sizing: border-box;
+    background-color: var(--color-background);
+    
+}
+
+
+.form{
+    display: flex;
+    flex-direction: column;
+    margin-inline:auto;
+    margin-block: 2.5rem;
+    height: fit-content;
+    width: 250px;
+    min-width: 250px;
+    max-width: 300px;
+
+    padding: 2rem;
+    border-radius: .625rem;
+    background-color: var(--color-option);
+    box-shadow: 10px 10px 10px grey;
+}
+
+.Campo{
+    width: 100%;
+    margin-block: 15px;
+}
+
+
+
+.linea{
+    border: none;
+    height: 2px;
+    background-color: var(--color-lines);
+}
+
+.Buttons{
+    margin-top: 13px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-inline: auto;    
+}
+
+.button{
+    padding-inline: 5.015rem;
+}
+
+h4{
+    margin-bottom: 4px;
+}
+
+.contenedor-code{
+    width: 100%;
+    display: flex;
+    align-items: start;
+}
+
+.Input.code{
+    width: 65%;
+    border-radius: 5px 0px 0px 5px;
+    border-right: none;
+}
+.code-button{
+    width: 35%;
+    height: 2.5rem;
+    border-style:solid;
+    border-color: var(--color-border-input);
+    border-radius: 0px 5px 5px 0px;
+    background-color: var(--color-button-code);
+    color: var(--color-background);
+    font-weight: 700;
+}
+
+.code-button:disabled{
+    color: var(--color-buttonletters-disable);
+}
+
+.code-button:hover:enabled{
+    transition: .5s;
+    background-color:#464646;
+    cursor: pointer;
+}
+
+.error{
+    color: red;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.names{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+.names.Campo{
+    width: 50%;
+    
+}
+
+
+
+
+
+@media(min-width:880px){
+    app-auth-side-decoration{
+        visibility: visible;
+        
+    }
+
+    .side-form,app-auth-side-decoration{
+        width: 50%;
+        height: 130vh;
+    }
+
+    
+}
+
+@media(min-width:450px){
+    .form{
+        width: 350px;
+        min-width: 350px;
+        max-width: 450px;
+        padding: 2rem;
+        
+    }
+    
+    .side-form,app-auth-side-decoration{
+        width: 50%;
+        
+    }
+}

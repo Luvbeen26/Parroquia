@@ -17,17 +17,12 @@ class LoginUser(BaseModel):
     correo: EmailStr
     contra: str
 
-#Modelo para regresar como respuesta
-class LoginResponse(UserBase):
-    id_usuario: int
-    model_config = { "from_attributes" : True }
-
-
-
 class ChangePassword(LoginUser):
     code: str
 
-
+class ChangePasswordOnSession(BaseModel):
+    password: str
+    old_password: str
 
 class Get_email(BaseModel):
     correo: EmailStr

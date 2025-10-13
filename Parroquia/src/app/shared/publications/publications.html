@@ -1,0 +1,16 @@
+<main class="contenedor-publication"> 
+    <article class="contenido">
+        <p class="fecha">{{ date() }}</p>
+        <h2>{{ titulo() }}</h2>
+        <p>{{ contenido() }}</p>
+        @if (image() != "") {
+            <figure class="img">
+                <img class="img_public" [src]="image()" >
+            </figure>
+        }
+        
+        <footer>
+
+        </footer>
+    </article>
+</main>

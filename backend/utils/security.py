@@ -1,0 +1,69 @@
+from schema import users as schema_users
+from sqlalchemy.orm import Session
+from jwt import encode,decode, exceptions
+from datetime import datetime,timedelta
+from fastapi.responses import JSONResponse
+from models import codigo_verificacion,users as models_users
+from datetime import datetime, timedelta, timezone
+from config.setting import settings
+import bcrypt
+
+access_key=settings.JWT_ACCESS_KEY
+refresh_key=settings.JWT_REFRESH_KEY
+
+
+
+def check_email(db:Session, correo:str):
+    return db.query(models_users.User).filter(models_users.User.correo == correo).first()
+
+
+
+def check_code(db:Session,code:str,correo:str):
+    last_code=db.query(codigo_verificacion.CodigoVerificacion)\
+    .filter((codigo_verificacion.CodigoVerificacion.correo == correo) & (codigo_verificacion.CodigoVerificacion.usado == False))\
+    .order_by(codigo_verificacion.CodigoVerificacion.creado_en.desc()).first()
+
+    now=datetime.utcnow()
+    try:
+        vigente = last_code.expira_en > now
+        valido=bcrypt.checkpw(code.encode(), last_code.codigo_hash.encode())
+
+        if vigente and valido:
+            last_code.usado=True
+            db.commit()
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(e)
+        return False
+
+
+def check_password(db:Session, password:str, id:int):
+    user=db.query(models_users.User).filter(models_users.User.id_usuario == id).first()
+    isSame=bcrypt.checkpw(password.encode(),user.contrasena.encode())
+    return isSame
+
+
+
+def expire_minutes(minutes : int):
+    now=datetime.utcnow()
+    new_date=now+timedelta(minutes=minutes)
+    return new_date
+
+def write_access_token(data:dict):
+    token=encode(payload={**data,"exp" : expire_minutes(15) }, key=access_key,algorithm="HS256")
+    return token
+
+def write_refresh_token(data:dict):
+    token=encode(payload={**data,"exp":expire_minutes(10080)},key=refresh_key)
+    return token
+
+def validate_token(token,output=False):
+    try:
+        decode(token,key=access_key,algorithms=["HS256"])
+        return decode(token, key=access_key, algorithms=["HS256"])
+    except exceptions.DecodeError:
+        return JSONResponse({"error": "Token Invalido"}, status_code=401)
+    except exceptions.ExpiredSignatureError:
+        return JSONResponse({"error": "Token Expirado"}, status_code=401)

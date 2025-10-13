@@ -1,0 +1,83 @@
+<section class="register-body">
+    <aside class="side-form">
+        <form class="form" [formGroup]="register_form" (submit)="Submit()">
+            <h1>Registrarse</h1>
+
+            <div class="names">
+                <label class="Campo">
+                    <h4>Nombres</h4>
+                    <input type="text" class="Input" placeholder="Nombres" formControlName="nombres">
+                    @if (nombres.hasError("required") && nombres.touched) {
+                        <p class="error">Debe ingresar algun nombre</p>
+                    }
+                </label>
+
+                <label class="Campo">
+                    <h4>Apellidos</h4>
+                    <input type="text" class="Input" placeholder="Apellidos" formControlName="apellidos">
+                    @if (apellidos.hasError("required") && apellidos.touched) {
+                        <p class="error">Debe ingresar algun apellido</p>
+                    }
+                </label>
+            </div>
+            
+
+            <label class="Campo">
+                <h4>Correo Electronico</h4>
+                <input type="email" class="Input" placeholder="Correo@dominio.com" formControlName="correo">
+                @if (correo.hasError("required") && correo.touched) {
+                    <p class="error">Debe ingresar algun correo</p>
+                }@else if (correo.hasError("email") && correo.touched) {
+                    <p class="error">El correo debe escribirse como correo</p>
+                }
+            </label>
+
+            <label class="Campo">
+                <h4>Contraseña</h4>
+                
+                <div class="contenedor-password">
+                    <input [type]="show_pass ? 'text' : 'password'" class="Input password" placeholder="Contraseña" formControlName="contrasena" autocomplete="off">
+                    <span class="contenedor-eye" (click)="Visibility_Password('contra')"><img [src]="show_pass ? 'icons/openeye.svg' : 'icons/eye.svg'" class="eye" alt="mostrar Contraseña"></span>
+                </div>
+                @if (contrasena.hasError("required") && contrasena.touched ) {
+                    <p class="error">Debe ingresar alguna contraseña</p>
+                }@else if (contrasena.hasError("minlength") && contrasena.touched) {
+                    <p class="error">La contraseña debe contener minimo 8 caracteres</p>
+                }@else if (contrasena.hasError("pattern") && contrasena.touched) {
+                    <p class="error">La contraseña debe contener una mayuscula, numero y un simbolo</p>
+                }@else if (contrasena.hasError("maxlength") && contrasena.touched) {
+                    <p class="error">La contraseña debe tener maximo 20 caracteres</p>
+                }
+            </label>
+
+            
+            <label class="Campo">
+                <h4>Confirmar Contraseña</h4>
+                
+                <div class="contenedor-password">
+                    <input [type]="show_confirm_pass ? 'text' : 'password'" class="Input password" placeholder="Contraseña" formControlName="confirm_pswd" autocomplete="off">
+                    <span class="contenedor-eye" (click)="Visibility_Password('confirm')"><img [src]="show_confirm_pass ? 'icons/openeye.svg' : 'icons/eye.svg'" class="eye" alt="mostrar Contraseña"></span>
+                </div>
+                @if (register_form.hasError('notmatch') && confirm_pswd.touched) {
+                    <p class="error" >Las contraseñas deben coincidir</p>
+                }
+            </label>
+
+            <label class="Campo">
+                <h4>Codigo</h4>
+                <div class="contenedor-code">
+                    <input type="number" class="Input code" formControlName="codigo" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"
+                     onkeydown="return event.key !== 'e' && event.key !== 'E' && event.key !== '+' && event.key !== '-';">
+                    <button class="code-button" [disabled]="register_form.get('correo')?.invalid" (click)="Send_code()">Enviar Codigo</button>
+                </div>
+                
+
+            </label>
+
+            <div class="Buttons">
+                <button class="button" type="submit" [disabled]="register_form.invalid">Registrar</button>
+            </div>
+        </form>
+    </aside>
+    <app-auth-side-decoration size="big"></app-auth-side-decoration>
+</section>

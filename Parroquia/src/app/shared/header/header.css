@@ -1,22 +1,22 @@
 .header{
-    background-color: var(--color-principal);
+    background-color: var(--color-principal);   
+    font-weight: 550;
     
-    font-weight: 700;
+    width: 100%;
+    box-sizing: border-box;
     height: 3.75rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
     display: flex;
     justify-content: space-between;
     font-size: 18px;
 }
 
 .logo{
-    height: 3.75rem;
+    height: 3rem;
     margin-left: 2rem;
 }
 
 .notif{
-    height: 2.5rem;
+    height: 1.5rem;
     margin-left: 2rem;
     margin-right: 2rem;
 }
@@ -32,22 +32,41 @@
 }
 
 .options {
+    font-size: var(--size-header-options);
     color:var(--color-option);
     text-decoration: none;
     display: flex;
     align-items: center;
     padding-inline:7px;
-    padding-block: 10px;
+    padding-block: 0.313rem;
     margin-inline: 20px;
-    gap: .5rem;
+    gap: .4rem;
 }
 
 .Another-options .options{
- 
     border: 2px solid var(--color-hover-options);
     border-radius: .313rem;
 }
 
 .hide{
     display: none;
+}
+
+
+@media (max-width:570px) {
+    .logo{
+        margin-left: 1.2rem;
+    }
+    .options span{
+        display: none;
+    }
+
+    .options{
+        margin-inline: 10px;
+    }
+
+    .notif{
+        margin-left: 1rem;
+        margin-right: 1.2rem;
+    }
 }

@@ -1,1 +1,39 @@
-<p>home works!</p>
+<main class="contenedor-home">
+
+    <div class="church">
+        <section class="contenedor-cards-eventos">
+            <span><img src="icons/calendary_blue.svg" alt=""><h3>Proximos Eventos</h3></span>
+            
+            <div class="cards">
+                @for (event of eventList; track $index) {
+                    <app-home-event-cards [evento]="event.evento" [fecha]="event.date" [hora]="event.hour"></app-home-event-cards>
+                }
+            </div>
+        </section>
+
+        <section class="horarios">
+            <h4>Lunes a Sabado</h4>
+            <h5>7:00 AM • 6:00 PM</h5>
+            <hr>
+            <h4>Domingo</h4>
+            <h5>7:00 AM • 9:00 AM • 12:00 PM • 1:00 PM • 6:00 PM • 7:00 PM</h5>
+        </section>
+    </div>
+    
+
+    <div class="Publications">
+        <section class="search">
+            <div class="contenedor-search">
+                <span class="contenedor-lupa"><img src="icons/lupa.svg" class="lupa" alt="Buscar"></span>
+                <input type="search" class="input-search" placeholder="Buscar">
+            </div>
+        </section>
+
+        <section class="contenedor-publicacion">
+            @for (public of publicList; track $index) {
+                <app-publications [titulo]="public.titulo" [date]="public.date" [image]="public.img" [contenido]="public.contenido"></app-publications>    
+            }        
+        </section>
+    </div>
+    
+</main>

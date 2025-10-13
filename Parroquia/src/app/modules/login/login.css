@@ -1,6 +1,8 @@
-body{
+.login-body{
     display: flex;
     flex-direction: row;
+    width: 100%;
+    font-size: 17px;
 }
 
 app-auth-side-decoration{
@@ -8,21 +10,90 @@ app-auth-side-decoration{
     width: 0%;
 }
 
+h1{
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 32px;
+}
 
-.Form{
+.side-form{
+    display: flex;
     width: 100%;
     height: 100vh;
+    box-sizing: border-box;
     background-color: var(--color-background);
+    
 }
 
 
-@media(min-width:650px){
+.form{
+    display: flex;
+    flex-direction: column;
+    margin-inline:auto;
+    margin-block: 2.5rem;
+    height: fit-content;
+    width: 250px;
+    min-width: 250px;
+    max-width: 300px;
+    padding: 2rem;
+    border-radius: .625rem;
+    background-color: var(--color-option);
+    box-shadow: 10px 10px 10px grey;
+}
+
+.Campo{
+    width: 100%;
+    margin-block: 15px;
+}
+
+
+
+.linea{
+    border: none;
+    height: 2px;
+    background-color: var(--color-lines);
+}
+
+.Buttons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-inline: auto;
+    gap: 16px;
+    
+}
+
+h4{
+    margin-bottom: 4px;
+}
+
+hr{
+    margin-bottom: 30px;
+}
+
+.error{
+    color: red;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+@media(min-width:790px){
     app-auth-side-decoration{
         visibility: visible;
         height: 100vh;
     }
 
-    .Form,app-auth-side-decoration{
+    .side-form,app-auth-side-decoration{
         width: 50%;
+    }
+}
+
+@media(min-width:450px){
+    .form{
+        width: 350px;
+        min-width: 350px;
+        max-width: 450px;
+        padding: 2rem;
+        
     }
 }

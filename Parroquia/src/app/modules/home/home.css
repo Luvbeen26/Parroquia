@@ -1,0 +1,140 @@
+.contenedor-home{
+    color: var(--color-principal);
+    background-color: var(--color-background);
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding:2rem;
+    
+}
+
+.Publications{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+
+.church{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: sticky;
+    top: 1rem;
+    height: fit-content;
+}
+
+.contenedor-cards-eventos,.search,.horarios{
+    background-color: #FFFF; 
+    display:flex;
+    flex-direction: column  ;
+    gap: 10px;   
+}
+
+.search{
+    border: 2px solid var(--color-lines);
+    width: 90%;
+    padding-block:1rem;
+    padding-inline: 2rem;
+    margin-inline: auto;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.contenedor-cards-eventos{
+    border: 2px solid var(--color-lines);
+    border-radius: 5px;
+    padding-inline: 1rem;
+    padding-block: 2rem;
+    height: 300px;
+}
+
+.horarios{
+    border: 2px solid var(--color-lines);
+    border-radius: 5px;
+    padding-inline: 1rem;
+    padding-block: 2rem;
+}
+
+
+span{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+}
+
+app-home-event-cards {
+    min-width: 220px;        
+}
+
+.cards{
+    gap: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.cards::-webkit-scrollbar {
+  display: none;         /* 🔹 Chrome, Edge, Safari */
+}
+
+app-publications{
+    margin: auto;
+}
+
+.contenedor-home{
+    display: flex;
+    gap:10px;
+}
+
+.contenedor-publicacion{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 90%;
+    margin-inline: auto;
+}
+
+
+h5{
+    font-weight: normal;
+}
+
+@media (max-width:690px){
+    .church{
+        display: none;
+    }
+
+    .search{
+        width: 100%;
+        padding-inline: 1rem;
+    }
+    .contenedor-publicacion{
+        width: 100%;
+    }
+}
+
+@media (max-width:850px){
+    h2{
+        font-size: 1.1rem;
+    }
+
+    h3{
+        font-size: 16px;
+    }
+
+    h4{
+        font-size: 13.28px;
+    }
+
+    .contenedor-cards-eventos img{
+        width: 25px;
+    }
+    
+}
