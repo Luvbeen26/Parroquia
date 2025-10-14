@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { HomeEventCards } from "../../shared/home-event-cards/home-event-cards";
-import { Publications } from '../../shared/publications/publications';
+import { HomeEventCards } from '../../components/home-event-cards/home-event-cards';
+import { Publications } from '../../../../shared/publications/publications';
 
 @Component({
   selector: 'app-home',

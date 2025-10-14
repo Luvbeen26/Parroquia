@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthSideDecoration } from '../../shared/auth-side-decoration/auth-side-decoration';
+import { AuthSideDecoration } from '../../auth-side-decoration/auth-side-decoration';
 import { Router } from '@angular/router';
 import { ReactiveFormsModule,FormGroup,FormControl,Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';

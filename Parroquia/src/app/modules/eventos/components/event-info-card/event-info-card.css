@@ -1,0 +1,146 @@
+.Contenedor{
+    background-color: #FFFF;
+    border: 2px solid var(--color-lines);
+    
+    width: 100%;
+    border-radius: 5px ;
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+h3{
+    color: var(--color-principal);
+}
+
+.image{
+    width: 100%;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.info{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    gap: 10px;
+}
+
+.requisitos{
+    display: flex;
+    flex-direction: column;
+    color: #5B4E4E;
+    gap: 8px;
+    font-size: 16px;
+    height:  170px;
+}
+
+
+
+.requisito p{
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.check{
+    height: 20px;
+}
+
+
+.requisito{
+    display: flex;
+    gap:8px;
+    font-weight: normal;
+    padding-inline: 20px;
+    align-items: center;
+}
+
+.requisitos h3{
+    font-weight:bold;
+}
+
+.impresion,.programar{
+    
+    padding-block: .5rem;
+    border-radius: 5px;
+    background-color: #D9EEFF;
+    color:var(--color-principal-button);
+    font-weight: 550;
+}
+
+
+.Buttons{
+    margin-top: auto;
+    gap: 2rem;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.costs{
+    margin-top: 2rem;
+    
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+.impr,.progr{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.content-button{
+    min-width: 120px;
+    
+    max-width: 500px;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+}
+
+
+.print-icon{
+    width: 29px;
+    height: 29px;
+}
+    
+@media(max-width:450px){
+    .Buttons{
+        margin-top: 2rem;
+        align-items: center;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .impr,.progr{
+        width: 70%;
+    }
+
+    .content-button{
+        justify-content: center;
+    }
+
+    .costs{
+        
+        display: none;
+    }
+
+    .requisitos{
+        height: 140px;
+    }
+
+    .requisitos.big{
+        height:  240px;
+    }
+
+    .Contenedor.big{
+        height: 41.5rem;
+    }
+
+    .Buttons{
+        gap:10px;
+        
+    }
+}

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AuthSideDecoration } from '../../shared/auth-side-decoration/auth-side-decoration';
+import { AuthSideDecoration } from '../../auth-side-decoration/auth-side-decoration';
 import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Auth } from '../../services/auth';

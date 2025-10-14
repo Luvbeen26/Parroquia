@@ -8,4 +8,8 @@ import { Component, input } from '@angular/core';
 })
 export class EventInfoCard {
   image=input<string>();
+  nombre=input<string>();
+  requisitos=input<string[]>();
+  impresion=input<number>();
+  programar=input<number>();
 }

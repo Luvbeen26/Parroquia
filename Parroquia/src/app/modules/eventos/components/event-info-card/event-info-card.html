@@ -1,0 +1,32 @@
+<main class="Contenedor" [class.big]="nombre() == 'Matrimonio'">
+    <picture><img class="image" [src]="image()" alt=""></picture>
+
+    <div class="info">
+
+    
+        <h3>{{ nombre() }}</h3>
+        
+        <section class="requisitos" [class.big]="nombre() == 'Matrimonio'">
+            <h4>Requisitos</h4>
+         
+            @for (requisito of requisitos(); track $index) {
+                <span class="requisito"><img src="../icons/check_blue.svg" class="check" alt=""><p>{{ requisito }}</p></span>
+            }
+        </section>
+        
+
+        <section class="Buttons">
+            @if (nombre() != "XV Años") {
+                <div class="impr">
+                    <span class="costs impresion">Impresion <br>{{ impresion() }}</span>
+                    <button class="two-button"><span class="content-button"><img class="print-icon" src="../icons/printer.svg" alt="">Imprimir</span></button>
+                </div>
+            }
+            <div class="progr">
+                <span class="costs programar">Programar <br>${{ programar() }}</span>  
+                <button class="button"><span class="content-button"><img src="../icons/calendary_white.svg" alt="">Programar</span></button>
+            </div>
+            
+        </section>
+    </div>
+</main>
