@@ -12,6 +12,8 @@ import { Auth } from '../../services/auth';
   styleUrl: './restore-password.css'
 })
 export class RestorePassword {
+  text_codebtn:string="Enviar Codigo"
+  
   show_pass:boolean=false;
 
   restore_form:FormGroup;
@@ -22,12 +24,15 @@ export class RestorePassword {
 
   constructor(private authservice:Auth,private router:Router){
     this.correo=new FormControl("",[
-      Validators.required,Validators.email
+      Validators.required,
+      Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
     ]);
 
     this.contrasena=new FormControl("",[
-      Validators.required,Validators.minLength(8),Validators.maxLength(21),
-      Validators.pattern('^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&/#\-])[A-Za-z\\d@$!%*?&/#\\-]{8,}$')
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(25),
+      Validators.pattern('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,25}')
     ]);
     
     this.code = new FormControl("",[Validators.required,Validators.min(100000),Validators.max(999999)]);
@@ -50,6 +55,7 @@ export class RestorePassword {
     });
   }
 
+  
   Send_code(){
     const correo=this.restore_form.get("correo")?.value;
     this.authservice.send_code(correo).subscribe({
@@ -60,7 +66,7 @@ export class RestorePassword {
         console.log(err);
       }
     });
-    console.log(correo);
+    this.text_codebtn="Reenviar Codigo";
   }
 
 

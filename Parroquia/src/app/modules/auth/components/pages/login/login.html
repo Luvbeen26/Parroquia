@@ -6,9 +6,9 @@
                 <h4>Correo Electronico</h4>
                 <input type="email" class="Input" placeholder="Correo@dominio.com" formControlName="correo">
                 @if (correo.hasError("required") && correo.touched) {
-                    <p class="error">Debe ingresar algun correo</p>
-                }@else if (correo.hasError("email") && correo.touched) {
-                    <p class="error">El correo debe escribirse como correo</p>
+                    <p class="error">Ingrese su correo</p>
+                }@else if (correo.hasError("pattern") && correo.touched) {
+                    <p class="error">Correo Invalido</p>
                 }
             </label>
 
@@ -20,13 +20,11 @@
                     <span class="contenedor-eye" (click)="Visibility_Password()"><img [src]="show_password ? 'icons/openeye.svg' : 'icons/eye.svg'" class="eye" alt="mostrar Contraseña"></span>
                 </div>
                 @if (contrasena.hasError("required") && contrasena.touched ) {
-                    <p class="error">Debe ingresar alguna contraseña</p>
-                }@else if (contrasena.hasError("minlength") && contrasena.touched) {
-                    <p class="error">La contraseña debe contener minimo 8 caracteres</p>
+                    <p class="error">Ingrese una contraseña</p>
+                }@else if ((contrasena.hasError("minlength") || contrasena.hasError("maxlength")) && contrasena.touched) {
+                    <p class="error">La contraseña debe contener minimo 8 caracteres y maximo 25</p>
                 }@else if (contrasena.hasError("pattern") && contrasena.touched) {
-                    <p class="error">La contraseña debe contener una mayuscula, numero y un simbolo</p>
-                }@else if (contrasena.hasError("maxlength") && contrasena.touched) {
-                    <p class="error">La contraseña debe tener maximo 20 caracteres</p>
+                    <p class="error">La contraseña debe contener una mayuscula,minuscula y un numero</p>
                 }
             </label>
             <hr>

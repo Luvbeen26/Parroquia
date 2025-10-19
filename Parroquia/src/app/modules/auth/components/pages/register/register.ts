@@ -18,6 +18,9 @@ import { error } from 'console';
 })
 
 export class Register {
+  sending_code:boolean=false
+  text_codebtn:string="Enviar Codigo"
+
   show_pass:boolean=false;
   show_confirm_pass:boolean=false;
   
@@ -35,14 +38,14 @@ export class Register {
     
     this.correo=new FormControl("",[
       Validators.required,
-      Validators.email
+      Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
     ]);
 
     this.contrasena=new FormControl("",[
       Validators.required,
       Validators.minLength(8),
-      Validators.maxLength(21),
-      Validators.pattern('^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&/#\-])[A-Za-z\\d@$!%*?&/#\\-]{8,}$')
+      Validators.maxLength(25),
+      Validators.pattern('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,25}')
     ]);
 
     this.confirm_pswd=new FormControl("",Validators.required);
@@ -66,9 +69,9 @@ export class Register {
         const correoCtrl = this.register_form.get('correo')!;
         correoCtrl.valid ? codigoCtrl.enable() : codigoCtrl.disable();
       }); 
-      this.register_form.statusChanges.subscribe(status => {
-        console.log("Estado del formulario:", status);
-      });
+      //this.register_form.statusChanges.subscribe(status => {
+        //console.log("Estado del formulario:", status);
+      //});
   }
   
   passwordMatch(control:AbstractControl):ValidationErrors | null{
@@ -84,16 +87,24 @@ export class Register {
 
   Send_code(){
     const correo=this.register_form.get("correo")?.value;
+    this.sending_code=true;
+    this.text_codebtn="Enviando codigo...";
     this.authservice.send_code(correo).subscribe({
       next: (res) =>{
         console.log(res);
+  
+        
       },
       error: (err) =>{
         console.log(err);
+        
       }
     });
-    console.log(correo);
+    this.text_codebtn="Reenviar Codigo";
+    
   }
+
+  
 
   Submit(){
     if(this.register_form.valid){
@@ -101,7 +112,8 @@ export class Register {
 
       this.authservice.register(nombres,apellidos,correo,contrasena,confirm_pswd,codigo.toString()).subscribe({
           next: (res) =>{
-            this.router.navigate(["/"],{queryParams : {user_id:res.id}});
+            this.router.navigate(["/"]);
+            //this.router.navigate(["/"],{queryParams : {user_id:res.id}});
           },
           error: (err) =>{
             console.log(err)

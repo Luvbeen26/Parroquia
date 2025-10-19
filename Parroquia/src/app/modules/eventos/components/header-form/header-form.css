@@ -1,0 +1,25 @@
+header{
+    color: var(--color-principal);
+    display: flex;
+    padding-block: 5px;
+    gap: 10px;
+}
+
+header h4{
+    font-weight: normal;
+}
+
+.icono {
+  width: 55px;            /* tamaño del círculo */
+  height: 55px;
+  background-color: #D9EEFF; /* color de fondo */
+  border-radius: 50%;     /* hace que sea un círculo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icono img {
+  width: 44px;  /* ajusta el tamaño de la imagen */
+  height: 44px;
+}

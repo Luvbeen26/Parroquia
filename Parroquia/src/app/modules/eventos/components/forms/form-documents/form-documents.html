@@ -1,0 +1,8 @@
+<app-header-form [titulo]="'Documentos'" [icono]="'../icons/documents.svg'" [descripcion]="'Suba los documentos requeridos para el sacramento'"></app-header-form>
+<hr>
+<form action="" class="form">    
+    @for (file of fileList(); track $index) {
+        <app-document-upload  [tipo]="file"></app-document-upload>
+    }
+    
+</form>

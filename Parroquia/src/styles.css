@@ -11,6 +11,7 @@
 
     --color-principal-button:#4F46E5;
     --color-principalbutton-hover:#3f36ba;
+    --color-principal-darker:#1B4A9A;
     --color-principalbutton-active:#15123E;
     --color-button-disabled:#4e46e5a3;
     --color-secondbutton-hover: #ECECEC;
@@ -25,6 +26,9 @@
     --color-button-code:#252525;
     --size-header-options:15px;
 
+    --second-blue-icon:#E8EAFF;
+    --resume-content:#e9ecf1;
+    --resume-border:#cfdcf1;
 }
 
 *{
@@ -152,4 +156,13 @@ input:disabled{
 
 .contenedor-lupa {
     position: relative;      
+}
+
+.flex-column{
+    display: flex;
+    flex-direction: column;
+}
+
+.flex{
+    display: flex;
 }

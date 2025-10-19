@@ -1,0 +1,24 @@
+hr{
+    margin-block: 10px;
+    height: 3px;
+    background-color: var(--color-lines);
+    border: none;
+}
+
+.contenido{
+    display: grid;
+    grid-template-columns: 30% 30%;
+    justify-content: space-between;
+}
+
+.campos{
+    display: flex;
+    flex-direction: column;
+}
+
+.resumen{
+    color: var(--color-principal-darker);
+    background-color: var(--resume-content);
+    outline: 2px solid var(--resume-border);
+    padding: 20px;
+}

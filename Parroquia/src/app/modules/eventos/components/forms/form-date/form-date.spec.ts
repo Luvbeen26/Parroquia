@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormBautizado } from './form-bautizado';
+import { FormDate } from './form-date';
 
-describe('FormBautizado', () => {
-  let component: FormBautizado;
-  let fixture: ComponentFixture<FormBautizado>;
+describe('FormDate', () => {
+  let component: FormDate;
+  let fixture: ComponentFixture<FormDate>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FormBautizado]
+      imports: [FormDate]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FormBautizado);
+    fixture = TestBed.createComponent(FormDate);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

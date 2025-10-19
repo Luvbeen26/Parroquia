@@ -1,0 +1,76 @@
+<app-header-form [titulo]="'Datos de los Padres y Padrino'" [descripcion]="'Ingrese la información de los padres del bautizado'" [icono]="'../icons/two-people_blue.svg'"></app-header-form>
+<hr>
+<form [formGroup]="form" action="" class="form">    
+    <div class="Parents">
+        <h2>Padre</h2>
+        <section class="inputs">
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_f" class="Input" placeholder="Nombres">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_f" class="Input" placeholder="Apellido paterno">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_f" class="Input" placeholder="Apellido materno">
+            </span>
+        </section>
+        
+
+    </div>
+
+
+    <div class="Parents">
+        <h2>Madre</h2>
+        <section class="inputs">
+            <span class="Campo"> 
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_m" class="Input" placeholder="Nombres">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_m" class="Input" placeholder="Apellido paterno">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_m" class="Input" placeholder="Apellido materno">
+            </span>
+        </section>
+        
+
+    </div>
+    
+    <div class="Parents">
+        <h2>Padrino</h2>
+        <section class="inputs">
+            <span class="Campo"> 
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_p" class="Input" placeholder="Nombres">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_p" class="Input" placeholder="Apellido paterno">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_p" class="Input" placeholder="Apellido materno">
+            </span>
+        </section>
+        
+
+    </div>
+    
+
+    <div class="buttons">
+        <button class="two-button" (click)="prev()">Volver</button> 
+        <button class="button" [disabled]="form.invalid" (click)="next()">Continuar</button> 
+    </div>
+</form>

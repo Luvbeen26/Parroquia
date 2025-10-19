@@ -10,6 +10,6 @@ class CodigoVerificacion(Base):
     correo = Column(String, nullable=False)
     codigo_hash= Column(String,nullable=False)
     creado_en= Column(DATETIME,default=datetime.utcnow)
-    expira_en= Column(DATETIME,default=lambda: datetime.utcnow() + timedelta(minutes=1))
+    expira_en= Column(DATETIME,default=lambda: datetime.utcnow() + timedelta(minutes=15))
     usado=Column(Boolean, default=False)
     #AGREGAR PROPOSITO??

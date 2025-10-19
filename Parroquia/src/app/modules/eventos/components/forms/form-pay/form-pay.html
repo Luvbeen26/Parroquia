@@ -1,0 +1,27 @@
+<app-header-form [titulo]="'Metodo de pago'" [icono]="'../icons/card.svg'" [descripcion]="'Ingrese los datos de su tarjeta de credito o debito'"></app-header-form>
+<hr>
+<section class="contenido">
+    <div class="campos">    
+        <label>
+            <h4>Numero de tarjeta</h4>
+            <input type="text" class="Input">
+        </label>
+
+        <label>
+            <h4>Fecha de caducidad</h4>
+            <input type="month" class="Input">
+        </label>
+
+        <label>
+            <h4>CVV</h4>
+            <input type="text" class="Input">
+        </label>
+
+    </div>
+
+    <div class="resumen">
+        <h3>Total a pagar:</h3>
+        <h2>$ {{ precio() }}</h2>
+
+    </div>
+</section>

@@ -1,0 +1,17 @@
+.form{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: 350px;
+    padding: 10px;
+}
+
+hr{
+    margin-block: 10px;
+    height: 3px;
+    background-color: var(--color-lines);
+    border: none;
+}

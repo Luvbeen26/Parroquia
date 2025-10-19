@@ -1,0 +1,15 @@
+.background{
+    background-color: var(--color-background);
+    padding-block: 4rem;
+    padding-inline: 8rem;
+
+}
+
+.Contenedor{
+    padding: 30px;
+    background-color: #FFFF;
+    border: 2px solid var(--color-lines);
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px rgba(0,0,0,0.3);
+}
+

@@ -1,0 +1,166 @@
+
+header{
+    color: var(--color-principal);
+    display: flex;
+    padding-block: 5px;
+    gap: 10px;
+}
+
+header h4{
+    font-weight: normal;
+}
+
+
+.age-gender{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    
+}
+
+
+h2{
+    color:var(--color-principal);
+    margin-bottom:8px;
+}
+.names-input{
+    margin-bottom: 20px;
+    grid-row: 1fr 1fr;
+}
+.Names{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    
+}
+
+.Campo{
+    display: flex;
+    flex-direction:column;
+    gap: 5px;
+}
+
+
+.icono {
+  width: 55px;            /* tamaño del círculo */
+  height: 55px;
+  background-color: #D9EEFF; /* color de fondo */
+  border-radius: 50%;     /* hace que sea un círculo */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icono img {
+  width: 44px;  /* ajusta el tamaño de la imagen */
+  height: 44px;
+}
+
+hr{
+    margin-block: 10px;
+    height: 3px;
+    background-color: var(--color-lines);
+    border: none;
+}
+
+.info-bautizado{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.form{
+    padding:1rem;
+}
+
+
+.Campo{
+    display: flex;
+    flex-direction:column;
+    gap: 5px;
+}
+
+
+.genero{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radios{
+    display: flex;
+    gap: 15px;
+}
+.radios2{
+    display: flex;
+    gap: 5px;
+}
+
+.tipo-ceremonia{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tipo-ceremonia h2{
+    color: var(--color-principal);
+}
+
+.tipo{
+    margin-block: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.tipo input[type="radio"],
+.radios2 input[type="radio"] {
+  display: none;
+}
+
+/* Círculo personalizado para ambos */
+.tipo span,
+.radios2 span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #007BFF;
+    margin-right: 10px;
+    vertical-align: middle;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+/* Punto interno animado al seleccionar */
+.tipo input[type="radio"]:checked + span::after,
+.radios2 input[type="radio"]:checked + span::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    background-color: #007BFF;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: pop 0.3s forwards;
+}
+
+/* Animación pop */
+@keyframes pop {
+    0% { transform: translate(-50%, -50%) scale(0); }
+    60% { transform: translate(-50%, -50%) scale(1.2); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+
+.buttons{
+    margin-top: 20px;
+    gap: 20px;
+    display: flex;
+    justify-content: center;
+}

@@ -23,13 +23,14 @@ export class Login {
   constructor(private authservice:Auth,private router:Router){
     this.correo=new FormControl("",[
       Validators.required,
-      Validators.email
+      Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
     ]);
+    
     this.contrasena=new FormControl("",[
       Validators.required,
       Validators.minLength(8),
-      Validators.maxLength(21),
-      Validators.pattern('^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&/#\-])[A-Za-z\\d@$!%*?&/#\\-]{8,}$')
+      Validators.maxLength(25),
+      Validators.pattern('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,25}')
     ]);
 
     this.login_form=new FormGroup({
@@ -44,7 +45,8 @@ export class Login {
       //subscribe permite escuchar la respuesta de la peticion
       this.authservice.login(correo,contrasena).subscribe({ 
         next: (res) =>{
-          this.router.navigate(["/"],{queryParams : {user_id:res.id}});
+          this.router.navigate(["/"]);
+          //this.router.navigate(["/"],{queryParams : {user_id:res.id}});
         },
         error: (err) =>{
           console.log("Error al iniciar sesion");

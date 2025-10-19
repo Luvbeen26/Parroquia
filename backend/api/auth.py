@@ -28,7 +28,7 @@ def create_user(user:schema_users.RegisterUser,db:Session = Depends(get_db)):
 
     #validacion de contraseña
     if user.contra != user.confirm_pswd:
-        raise HTTPException(status_code=401,detail="Las Contraseñas no coinciden")
+        raise HTTPException(status_code=400,detail="Las Contraseñas no coinciden")
 
     #validacion de codigo
     if not db_code:
@@ -71,8 +71,10 @@ async def send_code_verification(user:schema_users.Get_email,db:Session = Depend
         db.refresh(db_code)
         await email.send_email(codigo,user.correo,"Codigo de verificacion de creacion de cuenta")
         return {
-            "codigo_estructura": db_code,
-            "codigo": codigo
+            "success": True,
+            "message" : "Codigo Enviado Correctamente"
+         #   "codigo_estructura": db_code,
+        #    "codigo": codigo
         }
     except Exception as e:
         return {

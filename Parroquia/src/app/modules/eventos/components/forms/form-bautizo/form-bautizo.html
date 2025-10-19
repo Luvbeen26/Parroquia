@@ -1,0 +1,77 @@
+<app-header-form [titulo]="'Datos del Bautizado'" [icono]="'../icons/sacramentos/bautizo.svg'" [descripcion]="'Ingrese la informacion personal del bautizado'"></app-header-form>
+<hr>
+<form [formGroup]="form" class="form">    
+    
+    
+    <section class="info-bautizado">
+        
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres" class="Input" placeholder="Nombres">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat" class="Input" placeholder="Apellido paterno">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat" class="Input" placeholder="Apellido materno">
+            </span>
+        
+        <span class="genero">
+            <h4>Genero</h4>
+            <div class="radios">
+                <label class="radios2">
+                    <input type="radio" name="genero" value="M" formControlName="genero">
+                    <span></span>
+                    Masculino
+                </label>
+                <label class="radios2">
+                    <input type="radio" name="genero" value="F" formControlName="genero">
+                    <span></span>
+                    Femenino
+                </label>
+            </div>
+        </span>
+
+
+        <span class="Campo">
+            <h4>Fecha de Nacimiento</h4>
+            <input type="date" class="Input" formControlName="fecha_nac">
+        </span>
+
+
+        <span class="Campo">
+            <h4>Edad</h4>
+            <input type="number" class="Input" placeholder="Edad" formControlName="edad">
+        </span>
+    </section>
+    
+    <section class="tipo-ceremonia">
+        <h2>Tipo de Ceremonia</h2>
+        <span>
+            <label class="tipo">
+                <input type="radio" name="tipo" value="C" formControlName="tipo">
+                <span></span>
+                <div class="tipo-text">
+                    <h4>Comunitario</h4>
+                    <p>Realizado con la participación de la comunidad o grupo social, con carácter público y colectivo.</p>
+                </div>
+            </label>
+            <label class="tipo">
+                <input type="radio" name="tipo" value="P" formControlName="tipo">
+                <span></span>
+                <div class="tipo-text">
+                    <h4>Privado</h4>
+                    <p>Reservado únicamente para familiares o invitados seleccionados.</p>
+                </div>
+            </label>
+        </span>
+        
+    </section>
+    <div class="buttons">
+        <button class="button" [disabled]="form.invalid" (click)="next()">Continuar</button> 
+    </div>
+</form>

@@ -1,0 +1,15 @@
+<main class="background">
+    <section class="Contenedor">
+        @if (step==0) {
+            <app-form-bautizo [formgroup]="bautizadoform" (steps)="next_prev_step($event)" (formdata)="updateBautizadoForm($event)"></app-form-bautizo>
+        }@else if (step==1){
+            <app-form-padres (steps)="next_prev_step($event)" ></app-form-padres>
+        }@else if (step==2) {
+            <app-form-documents [fileList]="files"></app-form-documents>
+        }@else if (step==3) {
+            <app-form-date></app-form-date>    
+        }@else if (step==4) {
+            <app-form-pay></app-form-pay>
+        }
+    </section>
+</main>
