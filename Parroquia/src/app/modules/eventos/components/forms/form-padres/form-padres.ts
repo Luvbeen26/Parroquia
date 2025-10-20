@@ -10,8 +10,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrl: './form-padres.css'
 })
 export class FormPadres {
-  @Input() formgroup!:FormGroup;
+  @Input() formgroup!: any;
   @Output() steps=new EventEmitter<boolean>();
+  @Output() formdata=new EventEmitter<any>();
 
   form: FormGroup;
 
@@ -31,16 +32,28 @@ export class FormPadres {
 
   next(){
     this.steps.emit(true);
+    this.formdata.emit(this.form.value);
   }
 
   prev(){
     this.steps.emit(false);
+    this.formdata.emit(this.form.value);
   }
 
 
   ngOnInit(){
-    if(this.formgroup){
-      
+    if(this.formgroup && this.formgroup.length > 0){
+      this.form.setValue({
+        nombres_f: this.formgroup[0].nombres_f || '',
+        ap_pat_f: this.formgroup[0].ap_pat_f || '',
+        ap_mat_f: this.formgroup[0].ap_mat_f || '',
+        nombres_m: this.formgroup[0].nombres_m || '',
+        ap_pat_m:this.formgroup[0].ap_pat_m || '',
+        ap_mat_m: this.formgroup[0].ap_mat_m || '',
+        nombres_p:this.formgroup[0].nombres_p || '',
+        ap_pat_p: this.formgroup[0].ap_pat_p || '',
+        ap_mat_p: this.formgroup[0].ap_mat_p || ''
+      })
     }
   }
 

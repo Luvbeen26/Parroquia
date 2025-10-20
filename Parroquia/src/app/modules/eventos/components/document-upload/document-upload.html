@@ -1,8 +1,8 @@
 <div class="contenedor">
     <span class="tipo"><h3>{{ tipo() }}</h3></span>
     <div class="filebutton">
-        <label for="file" class="two-button"><img src="icons/upload.svg" class="icon" alt="">Buscar archivo</label>
-        <input type="file" id="file" accept=".pdf" (change)="FileSelected($event)" hidden>
+        <label [for]="id" class="two-button"><img src="icons/upload.svg" class="icon" alt="">Buscar archivo</label>
+        <input type="file" [id]="id" accept=".pdf" (change)="FileSelected($event)" hidden>
 
         @if(filename != ""){
             <span class="filename">{{ filename }}</span>

@@ -1,0 +1,10 @@
+svg{
+    width: 30px;
+    height: 30px;
+}
+
+.contenedor{
+    padding: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}

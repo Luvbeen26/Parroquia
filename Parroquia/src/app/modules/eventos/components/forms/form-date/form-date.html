@@ -1,1 +1,17 @@
-<input type="datetime-local">
+<!-- <script type="module" src="https://unpkg.com/cally"></script> -->
+<app-header-form [titulo]="'Fecha y Hora'" [icono]="'../icons/calendary_blue.svg'" [descripcion]="'Elija fecha y hora para la ceremonia'"></app-header-form>
+<hr>
+<section class="contenedor">    
+    <div class="card">
+        <calendar-date [min]="isomin"(change)="DateChange($event)">
+            <div class="grid">
+            <calendar-month ></calendar-month>
+            </div>
+        </calendar-date>
+    </div>
+    <form action="">
+        <input type="text" class="Input">
+        <input type="text" class="Input">
+    </form>
+</section>
+

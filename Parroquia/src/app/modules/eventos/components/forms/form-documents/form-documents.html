@@ -1,8 +1,14 @@
 <app-header-form [titulo]="'Documentos'" [icono]="'../icons/documents.svg'" [descripcion]="'Suba los documentos requeridos para el sacramento'"></app-header-form>
 <hr>
 <form action="" class="form">    
-    @for (file of fileList(); track $index) {
-        <app-document-upload  [tipo]="file"></app-document-upload>
-    }
+    <section class="cards">
+        @for (file of fileList; track $index) {   
+            <app-document-upload [id]="$index" [archivoreal]="fileinputs[$index]" [tipo]="file" (archivo)="SaveFile($event,$index)"></app-document-upload>
+        }
+    </section>
+    <div class="buttons">
+        <button type="button" class="two-button" (click)="prev()">Volver</button> 
+        <button type="button" [disabled]="!ValidateAllInputs()" class="button" (click)="next()">Continuar</button> 
+    </div>
     
 </form>
