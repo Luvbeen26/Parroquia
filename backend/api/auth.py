@@ -4,11 +4,11 @@ import random
 from services import email
 from sqlalchemy.orm import Session
 from utils.database import get_db
-from jwt import encode,decode, exceptions
+from jwt import decode, exceptions
 from fastapi import APIRouter,Depends, HTTPException,Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import utils.security as security
-import config.setting as settings
+from config.setting import settings
 import bcrypt
 from utils.dependencies import current_user
 from utils.security import write_access_token

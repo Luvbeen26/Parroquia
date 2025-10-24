@@ -11,7 +11,7 @@ class EventoParticipante(Base):
     apellido_pat=Column(String,nullable=False)
     apellido_mat = Column(String, nullable=False)
     id_rol=Column(Integer, ForeignKey("rol.id_rol"),nullable=False)
-
     # FK DE LA TABLA
     evento=relationship("Evento",back_populates="evento_participante")
     rol=relationship("Rol",back_populates="rol_participante")
+    documentos = relationship("Documento", back_populates="participante")

@@ -7,7 +7,7 @@
         }@else if (step==2) {
             <app-form-documents [docs]="filesinputs" [fileList]="files" (steps)="next_prev_step($event)" (archivos)="updateDocumentsForm($event)"></app-form-documents>
         }@else if (step==0) {
-            <app-form-date></app-form-date>    
+            <app-form-date (steps)="next_prev_step($event)"></app-form-date>    
         }@else if (step==4) {
             <app-form-pay></app-form-pay>
         }

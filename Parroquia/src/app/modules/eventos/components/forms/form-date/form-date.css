@@ -1,10 +1,120 @@
 svg{
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
+}
+
+hr{
+    margin-block: 10px;
+    height: 3px;
+    background-color: var(--color-lines);
+    border: none;
 }
 
 .contenedor{
-    padding: 3rem;
+    padding: 2.5rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+
+calendar-month {
+    --color-accent: var(--color-principal-button);
+    --color-text-on-accent: #ffffff;
+    &::part(button) {
+        border-radius: 5px;  
+        font-size: 19px;
+        transition: .5s;
+        padding-block: 2px;
+    }
+    
+}
+
+calendar-date {
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 4px 4px 8px grey;
+    &::part(button) {
+        border-radius: 5px;  /* ejemplo: 8px de radio */
+        background-color: #ffffff;
+        color:var(--color-principal-button);
+        border:2px solid var(--color-principal-button)
+    }
+    &::part(button):hover {
+        background-color: var(--color-secondbutton-hover);
+        transition: .5s;
+    }
+
+    &::part(button):active{
+        box-shadow: 1px 3px 4px grey;
+    }
+}
+
+
+calendar-date::part(header){
+    font-size: 22px;
+}
+
+calendar-month::part(day){
+    font-size: 19px;
+}
+calendar-month::part(day){
+    margin-block: 5px;
+}
+
+calendar-month::part(heading){
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+
+
+.calendary{
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    
+}
+
+.calendary calendar-date{
+    width: 80%;
+    height: 80%;
+}
+
+calendar-month{
+    width: 100%;
+    height: 350px;
+    margin-bottom: 10px;
+}
+
+
+
+.grid{
+    width: 100%;
+    
+}
+
+.form{
+    gap: 5px;
+    font-size: 17px;
+}
+
+.Campo{
+    width: 50%;
+    gap: 10px;
+    margin-block: 10px;
+}
+
+#hora{
+    -webkit-appearance: none; 
+    -moz-appearance: none;    
+    appearance: none;         
+    padding: 8px 30px 8px 12px; 
+        
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+}
+
+.buttons{
+    margin-top: 10px;
 }

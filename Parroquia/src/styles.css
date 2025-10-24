@@ -37,7 +37,6 @@
 }
 
 
-
 .Input{
     background-color: var(--color-background);
     border:2px solid var(--color-border-input);
@@ -45,6 +44,7 @@
     border-radius: 5px;
     width: 100%;
     box-sizing: border-box;
+    padding-left:8px;
 }
 
 
@@ -54,8 +54,8 @@
 }
 
 input:disabled{
-     background-color: #f0f0f0;
-  cursor: not-allowed;
+    background-color: #f0f0f0;
+    cursor: not-allowed;
 }
 
 

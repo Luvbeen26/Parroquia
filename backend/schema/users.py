@@ -26,3 +26,4 @@ class ChangePasswordOnSession(BaseModel):
 
 class Get_email(BaseModel):
     correo: EmailStr
+
