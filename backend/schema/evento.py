@@ -1,17 +1,11 @@
-from fastapi import APIRouter
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel,Field
 from typing import Optional, List
 
 
-class EventModel(BaseModel):
-    id_usuario: int
-    folio: str
-    id_tipo_evento:int
-    fecha: str
-    id_tipo_evento: int
+
+
 
 class ParticipantModel(BaseModel):
-    id_evento:int
     nombres:str
     apellido_pat:str
     apellido_mat: str
@@ -25,6 +19,25 @@ class CelebratedModel(ParticipantModel):
     edad:int
 
 class Pago(BaseModel):
-    fecha_hora:str
     monto:float
     descripcion:str
+
+
+class EventCreateModel(BaseModel):
+    id_tipo_evento: int
+    fecha_inicio: str
+    fecha_fin:str
+    celebrado:List[CelebratedModel]
+    participantes: List[ParticipantModel]
+    pago:Pago
+
+class ParroquialEvent(BaseModel):
+    fecha_inicio:str
+    fecha_fin: str
+    descripcion:str
+
+
+class StatusEvent(BaseModel):
+    id_evento: int
+    image:Optional[str] = Field(default=None)
+    status: str

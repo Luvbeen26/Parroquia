@@ -8,10 +8,12 @@ class Evento(Base):
     id_evento = Column(Integer, primary_key=True,index=True)
     id_usuario =Column(Integer,ForeignKey("usuario.id_usuario") ,nullable=False)
     folio=Column(String,nullable=False)
-    fecha_hora = Column(DATETIME, nullable=False)
+    fecha_hora_inicio = Column(DATETIME, nullable=False)
     status=Column(String,nullable=False)
     id_tipo_evento=Column(Integer, ForeignKey("tipo_evento.id_tipo_evento"), nullable=False)
-
+    descripcion=Column(String,nullable=False)
+    fecha_hora_fin= Column(DATETIME, nullable=False)
+    evidencia=Column(String, nullable=False)
     # FK DE LA TABLA
     usuario_evento=relationship("User",back_populates="evento")
     tipo_evento=relationship("TipoEvento",back_populates="evento")
