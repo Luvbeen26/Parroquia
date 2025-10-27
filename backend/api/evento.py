@@ -1,44 +1,49 @@
 import os
 import shutil
-from sqlalchemy import and_
-from sqlalchemy.orm import Session
+from sqlalchemy import and_, func, cast, Date
+from sqlalchemy.orm import Session, joinedload
 import datetime
 import schema.evento
 from models.celebrado import Celebrado
 from schema import evento as schema_event
-from models import evento as models_event
+from models import evento as models_event, Evento
 from models import evento_participantes as event_part
+from api import finanzas
 from models.pagos import Pagos
 from utils.database import get_db
 from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form
 from utils.dependencies import current_user, admin_required
+from services import email
 
 
 
 router=APIRouter(prefix="/event", tags=["event"])
 
 @router.post("/create/Bautizo")
-def create_bautizo(evento:schema_event.EventCreateModel,db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
+async def create_bautizo(evento:schema_event.EventCreateModel, db:Session = Depends(get_db), user_data:dict=Depends(current_user)):
     try:
         user_id=user_data["id_usuario"]
         descripcion = ""
         id_tipo_evento = evento.id_tipo_evento
-        for celebrado in evento.celebrado:
-            if id_tipo_evento == 4:
-                descripcion=celebrado.apellido_pat + ' ' +celebrado.apellido_mat +" & "+celebrado.apellido_pat+' '+celebrado.apellido_mat
-            else:
-                descripcion=celebrado.nombres+' '+celebrado.apellido_pat+' '+celebrado.apellido_mat
 
         if id_tipo_evento==1 or id_tipo_evento==2:
-            descripcion+=" Bautizo"
+            descripcion="Bautizo - "
         elif id_tipo_evento==3:
-            descripcion += " Primera Comunion"
+            descripcion = "Primera Comunion - "
         elif id_tipo_evento==4:
-            descripcion += " Confirmacion"
+            descripcion = "Confirmacion - "
         elif id_tipo_evento==5:
-            descripcion += " Matrimonio"
+            descripcion = "Matrimonio - "
         else:
-            descripcion += " XV Años"
+            descripcion = "XV Años - "
+
+        for celebrado in evento.celebrado:
+            if id_tipo_evento == 4:
+                descripcion+=celebrado.apellido_pat + ' ' +celebrado.apellido_mat +" & "+celebrado.apellido_pat+' '+celebrado.apellido_mat
+            else:
+                descripcion+=celebrado.nombres+' '+celebrado.apellido_pat+' '+celebrado.apellido_mat
+
+
 
 
 
@@ -55,6 +60,7 @@ def create_bautizo(evento:schema_event.EventCreateModel,db:Session = Depends(get
             if id_participante != None: participant_list.append(id_participante)
 
         metodo_pago(user_id,evento.pago,db)
+        await finanzas.generar_comprobante_pago(id_evento,f"Pago {descripcion}",evento.pago,datetime.now(),db)
         return {"msg" : "Registrado correctamente", "res" : {
             "evento" : id_evento,
             "user" : user_id,
@@ -105,7 +111,7 @@ def register_participant(id_evento:int,participant:schema_event.ParticipantModel
 
 def metodo_pago(user_id:int,pago:schema.evento.Pago,db:Session):
     try:
-        pay=Pagos(fecha_hora=datetime.datetime.utcnow(),monto=pago.monto,id_usuario=user_id,descripcion=pago.descripcion)
+        pay=Pagos(fecha_hora=datetime.datetime.now(),monto=pago.monto,id_usuario=user_id,descripcion=pago.descripcion)
         db.add(pay)
         db.commit()
         db.refresh(pay)
@@ -113,13 +119,16 @@ def metodo_pago(user_id:int,pago:schema.evento.Pago,db:Session):
         raise HTTPException(status_code=404, detail=str(error))
 
 
+def get_last_folio(db: Session):
+    last = db.query(models_event.Evento).order_by(models_event.Evento.folio.desc()).first()
 
-def get_last_folio(db:Session):
-    last=db.query(models_event.Evento).order_by(models_event.Evento.folio.desc()).first()
     if not last:
-        return "00000001"
-    new_folio=int(last.folio) + 1
-    return f"{new_folio:08d}"
+        return "EVT000001"
+    num_str = last.folio.replace("EVT", "")
+    new_number = int(num_str) + 1
+
+    new_folio = f"EVT{new_number:06d}"
+    return new_folio
 
 @router.post("/create/Parroquial")
 def create_parroquial(parroquial: schema_event.ParroquialEvent,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
@@ -136,7 +145,7 @@ def create_parroquial(parroquial: schema_event.ParroquialEvent,db:Session = Depe
 @router.get("/get/all_parroquial")
 def get_all_parroquial(db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
-        fecha=datetime.datetime.utcnow()
+        fecha=datetime.datetime.now()
 
         parroquial=db.query(models_event.Evento).filter(and_(models_event.Evento.id_tipo_evento == 6, models_event.Evento.fecha_hora_fin >= fecha)).all()
         eventos=[]
@@ -217,5 +226,52 @@ def update_parroquial(id_evento:int,parroquial:schema_event.ParroquialEvent,db:S
             {"fecha_hora_inicio":parroquial.fecha_inicio,"fecha_hora_fin":parroquial.fecha_fin,"descripcion":parroquial.descripcion})
         db.commit()
         return { "msg" : "Evento actualizado"}
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
+
+
+@router.get("/show/today_events")
+def show_manyevents(db:Session = Depends(get_db)):
+    try:
+        hoy=datetime.date.today()
+        cantidad=db.query(func.count(Evento.id_evento)).filter(cast(Evento.fecha_hora_inicio, Date) == hoy).scalar()
+        cantidad=cantidad or 0
+        return cantidad
+    except Exception as error:
+        print(error)
+
+@router.get("/show/user/eventos")
+def show_userevents(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
+    try:
+        eventos=db.query(Evento).filter(Evento.id_usuario == user_data["id_usuario"]).all()
+
+        prox=[e for e in eventos if e.status == "P" ]
+        pasados=[e for e in eventos if e.status != "P" ]
+
+        return{
+            "prox": prox,
+            "pasado": pasados,
+        }
+
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
+@router.get("/show/user/pendientes_eventos")
+def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
+    try:
+        eventos=db.query(Evento).options(joinedload(Evento.documentos)).filter(and_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P")).all()
+
+        result = []
+        for evento in eventos:
+            result.append({
+                "id_evento": evento.id_evento,
+                "id_tipo" :evento.id_tipo_evento,
+                "descripcion": evento.descripcion,
+                "documentos": [{"id_documento": doc.id_documento, "id_tipo":doc.id_tipo_documento ,"ruta": doc.ruta,"motivo":doc.motivo_rechazo,"status":doc.status} for doc in evento.documentos]
+            })
+
+        return result
+
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))

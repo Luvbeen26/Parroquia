@@ -9,4 +9,5 @@ class Rol(Base):
     descripcion =Column(String,nullable=False)
 
     ####
+    rol_celebrado=relationship("Celebrado",back_populates="rol")
     rol_participante=relationship("EventoParticipante",back_populates="rol")

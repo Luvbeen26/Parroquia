@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from schema import users as schema_users
 from sqlalchemy.orm import Session
 from jwt import encode,decode, exceptions
@@ -64,6 +66,7 @@ def validate_token(token,output=False):
         decode(token,key=access_key,algorithms=["HS256"])
         return decode(token, key=access_key, algorithms=["HS256"])
     except exceptions.DecodeError:
-        return JSONResponse({"error": "Token Invalido"}, status_code=401)
+        raise HTTPException(status_code=401, detail="Token inválido")
     except exceptions.ExpiredSignatureError:
-        return JSONResponse({"error": "Token Expirado"}, status_code=401)
+        raise HTTPException(status_code=401, detail="Token expirado")
+

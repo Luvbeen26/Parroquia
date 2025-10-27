@@ -46,7 +46,8 @@ def create_user(user:schema_users.RegisterUser,db:Session = Depends(get_db)):
     token_data={
         "id_usuario": db_user.id_usuario,
         "correo": db_user.correo,
-        "es_admin": db_user.es_admin
+        "es_admin": db_user.es_admin,
+        "nombre": f"{db_user.nombres} {db_user.apellidos}"
     }
     print(token_data)
 
@@ -97,7 +98,8 @@ def login_user(user:schema_users.LoginUser,db:Session = Depends(get_db)):
     token_data={
         "id_usuario": db_user.id_usuario,
         "correo": db_user.correo,
-        "es_admin": db_user.es_admin
+        "es_admin": db_user.es_admin,
+        "nombre": f"{db_user.nombres} {db_user.apellidos}"
     }
 
     access_token=security.write_access_token(token_data)
@@ -144,5 +146,5 @@ def refresh_token(token:str):
     except exceptions.DecodeError:
         raise HTTPException(status_code=401, detail="Refresh token inválido")
 
-    new_access_token=write_access_token({"id_usuario" : data["id_usuario"],"correo" : data["correo"], "es_admin" : data["es_admin"]})
+    new_access_token=write_access_token({"id_usuario" : data["id_usuario"],"correo" : data["correo"], "es_admin" : data["es_admin"], "nombre" : data["nombre"]})
     return {"access_token" : new_access_token}

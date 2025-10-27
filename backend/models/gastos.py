@@ -10,7 +10,7 @@ class Gastos(Base):
     fecha_hora=Column(DATETIME,nullable=False)
     monto = Column(Float, nullable=False)
     descripcion=Column(String, nullable=False)
-    evidencia = Column(String, nullable=False)
+    evidencia = Column(String, nullable=True)
 
     # FK DE LA TABLA
     usuario_gastos=relationship("User",back_populates="gastos")

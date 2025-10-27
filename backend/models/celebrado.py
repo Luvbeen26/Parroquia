@@ -15,5 +15,6 @@ class Celebrado(Base):
     edad = Column(Integer, nullable=False)
 
     # Relaciones
+    rol=relationship("Rol",back_populates="rol_celebrado")
     evento = relationship("Evento", back_populates="celebrados")
     documentos = relationship("Documento", back_populates="celebrado", cascade="all, delete-orphan")

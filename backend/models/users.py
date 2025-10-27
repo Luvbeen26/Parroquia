@@ -13,6 +13,7 @@ class User(Base):
     es_admin=Column(Boolean,default=False)
 
     ##
+    notificaciones = relationship("Notificacion", back_populates="usuario")
     pagos=relationship("Pagos",back_populates="usuario_pagos")
     publicacion=relationship("Publicacion",back_populates="usuario_publica")
     evento=relationship("Evento",back_populates="usuario_evento")

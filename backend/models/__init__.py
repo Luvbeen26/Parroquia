@@ -9,4 +9,6 @@ from .rol import Rol
 from .tipo_documento import TipoDocumento
 from .tipo_evento import TipoEvento
 from .codigo_verificacion import CodigoVerificacion
-
+from .notificacion import Notificacion
+from .comprobante import Comprobante
+from .imagenes_publicacion import ImagenPublicacion

@@ -41,3 +41,5 @@ class StatusEvent(BaseModel):
     id_evento: int
     image:Optional[str] = Field(default=None)
     status: str
+
+

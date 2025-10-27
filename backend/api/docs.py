@@ -1,15 +1,29 @@
+import datetime
 import os
 import shutil
 
+from sqlalchemy import func, cast
 from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse
 from models.documento import Documento
+from models.evento import Evento
 from utils.database import get_db
+from .notif import send_notification
 from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form
 from typing import List, Optional
 from utils.dependencies import current_user, admin_required
 
 router=APIRouter(prefix="/docs", tags=["docs"])
+
+
+@router.get("/show/pendient")
+def show_pendientdocs(db:Session = Depends(get_db)):
+    try:
+        cantidad=db.query(func.count(Documento.id_evento)).filter(Documento.status == "Pendiente").scalar()
+        cantidad=cantidad or 0
+        return cantidad
+    except Exception as error:
+        print(error)
 
 
 @router.post("/upload_file")
@@ -73,8 +87,22 @@ async def upload_file(tipos_docs: str = Form(...),
 @router.put("/reject_file")
 def reject_file(id_documento:int,motivo:str,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
-        db.query(Documento).filter(Documento.id_documento == id_documento).update(
-            {"status": "Rechazado","motivo_rechazo": motivo})
+        documento = db.query(Documento).filter(Documento.id_documento == id_documento).first()
+        if not documento:
+            raise HTTPException(status_code=404, detail="Documento no encontrado")
+
+        documento.status="Rechazado"
+        documento.motivo_rechazo=motivo
+
+        usuario_id=documento.evento_documento.id_usuario
+        if documento.id_evento_participante:
+            rol=documento.participante.rol.descripcion
+        elif documento.id_celebrado:
+            rol=documento.celebrado.rol.descripcion
+        tipo_documento=documento.tipo_documento.descripcion +' ' +rol
+
+        send_notification(usuario_id,f"El documento {tipo_documento} a sido rechazado",datetime.datetime.now(),"D",db)
+
         db.commit()
         return {"msg" : "El documento a sido rechazado"}
     except Exception as error:
@@ -84,26 +112,58 @@ def reject_file(id_documento:int,motivo:str,db:Session = Depends(get_db),admin_d
 @router.put("/accept_file")
 def accept_file(id_documento:int,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
-        db.query(Documento).filter(Documento.id_documento == id_documento).update(
-            {"status": "Aceptado","motivo_rechazo": None})
+        documento = db.query(Documento).filter(Documento.id_documento == id_documento).first()
+        if not documento:
+            raise HTTPException(status_code=404, detail="Documento no encontrado")
+
+        documento.status = "Aceptado"
+        documento.motivo_rechazo = None
+
+        usuario_id = documento.evento_documento.id_usuario
+        if documento.id_evento_participante:
+            rol = documento.participante.rol.descripcion
+        elif documento.id_celebrado:
+            rol = documento.celebrado.rol.descripcion
+        tipo_documento = documento.tipo_documento.descripcion + ' ' + rol
+
+        send_notification(usuario_id, f"El documento {tipo_documento} a sido aceptado", datetime.datetime.utcnow(),
+                          "D", db)
+
         db.commit()
-        return {"msg" : "El documento a sido aceptado"}
+        return {"msg": "El documento a sido aceptado"}
+
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
+
+
+
+
 
 @router.put("/re-update_file")
 def update_file(id_docs: str = Form(...),
                 id_evento: int = Form(...),
                 files: List[UploadFile] = File(...),db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     try:
+
         id_docs = [int(x) for x in id_docs.split(",")]
         cont=0
         for file in files:
+            documento = db.query(Documento).filter(Documento.id_documento == id_docs[cont]).first()
+
             file_path = os.path.join("Documents", str(id_evento), file.filename)  # combina rutas
+
+            if documento.ruta and os.path.exists(documento.ruta):
+                os.remove(documento.ruta)
+
+
+
             with open(file_path, "wb") as f:  # crea un archivo nuevo
                 shutil.copyfileobj(file.file, f)  # copia el contenido del archivo original al nuevo
 
-            db.query(Documento).filter(Documento.id_documento == id_docs[cont]).update({"ruta":file_path,"status":"Pendiente","motivo_rechazo": None})
+            documento.ruta = file_path
+            documento.status = "Pendiente"
+            documento.motivo_rechazo = None
+
             cont += 1
         db.commit()
         return {"msg" : "Documentos resubidos"}
@@ -112,21 +172,18 @@ def update_file(id_docs: str = Form(...),
 
 
 @router.get("/get_evidence")
-async def get_evidence(id_evento: int,admin_data:dict=Depends(admin_required)):
-    folder_path = os.path.join("Images","realized",str(id_evento))
+async def get_evidence(id_evento: int,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
+    #folder_path = os.path.join("Images","realized",str(id_evento))
+    evento = db.query(Evento).filter(Evento.id_evento == id_evento).first()
 
-    if not os.path.exists(folder_path):
-        raise HTTPException(status_code=404, detail="Carpeta no encontrada")
+    if not evento:
+        raise HTTPException(status_code=404, detail="El evento no existe")
 
+    file_path=evento.evidencia
 
-    files = [f for f in os.listdir(folder_path) #lista los archivo/carpetas dentro de una direccion
-             if os.path.isfile(os.path.join(folder_path, f))] #os.path.isfile si es archivo
-    if not files:                                              #Establece la direccion completa de cada archivo
-        raise HTTPException(status_code=404, detail="No hay archivos en esta carpeta")
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="El archivo no existe")
 
-    #Agarra el unico archivo
-    filename = files[0]
-    file_path = os.path.join(folder_path, filename)
-
+    filename=os.path.basename(file_path)
 
     return FileResponse(path=file_path, media_type="image/jpeg", filename=filename)

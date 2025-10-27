@@ -9,7 +9,7 @@ class CodigoVerificacion(Base):
     id_codigo_verificacion=Column(Integer, primary_key=True)
     correo = Column(String, nullable=False)
     codigo_hash= Column(String,nullable=False)
-    creado_en= Column(DATETIME,default=datetime.utcnow)
-    expira_en= Column(DATETIME,default=lambda: datetime.utcnow() + timedelta(minutes=15))
+    creado_en= Column(DATETIME,default=datetime.now)
+    expira_en= Column(DATETIME,default=lambda: datetime.now() + timedelta(minutes=15))
     usado=Column(Boolean, default=False)
     #AGREGAR PROPOSITO??

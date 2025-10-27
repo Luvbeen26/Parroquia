@@ -22,3 +22,4 @@ class Evento(Base):
     documentos=relationship("Documento",back_populates="evento_documento")
     evento_participante=relationship("EventoParticipante",back_populates="evento")
     celebrados = relationship("Celebrado", back_populates="evento", cascade="all, delete-orphan")
+    comprobantes=relationship("Comprobante",back_populates="evento")
