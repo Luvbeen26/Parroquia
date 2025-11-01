@@ -1,6 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, column, Float,DATETIME
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
+
 from utils.database import Base
 
 class Documento(Base):

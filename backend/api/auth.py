@@ -21,25 +21,25 @@ bearer_scheme = HTTPBearer()
 def create_user(user:schema_users.RegisterUser,db:Session = Depends(get_db)):
     db_user=security.check_email(db,correo=user.correo)
 
-    #Validacion de existencia de correo
+
     if db_user:
         raise HTTPException(status_code=400, detail="Correo ya Existente")
     db_code=security.check_code(db,code=user.code,correo=user.correo)
 
-    #validacion de contraseña
+
     if user.contra != user.confirm_pswd:
         raise HTTPException(status_code=400,detail="Las Contraseñas no coinciden")
 
-    #validacion de codigo
+
     if not db_code:
         raise HTTPException(status_code=400, detail="Codigo no valido (incorrecto o expirado)")
 
 
     pswd = bcrypt.hashpw(user.contra.encode(), bcrypt.gensalt(rounds=12))
     db_user= models_users.User(nombres=user.nombres,apellidos=user.apellidos,correo=user.correo,contrasena=pswd)
-    db.add(db_user) #guarda el objeto
-    db.commit() #Confirma el usar el objeto
-    db.refresh(db_user) #refrescar bd para incluir objeto añadido
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
 
 
 
@@ -124,8 +124,8 @@ def restore_password(user:schema_users.ChangePassword,db:Session = Depends(get_d
     hashed_password=bcrypt.hashpw(user.contra.encode(),bcrypt.gensalt(rounds=12))
     #db_user.correo=user.correo
     db_user.contrasena=hashed_password
-    db.commit()  # Confirma el usar el objeto
-    db.refresh(db_user)  # refrescar bd para incluir objeto añadido
+    db.commit()
+    db.refresh(db_user)
     return db_user
 
 

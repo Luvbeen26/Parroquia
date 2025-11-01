@@ -1,7 +1,6 @@
 .Contenedor{
     background-color: #FFFF;
     border: 2px solid var(--color-lines);
-    
     width: 100%;
     border-radius: 5px ;
     display: flex;
@@ -23,6 +22,7 @@ h3{
     display: flex;
     flex-direction: column;
     padding: 10px;
+    
     gap: 10px;
 }
 
@@ -32,7 +32,8 @@ h3{
     color: #5B4E4E;
     gap: 8px;
     font-size: 16px;
-    height:  170px;
+    height:  fit-content;
+    height: 180px;
 }
 
 
@@ -40,6 +41,7 @@ h3{
 .requisito p{
     font-size: 13px;
     font-weight: 600;
+    
 }
 
 .check{

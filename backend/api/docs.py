@@ -1,6 +1,7 @@
 import datetime
 import os
 import shutil
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, cast
 from sqlalchemy.orm import Session
@@ -14,6 +15,8 @@ from typing import List, Optional
 from utils.dependencies import current_user, admin_required
 
 router=APIRouter(prefix="/docs", tags=["docs"])
+
+MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
 
 @router.get("/show/pendient")
@@ -101,7 +104,7 @@ def reject_file(id_documento:int,motivo:str,db:Session = Depends(get_db),admin_d
             rol=documento.celebrado.rol.descripcion
         tipo_documento=documento.tipo_documento.descripcion +' ' +rol
 
-        send_notification(usuario_id,f"El documento {tipo_documento} a sido rechazado",datetime.datetime.now(),"D",db)
+        send_notification(usuario_id,f"El documento {tipo_documento} a sido rechazado",datetime.datetime.now(MAZATLAN_TZ),"D",db)
 
         db.commit()
         return {"msg" : "El documento a sido rechazado"}
@@ -126,7 +129,7 @@ def accept_file(id_documento:int,db:Session = Depends(get_db),admin_data:dict=De
             rol = documento.celebrado.rol.descripcion
         tipo_documento = documento.tipo_documento.descripcion + ' ' + rol
 
-        send_notification(usuario_id, f"El documento {tipo_documento} a sido aceptado", datetime.datetime.utcnow(),
+        send_notification(usuario_id, f"El documento {tipo_documento} a sido aceptado", datetime.datetime.now(MAZATLAN_TZ),
                           "D", db)
 
         db.commit()

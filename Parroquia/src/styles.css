@@ -166,3 +166,7 @@ input:disabled{
 .flex{
     display: flex;
 }
+
+.hide{
+    display: none;
+}

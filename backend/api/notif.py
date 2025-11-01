@@ -4,7 +4,10 @@ from sqlalchemy.orm import Session
 from utils.database import get_db
 from models.notificacion import Notificacion
 from fastapi import APIRouter,Depends, HTTPException
-from utils.dependencies import current_user, admin_required
+from utils.dependencies import current_user
+
+
+
 
 router=APIRouter(prefix="/notification", tags=["notification"])
 

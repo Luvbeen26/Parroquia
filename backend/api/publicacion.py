@@ -1,6 +1,7 @@
 import shutil
 from time import strftime
 from typing import List, Optional
+from zoneinfo import ZoneInfo
 
 from reportlab.lib.colors import describe
 from sqlalchemy import or_
@@ -16,11 +17,14 @@ from utils.dependencies import current_user, admin_required
 
 router=APIRouter(prefix="/publication", tags=["publication"])
 
+MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
+
+
 @router.post("/create/publication")
 def crear_publicacion(titulo:str,contenido:str,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
         user_id=admin_data["id_usuario"]
-        fecha=datetime.datetime.now()
+        fecha=datetime.datetime.now(MAZATLAN_TZ)
         public=Publicacion(id_usuario=user_id,contenido=contenido,titulo=titulo,fecha_hora=fecha)
         db.add(public)
         db.commit()
@@ -35,7 +39,8 @@ def crear_publicacion(titulo:str,contenido:str,db:Session = Depends(get_db),admi
 def crear_publicacion_imagenes(titulo:str = Form(...),contenido:str = Form(...),imagenes: List[UploadFile] = File(None),db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
         user_id=admin_data["id_usuario"]
-        fecha=datetime.datetime.now()
+        fecha=datetime.datetime.now(MAZATLAN_TZ)
+
         public=Publicacion(id_usuario=user_id,contenido=contenido,titulo=titulo,fecha_hora=fecha)
         db.add(public)
         db.commit()

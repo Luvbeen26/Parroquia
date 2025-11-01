@@ -22,6 +22,12 @@ class Pago(BaseModel):
     monto:float
     descripcion:str
 
+class RegisterModel(BaseModel):
+    descripcion:str
+    fecha_inicio:str
+    fecha_fin: str
+    id_tipo_evento:int
+    
 
 class EventCreateModel(BaseModel):
     id_tipo_evento: int
@@ -43,3 +49,7 @@ class StatusEvent(BaseModel):
     status: str
 
 
+class ChangeDate(BaseModel):
+    fecha_inicio: str
+    fecha_fin: str
+    id_evento:int

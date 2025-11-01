@@ -133,6 +133,8 @@ hr{
     vertical-align: middle;
     position: relative;
     transition: all 0.3s ease;
+    flex-shrink: 0;
+
 }
 
 /* Punto interno animado al seleccionar */
@@ -163,4 +165,112 @@ hr{
     gap: 20px;
     display: flex;
     justify-content: center;
+}
+
+
+
+@media (max-width: 870px) {
+    .info-bautizado{
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    
+    .Names{
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .form{
+        padding: 0.75rem;
+    }
+}
+
+/* Celulares y pantallas pequeñas (menor a 480px) */
+@media (max-width: 600px) {
+    .form{
+        padding: 0.5rem;
+    }
+    
+    .info-bautizado{
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .Names{
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .age-gender{
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .radios{
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .tipo{
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .tipo-text h4{
+        font-size: 1rem;
+        margin-bottom: 4px;
+    }
+    
+    .tipo-text p{
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+    
+    header{
+        gap: 8px;
+    }
+    
+    .icono{
+        width: 45px;
+        height: 45px;
+    }
+    
+    .icono img{
+        width: 35px;
+        height: 35px;
+    }
+    
+    h2{
+        font-size: 1.25rem;
+    }
+    
+    .buttons{
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .button{
+        width: 100%;
+    }
+}
+
+/* Pantallas extra pequeñas (menor a 360px) */
+@media (max-width: 360px) {
+    .form{
+        padding: 0.25rem;
+    }
+    
+    h2{
+        font-size: 1.1rem;
+    }
+    
+    h4{
+        font-size: 0.95rem;
+    }
+    
+    .Input{
+        font-size: 0.9rem;
+        padding: 8px;
+    }
 }

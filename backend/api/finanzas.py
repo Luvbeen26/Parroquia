@@ -1,5 +1,6 @@
 import datetime
 from io import BytesIO
+from zoneinfo import ZoneInfo
 
 from dns.reversename import to_address
 from sqlalchemy import cast, Date, func, extract
@@ -27,11 +28,12 @@ from models.comprobante import Comprobante
 
 router=APIRouter(prefix="/finanzas", tags=["finanzas"])
 
+MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
 @router.get("/show/lastest_months")
 def show_lastesmonths(db:Session = Depends(get_db)):
     try:
-        hoy=datetime.date.today()
+        hoy = datetime.datetime.now(MAZATLAN_TZ).date()
         meses = []
         for i in range(6, 0, -1):
             mes_fecha = hoy - relativedelta(months=i)
@@ -77,7 +79,7 @@ def show_lastesmonths(db:Session = Depends(get_db)):
 @router.post("/show/earnings")
 def ver_ganancias(db:Session = Depends(get_db)):
     try:
-        hoy=datetime.date.today()
+        hoy = datetime.datetime.now(MAZATLAN_TZ).date()
         total_monto=db.query(func.sum(Pagos.monto)).filter(cast(Pagos.fecha_hora, Date) == hoy).scalar()
         total_monto=total_monto or 0
         return total_monto
@@ -88,7 +90,7 @@ def ver_ganancias(db:Session = Depends(get_db)):
 def crear_pago(datos_pago:finanzas.Pago,db: Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
         user_id=admin_data["id_usuario"]
-        fecha=datetime.datetime.now()
+        fecha=datetime.datetime.now(MAZATLAN_TZ)
         pago=Pagos(fecha_hora=fecha.strftime("%Y-%m-%d %H-%M-%S"),monto=datos_pago.monto,id_usuario=user_id,descripcion=datos_pago.descripcion)
         db.add(pago)
         db.commit()
@@ -102,7 +104,7 @@ def crear_pago(datos_pago:finanzas.Pago,db: Session = Depends(get_db),admin_data
 def crear_gastos(descripcion:str=Form(...),monto:float = Form(...),image:UploadFile=File(...),db: Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
         user_id=admin_data["id_usuario"]
-        fecha=datetime.datetime.now()
+        fecha=datetime.datetime.now(MAZATLAN_TZ)
 
         gasto=Gastos(fecha_hora=fecha.strftime("%Y-%m-%d %H-%M-%S"),monto=monto,id_usuario=user_id,descripcion=descripcion,evidencia="")
         db.add(gasto)
@@ -128,7 +130,7 @@ def crear_gastos(descripcion:str=Form(...),monto:float = Form(...),image:UploadF
 #def get_comprobante()
 
 
-async def generar_comprobante_pago(comprobante:finanzas.Comprobante,db: Session,user_data:dict=Depends(current_user)):
+async def generar_comprobante_pago(comprobante:finanzas.Comprobante,db: Session):
     folio=get_last_comprobant_folio(db)
     buffer = BytesIO()
     #Se crea el documento de tamaño A5
@@ -164,7 +166,7 @@ async def generar_comprobante_pago(comprobante:finanzas.Comprobante,db: Session,
     datos_generales = [
         ["Folio:", folio],
         ["Fecha:", comprobante.fecha],
-        ["Cliente:", user_data["nombre"]],
+        ["Cliente:", comprobante.nombre],
         ["Concepto:", comprobante.concepto],
         ["Monto:", f"${comprobante.monto:,.2f}"]
     ]
@@ -204,7 +206,7 @@ async def generar_comprobante_pago(comprobante:finanzas.Comprobante,db: Session,
     add_comprobant(ruta,comprobante.id_evento,folio,comprobante.monto,comprobante.fecha,db)
 
     db.commit()
-    await send_email_comprobante(ruta,user_data["correo"],"Comprobante de pago")
+    await send_email_comprobante(ruta,comprobante.correo,"Comprobante de pago")
     return StreamingResponse(
         buffer,
         media_type="application/pdf",

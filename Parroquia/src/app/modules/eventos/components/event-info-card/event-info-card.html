@@ -16,12 +16,6 @@
         
 
         <section class="Buttons">
-            @if (nombre() != "XV Años") {
-                <div class="impr">
-                    <span class="costs impresion">Impresion <br>{{ impresion() }}</span>
-                    <button class="two-button"><span class="content-button"><img class="print-icon" src="../icons/printer.svg" alt="">Imprimir</span></button>
-                </div>
-            }
             <div class="progr">
                 <span class="costs programar">Programar <br>${{ programar() }}</span>  
                 <button class="button" [routerLink]="linkprog()"><span class="content-button"><img src="../icons/calendary_white.svg" alt="">Programar</span></button>

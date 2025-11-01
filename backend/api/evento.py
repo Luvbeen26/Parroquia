@@ -1,11 +1,18 @@
 import os
 import shutil
-from sqlalchemy import and_, func, cast, Date
+from zoneinfo import ZoneInfo
+
+from sqlalchemy import and_, func, cast, Date, or_
 from sqlalchemy.orm import Session, joinedload
 import datetime
+from utils.scheduler import scheduler
+from watchfiles import Change
+
 import schema.evento
+from api.notif import send_notification
 from models.celebrado import Celebrado
 from schema import evento as schema_event
+from schema import finanzas as schema_finanzas
 from models import evento as models_event, Evento
 from models import evento_participantes as event_part
 from api import finanzas
@@ -16,16 +23,21 @@ from utils.dependencies import current_user, admin_required
 from services import email
 
 
+MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
 router=APIRouter(prefix="/event", tags=["event"])
 
-@router.post("/create/Bautizo")
-async def create_bautizo(evento:schema_event.EventCreateModel, db:Session = Depends(get_db), user_data:dict=Depends(current_user)):
+@router.post("/create/Event")
+async def create_event(
+        evento:schema_event.EventCreateModel,
+        db:Session = Depends(get_db), user_data:dict=Depends(current_user)):
     try:
         user_id=user_data["id_usuario"]
         descripcion = ""
+        #ID DE EVENTO
         id_tipo_evento = evento.id_tipo_evento
 
+        #DESCRIPCION DE EVENTO
         if id_tipo_evento==1 or id_tipo_evento==2:
             descripcion="Bautizo - "
         elif id_tipo_evento==3:
@@ -43,11 +55,14 @@ async def create_bautizo(evento:schema_event.EventCreateModel, db:Session = Depe
             else:
                 descripcion+=celebrado.nombres+' '+celebrado.apellido_pat+' '+celebrado.apellido_mat
 
+        register = schema_event.RegisterModel(
+            descripcion=descripcion,
+            fecha_inicio=evento.fecha_inicio,
+            fecha_fin=evento.fecha_fin,
+            id_tipo_evento=id_tipo_evento
+        )
 
-
-
-
-        id_evento=create_event(descripcion,evento.fecha_inicio,evento.fecha_fin,id_tipo_evento,user_id,db)
+        id_evento=register_event(register,user_id,db)
         celebrado_list=[]
 
         for celebrado in evento.celebrado:
@@ -60,7 +75,29 @@ async def create_bautizo(evento:schema_event.EventCreateModel, db:Session = Depe
             if id_participante != None: participant_list.append(id_participante)
 
         metodo_pago(user_id,evento.pago,db)
-        await finanzas.generar_comprobante_pago(id_evento,f"Pago {descripcion}",evento.pago,datetime.now(),db)
+
+        name=user_data["nombre"]
+        email=user_data["correo"]
+        comproba = schema_finanzas.Comprobante(
+            id_evento=id_evento,
+            nombre=name,
+            correo=email,
+            concepto=f"Pago {descripcion}",
+            monto=evento.pago.monto,
+            fecha=datetime.datetime.now(MAZATLAN_TZ).strftime("%Y-%m-%d %H:%M:%S")
+        )
+
+        await finanzas.generar_comprobante_pago(comproba,db)
+
+        fecha_inicio_dt = datetime.datetime.strptime(evento.fecha_inicio, "%Y-%m-%d %H:%M:%S")
+        tiempo_notificacion = fecha_inicio_dt  - datetime.timedelta(days=1)
+        scheduler.add_job(
+            send_notification,
+            'date',
+            run_date=tiempo_notificacion,
+            args=[user_id, f"El {descripcion} se llevará a cabo en 1 día", datetime.datetime.now(MAZATLAN_TZ), "E",db]
+        )
+
         return {"msg" : "Registrado correctamente", "res" : {
             "evento" : id_evento,
             "user" : user_id,
@@ -71,10 +108,10 @@ async def create_bautizo(evento:schema_event.EventCreateModel, db:Session = Depe
         raise HTTPException(status_code=400, detail=str(error))
 
 
-def create_event(descripcion:str,fecha_inicio:str,fecha_fin:str,id_tipo_evento:int,user_id:int, db:Session):
+def register_event(register:schema_event.RegisterModel,user_id:int, db:Session):
     #fecha=datetime.datetime.utcnow() #Modificar al momento en el que se haga en el front
     folio=get_last_folio(db)
-    event=models_event.Evento(id_usuario=user_id,folio=folio,fecha_hora_inicio=fecha_inicio,fecha_hora_fin=fecha_fin,status="P",id_tipo_evento=id_tipo_evento,descripcion=descripcion)
+    event=models_event.Evento(id_usuario=user_id,folio=folio,fecha_hora_inicio=register.fecha_inicio,fecha_hora_fin=register.fecha_fin,status="P",id_tipo_evento=register.id_tipo_evento,descripcion=register.descripcion)
     try:
         db.add(event)
         db.commit()
@@ -111,7 +148,7 @@ def register_participant(id_evento:int,participant:schema_event.ParticipantModel
 
 def metodo_pago(user_id:int,pago:schema.evento.Pago,db:Session):
     try:
-        pay=Pagos(fecha_hora=datetime.datetime.now(),monto=pago.monto,id_usuario=user_id,descripcion=pago.descripcion)
+        pay=Pagos(fecha_hora=datetime.datetime.now(MAZATLAN_TZ),monto=pago.monto,id_usuario=user_id,descripcion=pago.descripcion)
         db.add(pay)
         db.commit()
         db.refresh(pay)
@@ -145,7 +182,7 @@ def create_parroquial(parroquial: schema_event.ParroquialEvent,db:Session = Depe
 @router.get("/get/all_parroquial")
 def get_all_parroquial(db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
-        fecha=datetime.datetime.now()
+        fecha=datetime.datetime.now(MAZATLAN_TZ)
 
         parroquial=db.query(models_event.Evento).filter(and_(models_event.Evento.id_tipo_evento == 6, models_event.Evento.fecha_hora_fin >= fecha)).all()
         eventos=[]
@@ -234,7 +271,7 @@ def update_parroquial(id_evento:int,parroquial:schema_event.ParroquialEvent,db:S
 @router.get("/show/today_events")
 def show_manyevents(db:Session = Depends(get_db)):
     try:
-        hoy=datetime.date.today()
+        hoy = datetime.datetime.now(MAZATLAN_TZ).date()
         cantidad=db.query(func.count(Evento.id_evento)).filter(cast(Evento.fecha_hora_inicio, Date) == hoy).scalar()
         cantidad=cantidad or 0
         return cantidad
@@ -275,3 +312,31 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
 
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
+
+
+
+@router.get("/parroquiales/ocupados")
+def eventos_ocupados(db: Session = Depends(get_db)):
+    hoy = datetime.datetime.now(MAZATLAN_TZ)
+    eventos = db.query(Evento.fecha_hora_inicio, Evento.fecha_hora_fin).filter(
+        and_(
+            or_(Evento.id_tipo_evento == 6),  # solo parroquiales,privados,xv
+            Evento.fecha_hora_fin >= hoy  # que no hayan terminado
+        )
+    ).all()
+
+    return [
+        {"inicio": e.fecha_hora_inicio.isoformat(), "fin": e.fecha_hora_fin.isoformat()}
+        for e in eventos
+    ]
+
+@router.patch("/update/reagendar")
+def reagendar(chng:schema_event.ChangeDate,db:Session=Depends(get_db)):
+    try:
+        db.query(Evento).filter(Evento.id_evento == chng.id_evento).update(
+            {"fecha_hora_inicio": chng.fecha_inicio, "fecha_hora_fin": chng.fecha_fin})
+        db.commit()
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
+    return chng

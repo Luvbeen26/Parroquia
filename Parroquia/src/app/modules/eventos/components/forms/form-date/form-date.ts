@@ -14,11 +14,15 @@ export class FormDate {
   today = new Date();
   minday: Date;
   isomin: string;
-  
+  selecteday="";
   form:FormGroup;
   @Output() steps=new EventEmitter<boolean>();
 
-    
+  meses = [
+    "Enero", "Febrero", "Marzo", "Abril",
+    "Mayo", "Junio", "Julio", "Agosto",
+    "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
     
   
 
@@ -37,7 +41,11 @@ export class FormDate {
   DateChange(event:Event){
     const selected=(event.target as any).value;
     const date_input=document.getElementById("date") as HTMLInputElement
-    date_input.value=selected
+    const fecha=this.transformDate(selected)
+    this.selecteday=selected
+    date_input.value=fecha
+
+    
 
     console.log(selected)
   }
@@ -49,5 +57,11 @@ export class FormDate {
   prev(){
     this.steps.emit(false);
     
+  }
+
+  transformDate(date:String):string{
+    const partes=date.split("-")
+    const fecha = `${parseInt(partes[2])} de ${this.meses[parseInt(partes[1]) - 1]} de ${partes[0]}`;
+    return fecha
   }
 }
