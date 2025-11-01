@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { HomeEventCards } from '../../components/home-event-cards/home-event-cards';
 import { Publications } from '../../../../shared/publications/publications';
+import { Observable } from 'rxjs';
+import { Home_Service } from '../../services/home';
+import { parroquial } from '../../../../models/event';
+import { Imagen } from '../../../../models/publication';
 
 @Component({
   selector: 'app-home',
@@ -9,17 +13,76 @@ import { Publications } from '../../../../shared/publications/publications';
   styleUrl: './home.css'
 })
 export class Home {
-  eventList = [
-    { evento: 'Misa Dominical', date: 'Miercoles 12 de Diciembre de 2025', hour: '13:00 - 14:00' },
-    { evento: 'Kermes', date: 'Miercoles 12 de Diciembre de 2025', hour: '11:00 - 15:00' },
-    { evento: 'Kermes', date: 'Miercoles 12 de Diciembre de 2025', hour: '11:00 - 15:00' },
-    { evento: 'Misa Dominical', date: 'Miercoles 12 de Diciembre de 2025', hour: '13:00 - 14:00' },
-    { evento: 'Kermes', date: 'Miercoles 12 de Diciembre de 2025', hour: '11:00 - 15:00' }
-  ];
+  
+  errors_Exists=false
+  isloading=false
+  
+  eventList:{evento:string,date:string,hour:string}[] = [];
+  publicList: {titulo:string,date:string,img:Imagen[],contenido:string}[] = [];
 
-  publicList = [
-    { titulo: 'Misa Dominical - Horarios Actualizados',date:'11 de Nov. de 2025', img:'img/image_26.png',contenido:'Les informamos sobre los nuevos horarios de misas dominicales a partir de este mes. Estaremos celebrando a las 8:00 AM, 10:00 AM y 6:00 PM.'},
-    { titulo: 'Proximos Eventos',date:'11 de Nov. de 2025', img:'../img/image_20.png',contenido:'Divierte ayudando en esta gran Kermes de la Parroquia Nuestra Señora del Rosario donde además contará con un gran elenco musical.'},
-     { titulo: 'Proximos Eventos',date:'11 de Nov. de 2025', img:'',contenido:'Divierte ayudando en esta gran Kermes de la Parroquia Nuestra Señora del Rosario donde además contará con un gran elenco musical.'}
-  ];
+  private home=inject(Home_Service)
+  private cdr = inject(ChangeDetectorRef)
+
+  ngOnInit(){
+    this.get_events();
+    this.get_publications();
+  }
+
+  get_events(){
+    this.isloading = true
+    this.errors_Exists = false
+
+    this.home.get_parroquial().subscribe({
+      next: (eventos) => {
+
+        if(!eventos || eventos.length ===0){
+          this.errors_Exists = true
+          this.isloading = false
+          this.cdr.detectChanges()
+          return
+        }
+
+        eventos.forEach(e =>{
+          this.eventList.push({evento:e.descripcion,date:e.fecha,hour:`${e.hora_inicio} - ${e.hora_fin}`})
+        })
+
+        this.isloading = false
+
+        console.log(eventos)
+      },
+      error: (err) => {
+        this.errors_Exists=true
+        this.isloading = false
+        this.cdr.detectChanges()
+        console.log(err)
+
+      },
+      complete: () =>{
+        console.log("Completo")
+      } 
+    })
+  }
+
+  get_publications(){
+    this.home.get_publication().subscribe({
+      next: (publications) => {
+        if(!publications || publications.length === 0){
+
+        }
+
+        publications.forEach(p =>{
+            console.log(p.imagenes)
+            this.publicList.push({titulo:p.titulo,date:p.fecha_hora,img:p.imagenes ?? [],contenido:p.contenido})
+        })
+      },
+      error: (err) =>{
+        console.log(err)
+      },
+      complete: () =>{
+        console.log(this.publicList)
+        console.log("Correcto")
+      } 
+    })
+  }
+
 }

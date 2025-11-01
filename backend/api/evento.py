@@ -24,6 +24,9 @@ from services import email
 
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
+meses=["Enero", "Febrero", "Marzo", "Abril",
+    "Mayo", "Junio", "Julio", "Agosto",
+    "Septiembre", "Octubre", "Noviembre", "Diciembre"]
 
 router=APIRouter(prefix="/event", tags=["event"])
 
@@ -180,16 +183,21 @@ def create_parroquial(parroquial: schema_event.ParroquialEvent,db:Session = Depe
 
 
 @router.get("/get/all_parroquial")
-def get_all_parroquial(db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
+def get_all_parroquial(db:Session = Depends(get_db)):
     try:
         fecha=datetime.datetime.now(MAZATLAN_TZ)
 
         parroquial=db.query(models_event.Evento).filter(and_(models_event.Evento.id_tipo_evento == 6, models_event.Evento.fecha_hora_fin >= fecha)).all()
         eventos=[]
         for e in parroquial:
+            og_fecha=e.fecha_hora_inicio.date()
+            fecha_split=str(og_fecha).split("-")
+            fecha_format=f"{fecha_split[2]} de {meses[int(fecha_split[1])-1]} de {fecha_split[0]}"
+
+
             eventos.append({
                 "descripcion" : e.descripcion,
-                "fecha" : e.fecha_hora_inicio.date(),
+                "fecha" : fecha_format,
                 "hora_inicio":e.fecha_hora_inicio.strftime("%H:%M"),
                 "hora_fin":e.fecha_hora_fin.strftime("%H:%M"),
             })

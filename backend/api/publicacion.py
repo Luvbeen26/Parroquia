@@ -12,13 +12,14 @@ import datetime
 import os
 from sqlalchemy.orm import Session, joinedload
 from utils.database import get_db
-from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form,Request
 from utils.dependencies import current_user, admin_required
 
 router=APIRouter(prefix="/publication", tags=["publication"])
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
+link_api="http://localhost:8000/"
 
 @router.post("/create/publication")
 def crear_publicacion(titulo:str,contenido:str,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
@@ -131,11 +132,12 @@ def editar_publicacion(id_publicacion: int,titulo: Optional[str] = Form(None),co
         raise HTTPException(status_code=400, detail=str(e))
 
 @router.get("/show/publication")
-def get_publications(db:Session = Depends(get_db)):
+def get_publications(request:Request,db:Session = Depends(get_db)):
     try:
         publicaciones=(db.query(Publicacion).options(joinedload(Publicacion.imagenes))
                        .order_by(Publicacion.fecha_hora.desc()).limit(20).all())
 
+        base_url= str(request.base_url).rstrip("/")
         publics = []
         for pub in publicaciones:
             publics.append({
@@ -143,33 +145,15 @@ def get_publications(db:Session = Depends(get_db)):
                 "titulo": pub.titulo,
                 "contenido": pub.contenido,
                 "fecha_hora": pub.fecha_hora.strftime("%d/%m/%Y"),
-                "imagenes": [{"id": img.id_imagen, "ruta": img.ruta} for img in pub.imagenes]
+                "imagenes": [{"id": img.id_imagen,
+                              "ruta": f"{base_url}/{img.ruta}"
+                              } for img in pub.imagenes]
             })
 
         return publics
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-
-@router.get("/show/publication")
-def get_publications(db:Session = Depends(get_db)):
-    try:
-        publicaciones=(db.query(Publicacion).options(joinedload(Publicacion.imagenes))
-                       .order_by(Publicacion.fecha_hora.desc()).limit(20).all())
-
-        publics = []
-        for pub in publicaciones:
-            publics.append({
-                "id_publicacion": pub.id_publicacion,
-                "titulo": pub.titulo,
-                "contenido": pub.contenido,
-                "fecha_hora": pub.fecha_hora.strftime("%d/%m/%Y"),
-                "imagenes": [{"id": img.id_imagen, "ruta": img.ruta} for img in pub.imagenes]
-            })
-
-        return publics
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/search/publication")

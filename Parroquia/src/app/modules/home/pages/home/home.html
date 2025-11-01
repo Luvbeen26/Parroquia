@@ -1,13 +1,35 @@
 <main class="contenedor-home">
 
     <div class="church">
-        <section class="contenedor-cards-eventos">
+        <section class="contenedor-cards-eventos" [class.void_events]="errors_Exists" [class.loading]="isloading">
             <span><img src="icons/calendary_blue.svg" alt=""><h3>Proximos Eventos</h3></span>
             
-            <div class="cards">
-                @for (event of eventList; track $index) {
-                    <app-home-event-cards [evento]="event.evento" [fecha]="event.date" [hora]="event.hour"></app-home-event-cards>
+            <div class="cards" >
+                @if (isloading) {
+                    <p>Cargando eventos...</p>
                 }
+                @if (errors_Exists) {
+                    <div class="No_events flex-column">
+                        <h4>Error al cargar eventos</h4>
+                    </div>
+                }
+                
+                @if (!isloading && !errors_Exists && eventList.length > 0) {
+                    @for (event of eventList; track $index) {
+                        <app-home-event-cards 
+                            [evento]="event.evento" 
+                            [fecha]="event.date" 
+                            [hora]="event.hour">
+                        </app-home-event-cards>
+                    }
+                }
+                
+                @if (!isloading && !errors_Exists && eventList.length === 0) {
+                    <div class="No_events flex-column">
+                        <h4>No hay Eventos Planificados</h4>
+                    </div>
+                }
+                
             </div>
         </section>
 

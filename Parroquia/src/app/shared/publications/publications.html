@@ -3,14 +3,23 @@
         <p class="fecha">{{ date() }}</p>
         <h2>{{ titulo() }}</h2>
         <p>{{ contenido() }}</p>
-        @if (image() != "") {
-            <figure class="img">
-                <img class="img_public" [src]="image()" >
-            </figure>
+        
+        @if (image().length > 0) {
+            <div class="galeria-imagenes" [attr.data-count]="image().length">
+                @for (img of image(); track img.id; let i = $index) {
+                    <figure class="img-item" [attr.data-index]="i">
+                        <img 
+                            [src]="img.ruta" 
+                            [alt]="titulo()"
+                            class="img_public"
+                            [attr.loading]="i === 0 ? 'eager' : 'lazy'"
+                            [attr.fetchpriority]="i === 0 ? 'high' : 'auto'">
+                    </figure>
+                }
+            </div>
         }
         
         <footer>
-
         </footer>
     </article>
 </main>
