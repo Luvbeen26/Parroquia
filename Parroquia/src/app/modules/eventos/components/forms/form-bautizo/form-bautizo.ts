@@ -32,11 +32,7 @@ export class FormBautizo {
       tipo:['',Validators.required]
     })
   }
-/*
-  send_data(){
-    return this.form.value;
-  }
-*/
+
 
   ngOnInit(){
     if(this.formgroup && this.formgroup.length > 0){
@@ -56,6 +52,7 @@ export class FormBautizo {
 
   next(){
     this.steps.emit(true);
+    console.log(this.form.value)
     this.formdata.emit(this.form.value)
   }
 }

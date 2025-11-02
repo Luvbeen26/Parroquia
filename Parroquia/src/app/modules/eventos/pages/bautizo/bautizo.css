@@ -2,11 +2,15 @@
     background-color: var(--color-background);
     padding-block: 3.75rem;
     padding-inline: 5rem;
-
+    height: 100vh;
+    justify-content: center;
 }
 
 .Contenedor{
     padding: 30px;
+    width: 90%;
+    height: fit-content;
+    max-width:1500px;
     background-color: #FFFF;
     border: 2px solid var(--color-lines);
     border-radius: 10px;

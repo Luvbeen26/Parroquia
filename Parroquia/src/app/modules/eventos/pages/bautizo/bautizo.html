@@ -1,4 +1,4 @@
-<main class="background">
+<main class="background flex">
     <section class="Contenedor">
         @if (step==0) {
             <app-form-bautizo [formgroup]="bautizadoform" (steps)="next_prev_step($event)" (formdata)="updateBautizadoForm($event)"></app-form-bautizo>

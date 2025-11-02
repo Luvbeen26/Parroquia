@@ -47,14 +47,40 @@
         <section class="search">
             <div class="contenedor-search">
                 <span class="contenedor-lupa"><img src="icons/lupa.svg" class="lupa" alt="Buscar"></span>
-                <input type="search" class="input-search" placeholder="Buscar">
+                    <input type="search" 
+                    [(ngModel)]="searchText" 
+                    (ngModelChange)="searchSubject.next($event)"
+                    [readonly]="isSearching"
+                    placeholder="Buscar..." 
+                    class="input-search"/>
+
             </div>
+            @if (searchText) {
+                <div class="search-results-info">
+                    @if (isSearching) {
+                        <p>Buscando...</p>
+                    }
+                </div>
+            }
         </section>
 
+        
         <section class="contenedor-publicacion">
-            @for (public of publicList; track $index) {
-                <app-publications [titulo]="public.titulo" [date]="public.date" [image]="public.img" [contenido]="public.contenido"></app-publications>    
-            }        
+            @let publicList = (publicList$ | async);
+            @if (publicList && publicList.length > 0) {
+                @for (public of publicList; track $index) {
+                    <app-publications 
+                        [titulo]="public.titulo" 
+                        [date]="public.date" 
+                        [image]="public.img" 
+                        [contenido]="public.contenido">
+                    </app-publications>    
+                }
+            } @else if (!isSearching && searchText) {
+                <div class="no-results">
+                    <h3>No hay resultados para <br> "{{ searchText }}"</h3>
+                </div>
+            }
         </section>
     </div>
     

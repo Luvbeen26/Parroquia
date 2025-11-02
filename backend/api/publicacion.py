@@ -157,14 +157,14 @@ def get_publications(request:Request,db:Session = Depends(get_db)):
 
 
 @router.get("/search/publication")
-def search_publications(texto:str,db:Session = Depends(get_db)):
+def search_publications(request:Request,texto:str,db:Session = Depends(get_db)):
     try:
         query=db.query(Publicacion).options(joinedload(Publicacion.imagenes))
 
         query=query.filter(or_(Publicacion.titulo.ilike(f"%{texto}%"),Publicacion.contenido.ilike(f"%{texto}%")))
 
         publicaciones=query.order_by(Publicacion.fecha_hora.desc()).limit(20).all()
-
+        base_url = str(request.base_url).rstrip("/")
         resultado=[]
         for pub in publicaciones:
             resultado.append({
@@ -172,7 +172,9 @@ def search_publications(texto:str,db:Session = Depends(get_db)):
                 "titulo": pub.titulo,
                 "contenido": pub.contenido,
                 "fecha_hora": pub.fecha_hora.strftime("%d/%m/%Y"),
-                "imagenes": [{"id": img.id_imagen, "ruta": img.ruta} for img in pub.imagenes]
+                "imagenes": [{"id": img.id_imagen,
+                              "ruta": f"{base_url}/{img.ruta}"
+                              } for img in pub.imagenes]
             })
         return resultado
     except Exception as e:

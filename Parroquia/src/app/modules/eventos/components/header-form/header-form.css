@@ -13,13 +13,18 @@ header h4{
   width: 55px;            /* tamaño del círculo */
   height: 55px;
   background-color: #D9EEFF; /* color de fondo */
-  border-radius: 50%;     /* hace que sea un círculo */
   display: flex;
   justify-content: center;
   align-items: center;
+
+  aspect-ratio: 1 / 1;   /* Mantiene la proporción cuadrada */
+  border-radius: 50%;
+  
 }
 
 .icono img {
   width: 44px;  /* ajusta el tamaño de la imagen */
   height: 44px;
 }
+
+

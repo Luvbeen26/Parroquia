@@ -1,33 +1,76 @@
-import { ChangeDetectorRef, Component, ElementRef, inject, ViewChild } from '@angular/core';
+import { ApplicationRef, ChangeDetectorRef, Component, ElementRef, inject, NgZone  } from '@angular/core';
 import { HomeEventCards } from '../../components/home-event-cards/home-event-cards';
 import { Publications } from '../../../../shared/publications/publications';
-import { Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, map, Observable, startWith, Subject, Subscription, switchMap } from 'rxjs';
 import { Home_Service } from '../../services/home';
-import { parroquial } from '../../../../models/event';
 import { Imagen } from '../../../../models/publication';
+import { FormsModule } from '@angular/forms';
+import { AsyncPipe } from '@angular/common';
+import { afterEach } from 'node:test';
 
 @Component({
   selector: 'app-home',
-  imports: [HomeEventCards,Publications],
+  imports: [HomeEventCards,Publications,FormsModule,AsyncPipe],
   templateUrl: './home.html',
   styleUrl: './home.css'
 })
 export class Home {
   
+
   errors_Exists=false
   isloading=false
+
+  searchText: string = '';
+  isSearching: boolean = false;
+  
+  searchSubject = new Subject<string>();
+   
   
   eventList:{evento:string,date:string,hour:string}[] = [];
-  publicList: {titulo:string,date:string,img:Imagen[],contenido:string}[] = [];
+  publicList$!: Observable<{titulo:string, date:string, img:Imagen[], contenido:string}[]>;
+  //allpublicList:{titulo:string,date:string,img:Imagen[],contenido:string}[] = [];
 
   private home=inject(Home_Service)
-  private cdr = inject(ChangeDetectorRef)
-
+  
+  constructor() {
+    console.log(' Constructor ejecutado');
+  }
   ngOnInit(){
+    console.log("inicio")
     this.get_events();
-    this.get_publications();
+    this.setupSearch();
+
+    
   }
 
+  setupSearch() {
+        console.log('🔧 Configurando búsqueda');
+
+    this.publicList$ = this.searchSubject.pipe(
+      startWith(''), //primero ejecuta como si se hubiese ingresado un valor vacio
+      debounceTime(500), //espera .5s despues del ultimo valor ingresado
+      distinctUntilChanged(), //pasa si ambos valores entre .5s son igual para no saturar el servidor
+      switchMap(searchText => { //recibe el searchtext y ejecuta las respectivas funciones
+        if (!searchText || searchText.trim() === '') {
+          this.isSearching = false;
+          return this.home.get_publication();
+        }
+        
+        this.isSearching = true;
+        return this.home.search_publications(searchText).pipe(
+          finalize(() => this.isSearching = false)
+        );
+      }),
+      // Transformar Publication[] al formato esperado
+      map(publications => publications.map(p => ({
+        titulo: p.titulo,
+        date: p.fecha_hora,
+        img: p.imagenes ?? [],
+        contenido: p.contenido
+      })))
+    );
+  }
+  
   get_events(){
     this.isloading = true
     this.errors_Exists = false
@@ -38,7 +81,7 @@ export class Home {
         if(!eventos || eventos.length ===0){
           this.errors_Exists = true
           this.isloading = false
-          this.cdr.detectChanges()
+          
           return
         }
 
@@ -48,39 +91,16 @@ export class Home {
 
         this.isloading = false
 
-        console.log(eventos)
       },
       error: (err) => {
         this.errors_Exists=true
         this.isloading = false
-        this.cdr.detectChanges()
-        console.log(err)
+        
+      
 
       },
       complete: () =>{
         console.log("Completo")
-      } 
-    })
-  }
-
-  get_publications(){
-    this.home.get_publication().subscribe({
-      next: (publications) => {
-        if(!publications || publications.length === 0){
-
-        }
-
-        publications.forEach(p =>{
-            console.log(p.imagenes)
-            this.publicList.push({titulo:p.titulo,date:p.fecha_hora,img:p.imagenes ?? [],contenido:p.contenido})
-        })
-      },
-      error: (err) =>{
-        console.log(err)
-      },
-      complete: () =>{
-        console.log(this.publicList)
-        console.log("Correcto")
       } 
     })
   }

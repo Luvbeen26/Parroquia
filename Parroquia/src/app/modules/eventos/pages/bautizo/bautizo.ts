@@ -14,13 +14,10 @@ import { FormDate } from '../../components/forms/form-date/form-date';
   styleUrl: './bautizo.css'
 })
 export class Bautizo {
-  
-
   files:string[]=["Acta de nacimiento del bautizado","Copia de la credencial de padrio/madrina","Copia de fe de bautismo de los padrinos"];
   
   
 
-  //bautizadoform: FormGroup;
   bautizadoform:any[]=[{
       nombres: '',
       ap_pat: '',

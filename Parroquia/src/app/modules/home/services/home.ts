@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { parroquial } from '../../../models/event';
 import { Observable } from 'rxjs';
@@ -20,5 +20,10 @@ export class Home_Service {
 
   public get_publication():  Observable<Publication[]>{
     return this.http.get<Publication[]>(`${this.api_public}/show/publication`)
+  }
+
+  public search_publications(texto:string): Observable<Publication[]>{
+    const params= new HttpParams().set("texto",texto);
+    return this.http.get<Publication[]>(`${this.api_public}/search/publication`,{params})
   }
 }
