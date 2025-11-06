@@ -1,3 +1,5 @@
+from zoneinfo import ZoneInfo
+
 from fastapi import HTTPException
 
 from schema import users as schema_users
@@ -13,6 +15,7 @@ import bcrypt
 access_key=settings.JWT_ACCESS_KEY
 refresh_key=settings.JWT_REFRESH_KEY
 
+MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
 
 def check_email(db:Session, correo:str):
@@ -25,18 +28,27 @@ def check_code(db:Session,code:str,correo:str):
     .filter((codigo_verificacion.CodigoVerificacion.correo == correo) & (codigo_verificacion.CodigoVerificacion.usado == False))\
     .order_by(codigo_verificacion.CodigoVerificacion.creado_en.desc()).first()
 
-    now=datetime.utcnow()
+    now_mazatlan = datetime.now(MAZATLAN_TZ)
+    now = now_mazatlan.replace(tzinfo=None)
+
     try:
         vigente = last_code.expira_en > now
-        valido=bcrypt.checkpw(code.encode(), last_code.codigo_hash.encode())
+        codigo_hash = last_code.codigo_hash
+        if isinstance(codigo_hash, str):
+            codigo_hash = codigo_hash.encode()
 
+        valido = bcrypt.checkpw(code.encode(), codigo_hash)
+        print(valido)
         if vigente and valido:
             last_code.usado=True
             db.commit()
             return True
         else:
+            print("❌ No se encontró código")
             return False
     except Exception as e:
+
+
         print(e)
         return False
 

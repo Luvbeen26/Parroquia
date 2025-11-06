@@ -15,17 +15,18 @@
 
 .logo{
     height: 3rem;
-    margin-left: 2rem;
+    margin-left: 1rem;
 }
 
 .Nologin-options span,.User-options span{
-    margin:10px;
+    margin:2px;
     color: white;
 }
 
 .Nologin-options,.User-options{
     display: flex;
     align-items: center;
+    font-size: 16px;
 }
 
 .Notif{
@@ -45,7 +46,7 @@
     color: white;
     display: flex;
     align-items: center;
-    margin-inline: 20px;
+    margin-inline: 5px;
     padding-inline:7px;
     padding-block: 0.200rem;
     cursor: pointer;
@@ -57,8 +58,8 @@
 }
 
 .icons{
-    width:30px;
-    height: 30px;
+    width:25px;
+    height: 25px;
 }
 
 @media (max-width: 768px){

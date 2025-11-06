@@ -73,7 +73,8 @@ async def send_code_verification(user:schema_users.Get_email,db:Session = Depend
         await email.send_email(codigo,user.correo,"Codigo de verificacion de creacion de cuenta")
         return {
             "success": True,
-            "message" : "Codigo Enviado Correctamente"
+            "message" : "Codigo Enviado Correctamente",
+            "codigo" : codigo
          #   "codigo_estructura": db_code,
         #    "codigo": codigo
         }

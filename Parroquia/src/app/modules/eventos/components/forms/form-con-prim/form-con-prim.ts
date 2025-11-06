@@ -1,26 +1,26 @@
-import { Component,Input, Output,EventEmitter, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { Eventos } from '../../../services/eventos';
 
 
-
-
 @Component({
-  selector: 'app-form-bautizo',
-  imports: [HeaderForm,ReactiveFormsModule],
-  templateUrl: './form-bautizo.html',
-  styleUrl: './form-bautizo.css'
+  selector: 'app-form-con-prim',
+  imports: [HeaderForm,ReactiveFormsModule,MatIconModule],
+  templateUrl: './form-con-prim.html',
+  styleUrl: './form-con-prim.css'
 })
-export class FormBautizo {
+export class FormConPrim {
+  eventService=inject(Eventos)
+  @Input() id_event!:number;
   @Input() formgroup!: any;
   @Output() formdata=new EventEmitter<any>();
   @Output() steps=new EventEmitter<boolean>();
-  eventService=inject(Eventos)
-
-
+  
+  eventName!:string;
   form:FormGroup;
-
+  icon!:string
  
 
   constructor(private frm:FormBuilder){
@@ -31,19 +31,20 @@ export class FormBautizo {
       genero:['',Validators.required],
       fecha_nac:['',Validators.required],
       edad:['',Validators.required],
-      tipo:['',Validators.required]
+      tipo:[this.id_event],
     })
   }
 
 
   ngOnInit(){
+    this.eventName= this.id_event == 3 ? "Comulgante" : "Confirmado";
+    this.icon=this.id_event == 3 ? "../icons/sacramentos/cross.svg" : "../icons/sacramentos/confirmacion.svg";
     const savedata=this.eventService.getCelebrado_form()
 
     console.log(savedata)
     if (savedata){
       this.form.patchValue(savedata)
     }
-    
   }
 
   next(){
@@ -51,4 +52,6 @@ export class FormBautizo {
     console.log(this.form.value)
     this.eventService.saveCelebradoform(this.form.value,0)
   }
+
+  
 }

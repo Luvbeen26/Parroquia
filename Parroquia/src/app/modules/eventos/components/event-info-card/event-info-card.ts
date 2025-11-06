@@ -1,5 +1,5 @@
 import { Component, input } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 
 @Component({
@@ -9,13 +9,17 @@ import { RouterLink } from '@angular/router';
   styleUrl: './event-info-card.css'
 })
 export class EventInfoCard {
+  id=input<number>();
   image=input<string>();
   nombre=input<string>();
   requisitos=input<string[]>();
-  impresion=input<number>();
   programar=input<number>();
   linkprog=input<string>();
 
-  
+  constructor(private router:Router){}
+
+  redirecting(){
+    this.router.navigate(['/eventos/create_event', this.id()]);
+  }
   
 }

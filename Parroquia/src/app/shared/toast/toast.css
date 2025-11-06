@@ -1,0 +1,106 @@
+/* 🔔 Toast personalizado */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 9999;
+  background-color: var(--color-principal-button);
+  color: white;
+  padding: 1rem 1.2rem;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.4s ease;
+  max-width: 90%;
+  width: 320px;
+}
+
+/* ✅ Cuando se activa */
+.toast-container.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 📝 Contenido del toast */
+.toast-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+/* 🎨 Iconos según tipo */
+.toast-icon {
+  font-size: 20px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+/* 📩 Texto */
+.toast-message {
+  font-weight: 500;
+  font-size: 15px;
+  flex: 1;
+  word-wrap: break-word;
+  margin: 0;
+}
+
+/* ❌ Botón de cierre */
+.toast-close {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-close:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
+/* 🎨 Variantes de color */
+.toast-container.success {
+  background-color: #28a745;
+}
+
+.toast-container.danger {
+  background-color: #dc3545;
+}
+
+.toast-container.warning {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.toast-container.warning .toast-close {
+  color: #333;
+}
+
+.toast-container.info {
+  background-color: #17a2b8;
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .toast-container {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+    font-size: 14px;
+  }
+}

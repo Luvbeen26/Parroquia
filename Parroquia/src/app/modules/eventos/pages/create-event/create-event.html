@@ -1,10 +1,18 @@
 <main class="background flex">
     <section class="Contenedor">
-        @if (step==2) {
-            <app-form-bautizo [formgroup]="bautizadoform" (steps)="next_prev_step($event)" (formdata)="updateBautizadoForm($event)"></app-form-bautizo>
+        @if (step==0) {
+            @if(eventoId == 1){
+                <app-form-bautizo [formgroup]="bautizadoform" (steps)="next_prev_step($event)" (formdata)="updateBautizadoForm($event)"></app-form-bautizo>
+            }@else if (eventoId == 3 || 7) {
+                <app-form-con-prim  [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-con-prim>
+            }@else if (eventoId == 4) {
+                <p>matrimonio</p>
+            }@else if (eventoId == 5) {
+                <p>XV</p>
+            }            
         }@else if (step==1){
             <app-form-padres [formgroup]="parentsform" (steps)="next_prev_step($event)" (formdata)="updateParentsForm($event)"></app-form-padres>
-        }@else if (step==0) {
+        }@else if (step==2) {
             <app-form-documents [docs]="filesinputs" [fileList]="files" (steps)="next_prev_step($event)" (archivos)="updateDocumentsForm($event)"></app-form-documents>
         }@else if (step==3) {
             <app-form-date (steps)="next_prev_step($event)"></app-form-date>    

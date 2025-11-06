@@ -1,7 +1,8 @@
-import { Component,EventEmitter,Input,Output } from '@angular/core';
+import { Component,EventEmitter,inject,Input,Output } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Eventos } from '../../../services/eventos';
 
 @Component({
   selector: 'app-form-padres',
@@ -10,6 +11,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
   styleUrl: './form-padres.css'
 })
 export class FormPadres {
+  eventService=inject(Eventos)
   @Input() formgroup!: any;
   @Output() steps=new EventEmitter<boolean>();
   @Output() formdata=new EventEmitter<any>();
@@ -31,30 +33,72 @@ export class FormPadres {
   }
 
   next(){
+    this.saveParents();
     this.steps.emit(true);
-    this.formdata.emit(this.form.value);
   }
 
   prev(){
+    this.saveParents();
     this.steps.emit(false);
-    this.formdata.emit(this.form.value);
   }
 
 
   ngOnInit(){
-    if(this.formgroup && this.formgroup.length > 0){
-      this.form.setValue({
-        nombres_f: this.formgroup[0].nombres_f || '',
-        ap_pat_f: this.formgroup[0].ap_pat_f || '',
-        ap_mat_f: this.formgroup[0].ap_mat_f || '',
-        nombres_m: this.formgroup[0].nombres_m || '',
-        ap_pat_m:this.formgroup[0].ap_pat_m || '',
-        ap_mat_m: this.formgroup[0].ap_mat_m || '',
-        nombres_p:this.formgroup[0].nombres_p || '',
-        ap_pat_p: this.formgroup[0].ap_pat_p || '',
-        ap_mat_p: this.formgroup[0].ap_mat_p || ''
-      })
+    const savedataParents=this.eventService.getParents_form('Parents')
+    const savedataPadrino=this.eventService.getParents_form('Padrinos')
+
+    console.log(savedataPadrino,savedataParents)
+
+    if (savedataPadrino && savedataPadrino.length > 0) {
+      const padrino = savedataPadrino[0];
+      this.form.patchValue({
+        nombres_p: padrino.nombres || '',
+        ap_pat_p: padrino.ap_pat || '',
+        ap_mat_p: padrino.ap_mat || ''
+      });
     }
+
+
+    if (savedataParents && savedataParents.length >= 2) {
+      const padre = savedataParents[0];
+      const madre = savedataParents[1];
+      this.form.patchValue({
+        nombres_f: padre.nombres || '',
+        ap_pat_f: padre.ap_pat || '',
+        ap_mat_f: padre.ap_mat || '',
+        nombres_m: madre.nombres || '',
+        ap_pat_m: madre.ap_pat || '',
+        ap_mat_m: madre.ap_mat || '',
+      });
+    }
+    console.log(this.form)
   }
 
+  saveParents(){
+    const formValue = this.form.value;
+
+    this.eventService.saveParentsForm(
+      {
+        nombres: formValue.nombres_f,
+        ap_pat: formValue.ap_pat_f,
+        ap_mat: formValue.ap_mat_f
+      },'Parents',0);
+
+    
+    this.eventService.saveParentsForm(
+      {
+        nombres: formValue.nombres_m,
+        ap_pat: formValue.ap_pat_m,
+        ap_mat: formValue.ap_mat_m
+      },'Parents',1);
+
+    
+    this.eventService.saveParentsForm(
+      {
+        nombres: formValue.nombres_p,
+        ap_pat: formValue.ap_pat_p,
+        ap_mat: formValue.ap_mat_p
+      },'Padrinos',0);
+
+  }
 }

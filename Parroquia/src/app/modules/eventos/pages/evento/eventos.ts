@@ -10,16 +10,16 @@ import { EventInfoCard } from '../../components/event-info-card/event-info-card'
 })
 export class Eventos {
   eventosList=[
-    { nombre:"Bautizo", image:"img/bautizo.png",route_prog:"/eventos/prog/bautizo",
-      requisitos:["Copia y acta de nacimiento del bautizado","Copia de la credencial de padrio/madrina","Copia de fe de bautismo de los padrinos"], impresion : 250, programar: 500},
-    { nombre:"Confirmacion", image:"img/confirmacion.png",route_prog:"/eventos/prog/confirmacion",
-      requisitos:["Copia y acta de nacimiento del confirmado","Copia de la credencial de padrio/madrina","Copia de fe de confirmación de los padrinos"], impresion : 250, programar: 500},
-    { nombre:"Primera Comunion", image:"img/primer.png",route_prog:"/eventos/prog/comunion",
-      requisitos:["Copia y acta de nacimiento del comulgante","Copia de la credencial de padrio/madrina","Copia de fe de primera comunion de los padrinos"], impresion : 250, programar: 500},
-    { nombre:"Matrimonio", image:"img/matrimonio.png",route_prog:"/eventos/prog/matrimonio",
-      requisitos:["Acta de nacimiento del novio y la novia","Fe de bautismo del novio y la novia","Fe de primera comunión del novio y la novia","Fe de confirmacion del novio y la novia","Copia de la credencial del novio y la novia","Copia de la credencial de los padrinos"], impresion : 250, programar: 500},
-    { nombre:"XV Años", image:"img/xv.png",route_prog:"/eventos/prog/Xvaños",
-      requisitos:["Copia y acta de nacimiento de la quinceañera","Copia de la fe de bautismo","Copia de fe de primera comunion","Copia de fe de confirmación"], impresion : 250, programar: 500},
+    { nombre:"Bautizo", image:"img/bautizo.png",route_prog:"/eventos/create_event",
+      requisitos:["Copia y acta de nacimiento del bautizado","Copia de la credencial de padrio/madrina","Copia de fe de bautismo de los padrinos"],programar: 500,id:1},
+    { nombre:"Confirmacion", image:"img/confirmacion.png",route_prog:"/eventos/create_event",
+      requisitos:["Copia y acta de nacimiento del confirmado","Copia de la credencial de padrio/madrina","Copia de fe de confirmación de los padrinos"], programar: 500,id:7},
+    { nombre:"Primera Comunion", image:"img/primer.png",route_prog:"/eventos/create_event",
+      requisitos:["Copia y acta de nacimiento del comulgante","Copia de la credencial de padrio/madrina","Copia de fe de primera comunion de los padrinos"], programar: 500,id:3},
+    { nombre:"Matrimonio", image:"img/matrimonio.png",route_prog:"/eventos/create_event",
+      requisitos:["Acta de nacimiento del novio y la novia","Fe de bautismo del novio y la novia","Fe de primera comunión del novio y la novia","Fe de confirmacion del novio y la novia","Copia de la credencial del novio y la novia","Copia de la credencial de los padrinos"],programar: 500,id:4},
+    { nombre:"XV Años", image:"img/xv.png",route_prog:"/eventos/create_event",
+      requisitos:["Copia y acta de nacimiento de la quinceañera","Copia de la fe de bautismo","Copia de fe de primera comunion","Copia de fe de confirmación"], programar: 500,id:5},
 
 
   ]

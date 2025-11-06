@@ -9,15 +9,19 @@ header h4{
     font-weight: normal;
 }
 
+.header-text{
+  justify-content: center;
+}
+
 .icono {
-  width: 55px;            /* tamaño del círculo */
+  width: 55px;          
   height: 55px;
-  background-color: #D9EEFF; /* color de fondo */
+  background-color: #D9EEFF; 
   display: flex;
   justify-content: center;
   align-items: center;
 
-  aspect-ratio: 1 / 1;   /* Mantiene la proporción cuadrada */
+  aspect-ratio: 1 / 1;   
   border-radius: 50%;
   
 }

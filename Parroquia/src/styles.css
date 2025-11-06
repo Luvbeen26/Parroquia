@@ -2,6 +2,9 @@
 /* styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
+
+
+
 :root{
     --color-principal:#1D293D;
     --color-background:#F7F9FB;
@@ -123,6 +126,7 @@ input:disabled{
 
 .two-button:active{
     box-shadow: 1px 3px 4px grey;
+    
 }
 
 .three-button{
@@ -170,3 +174,5 @@ input:disabled{
 .hide{
     display: none;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

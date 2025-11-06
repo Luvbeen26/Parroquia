@@ -1,3 +1,11 @@
+export interface UserData{
+    id_usuario:number,
+    correo:string,
+    es_admin:boolean,
+    nombre:string,
+    exp:number
+}
+
 
 export interface RegisterUser{
     nombres: string;

@@ -1,19 +1,24 @@
 import { HttpClient, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
+import { inject, PLATFORM_ID } from '@angular/core';
 import { Auth } from '../../modules/auth/components/services/auth';
 import { catchError, switchMap, throwError } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
+  const platformId=inject(PLATFORM_ID)
+
+  if(!isPlatformBrowser(platformId)){
+    return next(req);
+  }
+
   const auth=inject(Auth);
-  const http=inject(HttpClient);
-
   const token=auth.getAccessToken();
-
-  let authReq=req; //la peticion original
+  
+  
   if(token){
-    authReq=req.clone({ //la peticion clonada si se encuentra un token
+    req=req.clone({ //la peticion clonada si se encuentra un token
       setHeaders:{
         Authorization:`Bearer ${token}`
       }
@@ -21,9 +26,9 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
 
-  return next(authReq).pipe(
-    catchError((error: HttpErrorResponse) => {
-      if (error.status === 401) { //si el access no es valido o expiro
+  return next(req).pipe(
+    catchError(error => {
+      if (error.status === 401 && auth.getRefreshToken()) { //si el access no es valido o expiro
         return auth.refresh().pipe(
           switchMap(newToken =>{
             const newReq=req.clone({

@@ -21,17 +21,9 @@ export class Login {
   contrasena:FormControl;
 
   constructor(private authservice:Auth,private router:Router){
-    this.correo=new FormControl("",[
-      Validators.required,
-      Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
-    ]);
+    this.correo=new FormControl("",Validators.required);
     
-    this.contrasena=new FormControl("",[
-      Validators.required,
-      Validators.minLength(8),
-      Validators.maxLength(25),
-      Validators.pattern('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,25}')
-    ]);
+    this.contrasena=new FormControl("",Validators.required);
 
     this.login_form=new FormGroup({
       correo:this.correo,
@@ -42,7 +34,6 @@ export class Login {
   Submit(){
     if(this.login_form.valid){
       const {correo,contrasena} = this.login_form.value; //extrae los valores haciendo desestructuracion
-      //subscribe permite escuchar la respuesta de la peticion
       this.authservice.login(correo,contrasena).subscribe({ 
         next: (res) =>{
           this.router.navigate(["/"]);

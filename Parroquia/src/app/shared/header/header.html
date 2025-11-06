@@ -1,26 +1,35 @@
 <header class="header">
     <div class="img_logo">
-        <img src="../img/logo.png" alt="Nuestra Señora del Rosario" class="logo">
+        <img src="../img/logo.png" alt="Nuestra Señora del Rosario" class="logo" (click)="logout()">
     </div>
     <div class="Items" id="items" #items>
         <div class="User-options">
+        @if(es_admin === false){
             <a routerLink="/" class="options"><img src="../icons/inicio.svg" class="icons" alt=""><span>Inicio</span></a>
             <a routerLink="/eventos/ver" class="options"><img src="../icons/calendary_white.svg" class="icons" alt=""><span>Eventos</span></a>
             <a routerLink="" class="options"><img src="../icons/profile.svg" class="icons" alt=""><span>Perfil</span></a>
-            
+        }@else if(es_admin === true){
+            <a routerLink="" class="options"><img src="../icons/inicio.svg" class="icons" alt=""><span>Dashboard</span></a>
+            <a routerLink="" class="options"><img src="../icons/calendary_white.svg" class="icons" alt=""><span>Publicaciones</span></a>
+            <a routerLink="" class="options"><img src="../icons/profile.svg" class="icons" alt=""><span>Eventos</span></a>
+            <a routerLink="" class="options"><img src="../icons/profile.svg" class="icons" alt=""><span>Documentos</span></a>
+            <a routerLink="" class="options"><img src="../icons/profile.svg" class="icons" alt=""><span>Finanzas</span></a>
+        }
         </div>
-        @if (header_v()===1) {
-            <div class="Nologin-options hide">
+        @if (isauth===false) {
+            <div class="Nologin-options">
+                <a routerLink="/" class="options"><img src="../icons/inicio.svg" class="icons" alt=""><span>Inicio</span></a>
                 <a routerLink="/auth/login" class="options"> <img src="../icons/login.svg" class="icons" alt=""><span>Iniciar Sesion</span></a>
                 <a routerLink="/auth/register" class="options"><img src="../icons/register.svg" class="icons" alt=""><span>Registrarse</span></a>
             </div>   
         }
         
     </div>  
-    <div class="Notif">
-        <img src="../icons/notification.svg" alt="Notificaciones" class="icons">   
-    </div>
-    
+    @if (isauth===true) {
+        <div class="Notif">
+            <img src="../icons/notification.svg" alt="Notificaciones" class="icons">   
+        </div>
+    }
     <div class="nav_toggle" #toggle (click)="toggleMenu()">
         <span></span>
         <span></span>

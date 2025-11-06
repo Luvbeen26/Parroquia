@@ -1,0 +1,14 @@
+<div class="toast-container" [ngClass]="[show ? 'show' : '', type]">
+  <div class="toast-content">
+    <span class="toast-icon">
+      @if (type === 'success') { ✓ }
+      @if (type === 'danger') { ✕ }
+      @if (type === 'warning') { ⚠ }
+      @if (type === 'info') { ℹ }
+    </span>
+    <p class="toast-message">{{ message }}</p>
+    <button class="toast-close" (click)="close()" aria-label="Cerrar">
+      ×
+    </button>
+  </div>
+</div>

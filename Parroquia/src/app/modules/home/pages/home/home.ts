@@ -32,11 +32,9 @@ export class Home {
 
   private home=inject(Home_Service)
   
-  constructor() {
-    console.log(' Constructor ejecutado');
-  }
+  
   ngOnInit(){
-    console.log("inicio")
+    
     this.get_events();
     this.setupSearch();
 
@@ -44,7 +42,7 @@ export class Home {
   }
 
   setupSearch() {
-        console.log('🔧 Configurando búsqueda');
+  
 
     this.publicList$ = this.searchSubject.pipe(
       startWith(''), //primero ejecuta como si se hubiese ingresado un valor vacio

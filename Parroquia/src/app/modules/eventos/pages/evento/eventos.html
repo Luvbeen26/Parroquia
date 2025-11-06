@@ -6,7 +6,7 @@
     
     <section class="cards">
         @for (cards of eventosList; track $index) {
-            <app-event-info-card [nombre]="cards.nombre" [image]="cards.image" [requisitos]="cards.requisitos" [impresion]="cards.impresion" [programar]="cards.programar" [linkprog]="cards.route_prog"></app-event-info-card>
+            <app-event-info-card [id]="cards.id" [nombre]="cards.nombre" [image]="cards.image" [requisitos]="cards.requisitos" [programar]="cards.programar" [linkprog]="cards.route_prog"></app-event-info-card>
         }
     </section>
     

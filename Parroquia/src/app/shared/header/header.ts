@@ -1,6 +1,8 @@
 import { httpResource } from '@angular/common/http';
-import { Component, ElementRef, ViewChild,input} from '@angular/core';
+import { Component, ElementRef, PLATFORM_ID, ViewChild,inject,input} from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Auth } from '../../modules/auth/components/services/auth';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-header',
@@ -10,17 +12,38 @@ import { RouterLink } from '@angular/router';
   styleUrl: './header.css'
 })
 export class Header {
-  header_v=input<number>(0);
+  private auth=inject(Auth)
+  private platformId=inject(PLATFORM_ID)
+
+  
+  isauth=false;
+  es_admin: boolean | null=null
+  header_v=0;
   @ViewChild("toggle") toggleRef!:ElementRef;
   @ViewChild("items") itemsRef!:ElementRef;
 
+  ngOnInit(){
+    if(isPlatformBrowser(this.platformId)){
+      this.loadUserData();
 
+      this.auth.currentUser$.subscribe(user =>{
+        this.loadUserData();
+      })
+    }
+  }
+
+  private loadUserData(){
+    this.isauth=this.auth.isAuthenticated();
+    this.es_admin=this.auth.get_userRol();
+  }
 
   toggleMenu() {
     this.itemsRef.nativeElement.classList.toggle("open");
     this.toggleRef.nativeElement.classList.toggle("close");
   }
 
-
+  logout(){
+    this.auth.logout();
+  }
 }
 

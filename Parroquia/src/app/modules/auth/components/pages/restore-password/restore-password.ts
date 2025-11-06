@@ -4,11 +4,12 @@ import { Form, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@
 
 import { Router } from '@angular/router';
 import { Auth } from '../../services/auth';
+import { Toast } from '../../../../../shared/toast/toast';
 
 @Component({
   selector: 'app-restore-password',
   imports: [AuthSideDecoration,ReactiveFormsModule],
-  templateUrl: './restore-password.html',
+  templateUrl:'./restore-password.html',
   styleUrl: './restore-password.css'
 })
 export class RestorePassword {
@@ -70,7 +71,8 @@ export class RestorePassword {
   }
 
 
-  Submit(){
+  Change_password(){
+
 
   }
 
