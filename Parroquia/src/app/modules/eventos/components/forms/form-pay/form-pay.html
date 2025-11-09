@@ -1,10 +1,10 @@
 <app-header-form [titulo]="'Metodo de pago'" [icono]="'../icons/card.svg'" [descripcion]="'Ingrese los datos de su tarjeta de credito o debito'"></app-header-form>
 <hr>
-<section class="contenido">
+<section class="contenido flex-column">
     <div class="campos">    
         <label>
             <h4>Numero de tarjeta</h4>
-            <input type="text" class="Input">
+            <input type="text" class="Input" inputmode="numeric" maxlength="16" pattern="\d{16}" >
         </label>
 
         <label>
@@ -14,14 +14,14 @@
 
         <label>
             <h4>CVV</h4>
-            <input type="text" class="Input">
+            <input type="text" class="Input" inputmode="numeric" maxlength="3" pattern="\d{3}" >
         </label>
 
     </div>
 
     <div class="resumen">
         <h3>Total a pagar:</h3>
-        <h2>$ {{ precio() }}</h2>
+        <h2>$ {{ precio }}</h2>
 
     </div>
 </section>

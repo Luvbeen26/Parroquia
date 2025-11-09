@@ -6,12 +6,13 @@ hr{
 }
 
 .contenido{
-    display: grid;
-    grid-template-columns: 30% 30%;
-    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
 }
 
 .campos{
+    width: 300px;
     display: flex;
     flex-direction: column;
 }

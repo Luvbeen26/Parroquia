@@ -1,0 +1,46 @@
+.flex-column{
+    gap: 20px;
+}
+
+.events-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    
+}
+
+.no-events {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #FFFF;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: var(--color-principal);
+    height: 250px;
+}
+
+.no-events mat-icon {
+    font-size: 48px;
+    height: 48px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    color: var(--color-principal);
+}
+  
+
+.no-events h3 {
+    margin: 5px 0;
+}
+
+.no-events p {
+    margin: 0;
+    font-size: 14px;
+}

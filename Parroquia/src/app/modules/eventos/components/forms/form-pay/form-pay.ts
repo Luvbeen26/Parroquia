@@ -1,5 +1,6 @@
-import { Component,input } from '@angular/core';
+import { Component,inject,input } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
+import { Eventos } from '../../../services/eventos';
 
 @Component({
   selector: 'app-form-pay',
@@ -8,5 +9,11 @@ import { HeaderForm } from '../../header-form/header-form';
   styleUrl: './form-pay.css'
 })
 export class FormPay {
-  precio=input(500);
+  eventService=inject(Eventos)
+  precio=0
+
+
+  ngOnInit(){
+    this.precio=this.eventService.getPrice()
+  }
 }

@@ -1,8 +1,11 @@
-import { Component, EventEmitter, Input, input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, input, Output } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { DocumentUpload } from '../../document-upload/document-upload';
 import { Event } from '@angular/router';
 import { FormGroup } from '@angular/forms';
+import { Auth } from '../../../../auth/components/services/auth';
+import { Eventos } from '../../../services/eventos';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-form-documents',
@@ -11,40 +14,55 @@ import { FormGroup } from '@angular/forms';
   styleUrl: './form-documents.css'
 })
 export class FormDocuments {
-  //Listado de archivos que se van a subir
+  eventService=inject(Eventos)
+  @Input() id_event!:number;
+
   @Output() archivos=new EventEmitter<File[]>();
-  //El que activa el next o prev
   @Output() steps=new EventEmitter<boolean>();
-  
-  
-  @Input() docs: File[] = [];
-  //LISTADO DE ARCHIVOS A SUBIR EN EL EVENTO
-  @Input() fileList: string[] = [];
+  //NOMBRES DE ARCHIVOS
+  fileList:string[]=[]
+  //INPUTS DEL FORMULARIO FILE
   fileinputs:File[]=[];
 
   ngOnInit(){
+    //AGARRA LOS NOMBRES DE LOS ARCHIVOS
+    const take_events=this.eventService.sendDocumentArray(this.id_event)
+    //DA LOS NOMBRES DE LOS ARCHIVOS
+    this.fileList=take_events
+
     this.fileinputs=new Array(this.fileList.length).fill(null);
-    if (this.docs.length > 0) {
-      this.fileinputs=this.docs;
+
+    if (this.fileList.length > 0) {
+      this.fileinputs=this.eventService.getFilesForm();
     } 
+
+    const val=this.ValidateAllInputs()
+    console.log(this.fileList)
+    console.log(this.fileinputs)
+    
+
   }
 
   ValidateAllInputs():boolean{
-    return this.fileinputs.every(f => f != null);
+    return this.fileinputs.length > 0 && this.fileinputs.every(f => f != null);
   }
 
   next(){
     this.steps.emit(true);
-    this.archivos.emit(this.fileinputs);
+    this.SaveFileService(this.fileinputs)
+    
   }
 
   prev(){
     this.steps.emit(false);
-    this.archivos.emit(this.fileinputs);
+    this.SaveFileService(this.fileinputs)
   }
 
   SaveFile(file:File,index:number){
     this.fileinputs[index]=file;
   }
   
+  SaveFileService(file:File[]){
+    this.eventService.saveFilesForm(file)
+  }
 }

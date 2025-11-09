@@ -1,0 +1,56 @@
+.contenedor{
+    padding-block: 20px;
+    padding-inline: 25px;
+    gap: 20px;
+}
+
+.ListDocs{
+    max-height: 250px;       /* 🔹 altura máxima visible */
+    overflow-y: auto;        /* 🔹 permite hacer scroll vertical */
+    scrollbar-width: none; 
+    gap: 13px;
+}
+
+.ListDocs::-webkit-scrollbar {
+  display: none;
+}
+
+.Doc{
+    align-items: center;
+    justify-content: space-between;
+}
+
+.docEstado{
+    width: 90px;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 3px;
+}
+
+.estado-pendiente{
+    background-color: var(--pendient-background);
+    color: var(--pendient-letter);
+    border: 1px solid var(--pendient-letter);
+    border-radius: 10px;
+}
+
+.estado-aceptado{
+    background-color: var(--accept-background);
+    color: var(--accept-letter);
+    border: 1px solid var(--accept-letter);
+    border-radius: 10px;
+}
+
+.estado-rechazado{
+    background-color: var(--refused-background);
+    color: var(--refused-letter);
+    border: 1px solid var(--refused-letter);
+    border-radius: 10px;
+}
+
+.docEstado mat-icon{
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+}

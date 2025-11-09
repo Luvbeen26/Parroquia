@@ -16,14 +16,63 @@ export class Eventos {
     "Fe de confirmacion del novio","Fe de confirmacion del novia","Copia de la credencial del novio","Copia de la credencial de la novia","Copia de la credencial de padrino/madrina"]
   public files_XV=["Acta de nacimiento","Fe de bautismo","Fe primera comunion", "Fe de confirmación"]
 
+  public fecha=""
+  public hora=""
+
   public prices=[250,500,1000];
 
   public celebrado_form:Celebrate[]=[]
   public parents_form:Parents[]=[];
   public padrinos_form:Parents[]=[]
-  files_form:any[]=[]
+  public files_form:File[]=[]
   
   constructor(private http: HttpClient){}
+
+  getPrice(){
+    return this.prices[2]
+  }
+
+  saveFecha(fecha:string){
+    this.fecha=fecha;
+  }
+
+  getFecha(){
+    return this.fecha
+  }
+
+  saveHour(hora:string){
+    this.hora=hora
+  }
+
+  getHour(){
+    return this.hora;
+  }
+
+  sendDocumentArray(index:number){
+    switch(index){
+      case 1:
+        return this.files_Bautizo;
+        break;
+      case 3:
+        return this.files_Prim;
+      case 4:
+        return this.files_Mat
+      case 5: 
+        return this.files_XV
+      case 7:
+        return this.files_Conf
+      default:  
+        return []
+    }
+  }
+
+  saveFilesForm(files:File[]){
+    this.files_form=files;
+  }
+
+  getFilesForm():File[]{
+    return this.files_form;
+  }
 
 
   saveCelebradoform(celebrado:Celebrate,index:number=0){

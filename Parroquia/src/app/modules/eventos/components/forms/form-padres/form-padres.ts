@@ -47,7 +47,6 @@ export class FormPadres {
     const savedataParents=this.eventService.getParents_form('Parents')
     const savedataPadrino=this.eventService.getParents_form('Padrinos')
 
-    console.log(savedataPadrino,savedataParents)
 
     if (savedataPadrino && savedataPadrino.length > 0) {
       const padrino = savedataPadrino[0];
@@ -71,7 +70,6 @@ export class FormPadres {
         ap_mat_m: madre.ap_mat || '',
       });
     }
-    console.log(this.form)
   }
 
   saveParents(){

@@ -1,0 +1,14 @@
+.Contenedor{
+    background-color: var(--color-background);
+    padding: 40px;
+    min-height: 100vh;
+    gap: 25px;
+    box-sizing: border-box;
+
+
+}
+
+.button{
+    align-self: center;
+    width: fit-content;
+}

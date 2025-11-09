@@ -29,6 +29,16 @@ def show_pendientdocs(db:Session = Depends(get_db)):
         print(error)
 
 
+@router.get("/show/reject")
+def show_rejectdocs(db:Session = Depends(get_db)):
+    try:
+        cantidad=db.query(func.count(Documento.id_evento)).filter(Documento.status == "Rechazado").scalar()
+        cantidad=cantidad or 0
+        return cantidad
+    except Exception as error:
+        print(error)
+
+
 @router.post("/upload_file")
 async def upload_file(tipos_docs: str = Form(...),
                     id_evento: int = Form(...),

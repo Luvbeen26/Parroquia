@@ -1,0 +1,16 @@
+.card{
+    gap: 15px;
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box; /* Añade esto */
+    margin: 0 auto; /* Centra la card */
+
+
+}
+.motivo{
+    color: rgb(224, 1, 1);
+}
+
+.two-button{
+    width:fit-content
+}

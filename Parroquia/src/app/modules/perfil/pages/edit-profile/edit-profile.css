@@ -1,0 +1,64 @@
+.main{
+    gap: 30px;
+}
+
+.carding{
+    padding:30px;
+}
+.campos-name{
+    width: 80%;
+    gap:20px;
+    max-width: 660px;
+    
+}
+
+.campos-name .campo {
+    width: 50%;         /* que cada campo ocupe el mismo espacio */
+    max-width: 400px;
+    min-width: 200px;
+    min-width: 0;     /* evita overflow si el contenido es largo */
+}
+
+.personal .campo-correo,.password .campo{
+    width: 80%;
+    max-width: 660px;
+    min-width: 200px;
+    min-width: 0;
+}
+
+.personal,.password{
+    max-width: 1000px;
+}
+
+
+.campo,.campo-correo{
+    margin-block: 15px;
+}
+
+.buttons{
+    gap: 20px;
+}
+
+@media (max-width:755px){
+    .campos-name,.personal .campo-correo,.password .campo{
+        width: 100%;
+    }
+}
+
+@media (max-width:590px){
+    .campos-name,.buttons{
+        flex-direction: column;
+        
+    }
+
+    .campos-name .campo{
+        width: 100%;
+        
+    }
+
+    .campos-name{
+        gap: 0;
+    }
+
+  
+}

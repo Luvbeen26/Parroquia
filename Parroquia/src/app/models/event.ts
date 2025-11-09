@@ -1,3 +1,5 @@
+import { get_user_docs } from "./document"
+
 export interface parroquial{
     descripcion:string,
     fecha:string,
@@ -19,4 +21,10 @@ export interface Celebrate{
     fecha_nac: string, 
     edad: number,
     tipo: number
+}
+
+export interface PendientProcessClient{
+    id_evento:number,
+    descripcion:string,
+    documentos:get_user_docs[]
 }

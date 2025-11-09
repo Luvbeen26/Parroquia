@@ -1,0 +1,42 @@
+<main class="Contenedor flex">
+    <div class="wrapper flex">
+
+        
+        <div class="SideProfile flex-column">
+            <div class="UserName flex-column carding">
+                <div class="nophoto flex">
+                    <h1>{{ getInitials(name) }}</h1>
+                </div>
+                <h3>{{name}}</h3>
+    
+                
+            </div>    
+            <div class="menu carding">
+                <div class="menu-options flex">
+                    <mat-icon>person</mat-icon> <b>Editar Perfil</b>
+                </div>
+                <div class="menu-options flex">
+                    <mat-icon>description</mat-icon> <b>Procesos Pendientes</b>
+                </div>
+                <div class="menu-options flex">
+                    <mat-icon>calendar_today</mat-icon> <b>Mis Eventos</b>
+                </div>
+                <div class="menu-options flex">
+                    <mat-icon>logout</mat-icon> <b>Cerrar Sesion</b>
+                </div>
+                
+            </div>
+        </div>
+        <div class="Content">
+            @if(option==2){
+                <app-pendient-process></app-pendient-process>
+            }@else if(option==3){
+
+            }@else if (option==4) {
+
+            }@else{
+                <app-edit-profile></app-edit-profile>
+            }
+        </div>
+    </div>
+</main>

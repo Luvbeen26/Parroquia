@@ -309,11 +309,12 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
 
         result = []
         for evento in eventos:
+
             result.append({
                 "id_evento": evento.id_evento,
                 "id_tipo" :evento.id_tipo_evento,
                 "descripcion": evento.descripcion,
-                "documentos": [{"id_documento": doc.id_documento, "id_tipo":doc.id_tipo_documento ,"ruta": doc.ruta,"motivo":doc.motivo_rechazo,"status":doc.status} for doc in evento.documentos]
+                "documentos": [{"id_documento": doc.id_documento,"descripcion":f"{doc.tipo_documento.descripcion} {doc.participante.rol.descripcion if doc.participante else ''}" ,"id_tipo":doc.id_tipo_documento ,"ruta": doc.ruta,"motivo":doc.motivo_rechazo,"status":doc.status} for doc in evento.documentos]
             })
 
         return result

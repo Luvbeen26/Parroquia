@@ -1,0 +1,8 @@
+<main class="Contenedor flex-column">
+    @for (r of rejected; track $index) {
+        <app-card-rejected [id_docs]="r.id_documento" [motivo]="r.motivo" [descripcion]="r.descripcion" ></app-card-rejected>
+    }
+    <button class="button flex">
+       <mat-icon>save_alt</mat-icon> Actualizar Archivos
+    </button>
+</main>

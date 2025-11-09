@@ -1,0 +1,37 @@
+<div class="contenedor carding flex-column">
+    <div class="Description">
+        <h2>{{descripcion}}</h2>
+    </div>
+    
+    <div class="ListDocs flex-column">
+        @for (d of docs; track $index) {
+            <div class="Doc flex">
+                {{d.descripcion}}
+                <div class="docEstado flex" [ngClass]="{'estado-pendiente': d.status === 'pendiente',
+                'estado-aceptado': d.status === 'completo','estado-rechazado': d.status === 'rechazado'}">
+                    {{d.status}}
+                    @if(d.status == "completo"){
+                        <mat-icon> check</mat-icon>
+                    }@else if (d.status == "pendiente") {
+                        <mat-icon>query_builder</mat-icon>
+                    }@else if(d.status == "rechazado") {
+                        <mat-icon>close</mat-icon>
+                    }
+                    
+                </div>
+            </div>
+            
+        }
+        
+
+    </div>
+    @if (rejectedFile.length > 0) {
+        <button class="red-button flex" (click)="ShowRejected()">
+            <mat-icon>description</mat-icon>
+            Ver Archivos
+        </button>
+    }
+    
+
+    
+</div>
