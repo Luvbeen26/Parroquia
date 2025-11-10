@@ -1,8 +1,13 @@
-<main class="Contenedor flex-column">
-    @for (r of rejected; track $index) {
-        <app-card-rejected [id_docs]="r.id_documento" [motivo]="r.motivo" [descripcion]="r.descripcion" ></app-card-rejected>
-    }
-    <button class="button flex">
+
+<form action="" class="Contenedor flex-column">
+    @if (rejected$ | async; as rejected) {
+        @for (r of rejected; track $index) {
+            <app-card-rejected [id_docs]="r.id_documento" [motivo]="r.motivo" [descripcion]="r.descripcion" (archivo)="SaveFile($event,$index)"></app-card-rejected>
+        }
+    }    
+        
+    <button type="button" class="button flex" [disabled]="!ValidateAllInputs()" (click)="UpdateDocs()">
        <mat-icon>save_alt</mat-icon> Actualizar Archivos
     </button>
-</main>
+</form>
+

@@ -2,11 +2,20 @@
     <h2>{{descripcion}}</h2>
     <p class="motivo"> {{motivo}}</p>
        
-    <button class="two-button flex" type="file">
-        <mat-icon>insert_drive_file</mat-icon>
-        Subir Archivo
-    </button>
     
 
+    
+        
+    <div class="filebutton flex">
+        <label [for]="id_docs" class="two-button flex">
+            <mat-icon>insert_drive_file</mat-icon>
+            Subir Archivo
+        </label>
+        <input type="file" [id]="id_docs" accept=".pdf" (change)="FileSelected($event)" hidden>
 
+        @if(filename != ""){
+            <span class="filename">{{ filename }}</span>
+        }
+        
+    </div>
 </div>

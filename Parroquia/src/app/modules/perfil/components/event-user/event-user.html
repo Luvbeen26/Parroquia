@@ -7,14 +7,14 @@
         @for (d of docs; track $index) {
             <div class="Doc flex">
                 {{d.descripcion}}
-                <div class="docEstado flex" [ngClass]="{'estado-pendiente': d.status === 'pendiente',
-                'estado-aceptado': d.status === 'completo','estado-rechazado': d.status === 'rechazado'}">
+                <div class="docEstado flex" [ngClass]="{'estado-pendiente': d.status === 'Pendiente',
+                'estado-aceptado': d.status === 'Aceptado','estado-rechazado': d.status === 'Rechazado'}">
                     {{d.status}}
-                    @if(d.status == "completo"){
+                    @if(d.status == "Aceptado"){
                         <mat-icon> check</mat-icon>
-                    }@else if (d.status == "pendiente") {
+                    }@else if (d.status == "Pendiente") {
                         <mat-icon>query_builder</mat-icon>
-                    }@else if(d.status == "rechazado") {
+                    }@else if(d.status == "Rechazado") {
                         <mat-icon>close</mat-icon>
                     }
                     

@@ -3,7 +3,7 @@ import os
 import shutil
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, cast
+from sqlalchemy import func, cast, and_
 from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse
 from models.documento import Documento
@@ -18,6 +18,21 @@ router=APIRouter(prefix="/docs", tags=["docs"])
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
+@router.get("/show/rejected/{id}")
+def show_rejectdocs(id:int,db:Session = Depends(get_db)):
+    try:
+        rejectFiles=db.query(Documento).filter(and_(Documento.id_evento == id,Documento.status=="Rechazado"))
+        result=[]
+        for i in rejectFiles:
+            result.append({
+                "id_documento":i.id_documento,
+                "descripcion": f"{i.tipo_documento.descripcion} {i.participante.rol.descripcion if i.participante else ''}",
+                "motivo":i.motivo_rechazo
+            })
+
+        return result
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
 
 @router.get("/show/pendient")
 def show_pendientdocs(db:Session = Depends(get_db)):
@@ -29,14 +44,6 @@ def show_pendientdocs(db:Session = Depends(get_db)):
         print(error)
 
 
-@router.get("/show/reject")
-def show_rejectdocs(db:Session = Depends(get_db)):
-    try:
-        cantidad=db.query(func.count(Documento.id_evento)).filter(Documento.status == "Rechazado").scalar()
-        cantidad=cantidad or 0
-        return cantidad
-    except Exception as error:
-        print(error)
 
 
 @router.post("/upload_file")
@@ -152,24 +159,23 @@ def accept_file(id_documento:int,db:Session = Depends(get_db),admin_data:dict=De
 
 
 
-@router.put("/re-update_file")
+@router.put("/re_update_file")
 def update_file(id_docs: str = Form(...),
-                id_evento: int = Form(...),
                 files: List[UploadFile] = File(...),db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     try:
-
+        print("entrando")
         id_docs = [int(x) for x in id_docs.split(",")]
         cont=0
+        print("entrando2")
         for file in files:
             documento = db.query(Documento).filter(Documento.id_documento == id_docs[cont]).first()
 
-            file_path = os.path.join("Documents", str(id_evento), file.filename)  # combina rutas
-
+            file_path = os.path.join("Documents", str(documento.id_evento), file.filename)  # combina rutas
+            print("entrando3")
             if documento.ruta and os.path.exists(documento.ruta):
                 os.remove(documento.ruta)
-
-
-
+            print(file_path)
+            print("entrando4")
             with open(file_path, "wb") as f:  # crea un archivo nuevo
                 shutil.copyfileobj(file.file, f)  # copia el contenido del archivo original al nuevo
 

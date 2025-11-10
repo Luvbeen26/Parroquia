@@ -12,16 +12,16 @@
                 
             </div>    
             <div class="menu carding">
-                <div class="menu-options flex">
+                <div class="menu-options flex" (click)="optionMenu(1)">
                     <mat-icon>person</mat-icon> <b>Editar Perfil</b>
                 </div>
-                <div class="menu-options flex">
+                <div class="menu-options flex" (click)="optionMenu(2)">
                     <mat-icon>description</mat-icon> <b>Procesos Pendientes</b>
                 </div>
-                <div class="menu-options flex">
+                <div class="menu-options flex" (click)="optionMenu(3)">
                     <mat-icon>calendar_today</mat-icon> <b>Mis Eventos</b>
                 </div>
-                <div class="menu-options flex">
+                <div class="menu-options flex" (click)="auth.logout()">
                     <mat-icon>logout</mat-icon> <b>Cerrar Sesion</b>
                 </div>
                 
@@ -31,9 +31,7 @@
             @if(option==2){
                 <app-pendient-process></app-pendient-process>
             }@else if(option==3){
-
-            }@else if (option==4) {
-
+                <app-all-events></app-all-events>
             }@else{
                 <app-edit-profile></app-edit-profile>
             }

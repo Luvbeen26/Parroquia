@@ -22,7 +22,7 @@ export class EventUser {
 
   ngOnInit(){
     this.docs.forEach(doc =>{
-      if(doc.status == "rechazado"){
+      if(doc.status == "Rechazado"){
         this.rejectedFile.push(doc)
       }
     })

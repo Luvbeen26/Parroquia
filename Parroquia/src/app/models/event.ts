@@ -28,3 +28,11 @@ export interface PendientProcessClient{
     descripcion:string,
     documentos:get_user_docs[]
 }
+
+export interface getEventInfo{
+    id_evento:number,
+    descripcion:string,
+    tipo:string,
+    date:string,
+    hour:string
+}

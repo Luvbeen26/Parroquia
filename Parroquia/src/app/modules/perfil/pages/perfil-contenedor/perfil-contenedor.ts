@@ -1,25 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatIcon, MatIconModule,  } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 
 import { PendientProcess } from '../pendient-process/pendient-process';
 import { EditProfile } from '../edit-profile/edit-profile';
+import { Auth } from '../../../auth/components/services/auth';
+import { AllEvents } from '../all-events/all-events';
 
 
 
 
 @Component({
   selector: 'app-perfil-contenedor',
-  imports: [MatIcon,MatChipsModule,EditProfile,PendientProcess],
+  imports: [MatIcon,MatChipsModule,EditProfile,PendientProcess,AllEvents],
   templateUrl: './perfil-contenedor.html',
   styleUrl: './perfil-contenedor.css'
 })
 export class PerfilContenedor {
+  auth=inject(Auth)
   name="Luis Enrique Beerra"
   option!:number
 
   ngOnInit(){
-    this.option=2
+    this.option=0 
   }
 
 
@@ -30,6 +33,10 @@ export class PerfilContenedor {
       .join('')
       .slice(0,2)
       .toUpperCase();
+  }
+
+  optionMenu(opt:number){
+    this.option=opt;
   }
 
 }
