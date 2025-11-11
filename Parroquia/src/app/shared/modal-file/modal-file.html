@@ -1,0 +1,43 @@
+@if (isOpen && content) {
+  <div class="modal-overlay"
+       (click)="onBackdropClick($event)"
+       (keydown)="onKeyDown($event)"
+       tabindex="0">
+    
+    <div class="modal-container">
+      <button class="close-button" (click)="close()" aria-label="Cerrar modal">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      
+
+      <div class="modal-content">
+        @switch (content.type) {
+          @case ('image') {
+            <img 
+              [src]="content.src" 
+              [alt]="content.alt || 'Imagen'" 
+              class="modal-image"
+              (click)="$event.stopPropagation()">
+          }
+          @case ('pdf') {
+            <iframe 
+              [src]="content.src" 
+              class="modal-pdf"
+              frameborder="0"
+              (click)="$event.stopPropagation()">
+            </iframe>
+          }
+          @case ('document') {
+            <iframe 
+              [src]="content.src" 
+              class="modal-document"
+              frameborder="0"
+              (click)="$event.stopPropagation()">
+            </iframe>
+          }
+        }
+      </div>
+    </div>
+  </div>
+}

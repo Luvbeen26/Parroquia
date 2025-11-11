@@ -80,7 +80,7 @@ hr{
 @media(min-width:790px){
     app-auth-side-decoration{
         visibility: visible;
-        height: 100vh;
+        min-height: 100vh;
     }
 
     .side-form,app-auth-side-decoration{

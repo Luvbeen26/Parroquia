@@ -123,19 +123,15 @@ h4{
 
 
 
-
-@media(min-width:880px){
+@media(min-width:790px){
     app-auth-side-decoration{
         visibility: visible;
-        
+        height: 100vh;
     }
 
-    .side-form,app-auth-side-decoration{
+    .side-form, app-auth-side-decoration{
         width: 50%;
-        height: 130vh;
     }
-
-    
 }
 
 @media(min-width:450px){
@@ -144,11 +140,5 @@ h4{
         min-width: 350px;
         max-width: 450px;
         padding: 2rem;
-        
-    }
-    
-    .side-form,app-auth-side-decoration{
-        width: 50%;
-        
     }
 }

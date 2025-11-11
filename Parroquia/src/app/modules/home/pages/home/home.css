@@ -1,7 +1,7 @@
 .contenedor-home{
     color: var(--color-principal);
     background-color: var(--color-background);
-    height: 100%;
+    min-height: 100%;
     display: flex;
     flex-direction: row;
     gap: 10px;
@@ -25,6 +25,7 @@
     position: sticky;
     top: 1rem;
     height: fit-content;
+    align-self: flex-start;
 }
 
 .contenedor-cards-eventos,.search,.horarios{

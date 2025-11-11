@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Menu } from './menu';
+import { ModalFile } from './modal-file';
 
-describe('Menu', () => {
-  let component: Menu;
-  let fixture: ComponentFixture<Menu>;
+describe('ModalFile', () => {
+  let component: ModalFile;
+  let fixture: ComponentFixture<ModalFile>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Menu]
+      imports: [ModalFile]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Menu);
+    fixture = TestBed.createComponent(ModalFile);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

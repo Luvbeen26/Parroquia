@@ -5,3 +5,10 @@ export interface Userbase{
     es_admin?:boolean;
 }
 
+export interface Notif{
+    id:number,
+    mensaje:string,
+    fecha:string,
+    leido:boolean,
+    tipo:string
+}

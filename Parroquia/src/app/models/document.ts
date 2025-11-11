@@ -12,3 +12,10 @@ export interface docs_event extends get_user_docs{
     id_documento:number,
     motivo:string
 }
+
+export interface ModalContent {
+  type: 'image' | 'pdf' | 'document';
+  src: string;
+  alt?: string;
+  title?: string;
+}

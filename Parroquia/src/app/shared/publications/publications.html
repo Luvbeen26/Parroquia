@@ -7,7 +7,7 @@
         @if (image().length > 0) {
             <div class="galeria-imagenes" [attr.data-count]="image().length">
                 @for (img of image(); track img.id; let i = $index) {
-                    <figure class="img-item" [attr.data-index]="i">
+                    <figure class="img-item" [attr.data-index]="i" (click)="openImage(i)">
                         <img 
                             [src]="img.ruta" 
                             [alt]="titulo()"
@@ -23,3 +23,9 @@
         </footer>
     </article>
 </main>
+
+<app-modal-file
+  [isOpen]="isModalOpen"
+  [content]="modalContent"
+  (closeModal)="closeModal()">
+</app-modal-file>
