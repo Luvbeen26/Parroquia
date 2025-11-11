@@ -322,6 +322,55 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
 
+@router.get("/show/user/pendientes&prox")
+def show_pendients_and_prox(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
+    try:
+        tipos_evento = {
+            1: "Bautizo",
+            2: "Bautizo",
+            3: "Primera Comunión",
+            4: "Matrimonio",
+            5: "XV Años",
+            7: "Confirmación",
+        }
+
+        eventos_p=db.query(Evento).filter(and_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P",Evento.id_tipo_evento != 6)).all()
+        eventos_an = db.query(Evento).filter(Evento.id_usuario == user_data["id_usuario"], or_(Evento.status == "A", Evento.status == "N"), Evento.id_tipo_evento != 6)
+
+
+        pendients=[]
+        past=[]
+        for evento in eventos_p:
+
+            fecha = evento.fecha_hora_inicio.date().isoformat()  # devuelve "2025-10-29"
+            hora = evento.fecha_hora_inicio.time().strftime("%H:%M")
+            pendients.append({
+                "id_evento": evento.id_evento,
+                "id_tipo" :tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
+                "descripcion": evento.descripcion.split(" - ")[1],
+                "date": fecha,
+                "hour": hora,
+                "status" : "Pendiente"
+            })
+
+        for evento in eventos_an:
+            fecha = evento.fecha_hora_inicio.date().isoformat()  # devuelve "2025-10-29"
+            hora = evento.fecha_hora_inicio.time().strftime("%H:%M")
+            past.append({
+                "id_evento": evento.id_evento,
+                "id_tipo": tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
+                "descripcion": evento.descripcion.split(" - ")[1],
+                "date": fecha,
+                "hour": hora,
+                "status" : "Asistido" if evento.status == "A" else "No Asistido",
+            })
+        return {
+            "prox": pendients,
+            "past":past
+        }
+
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
 
 
 @router.get("/parroquiales/ocupados")

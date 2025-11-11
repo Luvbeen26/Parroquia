@@ -5,7 +5,7 @@ import { Router, RouterEvent } from '@angular/router';
 import { CardRejected } from '../../components/card-rejected/card-rejected';
 import { ActivatedRoute } from '@angular/router';
 import { MatIcon, MatIconModule,  } from '@angular/material/icon';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { nextTick } from 'process';
 import { response } from 'express';
@@ -32,17 +32,20 @@ export class ReUploadDoc {
 
 
   ngOnInit(){
-    this.rejected$=this.prof.GetRejectedDocs(this.eventoId)
-    this.rejected$.subscribe({
-      next: (r) => {
-        // si r es un arreglo
-        this.ids_docs = r.map(item => item.id_documento).join(',');
-        console.log(this.ids_docs); // "1,2,3,4,5"
-      },
-      error: (e) => console.error(e)
-    });
+    this.rejected$=this.prof.GetRejectedDocs(this.eventoId).pipe(
+      tap((r) => {
+        this.ids_docs=r.map(item => item.id_documento).join(',');
 
-    console.log(this.ids_docs)
+      }),
+      catchError((error) =>{
+        if(error.status == 401){
+          this.rout.navigate(["/"]);
+        }
+
+        
+        return of([]);
+      })
+    )
   }
 
   SaveFile(file:File,index:number){

@@ -19,11 +19,19 @@ router=APIRouter(prefix="/docs", tags=["docs"])
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
 @router.get("/show/rejected/{id}")
-def show_rejectdocs(id:int,db:Session = Depends(get_db)):
+def show_rejectdocs(id:int,db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     try:
         rejectFiles=db.query(Documento).filter(and_(Documento.id_evento == id,Documento.status=="Rechazado"))
+
+
+
         result=[]
         for i in rejectFiles:
+            if i.evento_documento.id_usuario != user_data["id_usuario"]:
+                raise HTTPException(status_code=401, detail="Usuario no coincide")
+
+
+
             result.append({
                 "id_documento":i.id_documento,
                 "descripcion": f"{i.tipo_documento.descripcion} {i.participante.rol.descripcion if i.participante else ''}",

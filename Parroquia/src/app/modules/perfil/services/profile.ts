@@ -4,7 +4,7 @@ import { environment } from '../../../environment/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
-import { PendientProcessClient } from '../../../models/event';
+import { PendientProcessClient, ProxPastEventsClient } from '../../../models/event';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,15 @@ export class Profile {
     });
 
     return this.http.get<PendientProcessClient[]>(`${this.apiurl}/event/show/user/pendientes_eventos`,{ headers });
+  }
+
+  GetPendientAndPastEvents(): Observable<ProxPastEventsClient>{
+    const token=this.cookies.get('access_token')
+    const headers=new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+
+    return this.http.get<ProxPastEventsClient>(`${this.apiurl}/event/show/user/pendientes&prox`,{ headers });
   }
 
   GetRejectedDocs(id_evento:number): Observable<docs_event[]>{

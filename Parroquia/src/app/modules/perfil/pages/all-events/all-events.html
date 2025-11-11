@@ -1,11 +1,49 @@
 
 <div class="Contenedor carding flex-column">
-    <div class="buttonsTime">
-        <span>Proximos Eventos</span>
-        <span>Eventos Pasados</span>
-    </div>  
-    <app-card-events  [id]="1" [description]="'Erika Inzunza Vega'" [event]="'Bautizo'" [date]="'14 de octubre de 2025'" [hour]="'10:00 hrs'"></app-card-events> 
-    <app-card-events  [id]="1" [description]="'Erika Inzunza Vega'" [event]="'Confirmacion'" [date]="'14 de octubre de 2025'" [hour]="'10:00 hrs'"></app-card-events> 
+    <div class="events-filter">
+        <button class="filter-btn" [class.active]="activeFilter === 'proximos'" (click)="changeFilter('proximos')">
+            Próximos Eventos
+        </button>
+        <button class="filter-btn" [class.active]="activeFilter === 'pasados'" (click)="changeFilter('pasados')">
+            Eventos Pasados
+        </button>
+    </div>
+    <div class="events-container">
+        @if (activeFilter === 'proximos') {
+            @for (evento of proxEvents$ | async; track evento.id_evento) {
+                <app-card-events 
+                [id]="evento.id_evento"
+                [description]="evento.descripcion" 
+                [event]="evento.tipo" 
+                [date]="evento.date" 
+                [hour]="evento.hour">
+                </app-card-events>
+            }
+            
+            @if ((proxEvents$ | async)?.length === 0) {
+                <div class="empty-state">
+                <mat-icon>event_busy</mat-icon>
+                <p>No hay próximos eventos programados</p>
+                </div>
+            }
+        } @else {
+        <!-- Eventos pasados -->
+        @for (evento of pastEvents$ | async; track evento.id_evento) {
+            <app-card-events 
+            [id]="evento.id_evento"
+            [description]="evento.descripcion" 
+            [event]="evento.tipo" 
+            [date]="evento.date" 
+            [hour]="evento.hour">
+            </app-card-events>
+        }
         
-    
+        @if ((pastEvents$ | async)?.length === 0) {
+            <div class="empty-state">
+            <mat-icon>history</mat-icon>
+            <p>No hay eventos pasados</p>
+            </div>
+        }
+        }
+    </div>
 </div>
