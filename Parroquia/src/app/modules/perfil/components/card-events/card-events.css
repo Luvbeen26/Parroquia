@@ -1,0 +1,103 @@
+.event-card {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 15px 24px;
+  background: white;
+  border: 2px solid ;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.event-card:hover {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+}
+
+.event-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.event-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  flex: 1;
+}
+
+.event-badge {
+  padding: 6px 16px;
+  background: white;
+  color: #6366f1;
+  border: 1.5px solid #6366f1;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.event-details {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.detail-item .icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #94a3b8;
+}
+
+.detail-item span {
+  font-weight: 400;
+}
+
+
+.event-bautizo { border-color: #6366f1; columns:#6366f1 ;}
+.event-confirmacion { border-color: #1F734F; color:#1F734F }
+.event-primera-comunion { border-color: #742FD3; color:#742FD3 }
+.event-matrimonio { border-color: #EF4444; color:#EF4444;}
+.event-xv-anos { border-color: #EC4899; color:#EC4899;}
+
+
+/* Responsive design */
+@media (max-width: 640px) {
+  .event-card {
+    padding: 16px 20px;
+  }
+
+  .event-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .event-badge {
+    align-self: flex-start;
+  }
+
+  .event-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .event-name {
+    font-size: 18px;
+  }
+}
+
+

@@ -13,6 +13,7 @@ import { Eventos } from '../../../services/eventos';
 })
 export class FormConPrim {
   eventService=inject(Eventos)
+  
   @Input() id_event!:number;
   @Input() formgroup!: any;
   @Output() formdata=new EventEmitter<any>();

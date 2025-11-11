@@ -1,8 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+
 
 @Component({
   selector: 'app-card-events',
-  imports: [],
+  imports: [MatIconModule,CommonModule],
   templateUrl: './card-events.html',
   styleUrl: './card-events.css'
 })

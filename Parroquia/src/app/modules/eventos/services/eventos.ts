@@ -113,7 +113,5 @@ export class Eventos {
     
   }
 
-  public register_event(){
-    
-  }
+  
 }

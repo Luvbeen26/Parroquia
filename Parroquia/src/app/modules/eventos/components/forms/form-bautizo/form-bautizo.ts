@@ -1,4 +1,4 @@
-import { Component,Input, Output,EventEmitter, inject } from '@angular/core';
+import { Component,Input, Output,EventEmitter, inject, Inject } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Eventos } from '../../../services/eventos';
@@ -13,7 +13,7 @@ import { Eventos } from '../../../services/eventos';
   styleUrl: './form-bautizo.css'
 })
 export class FormBautizo {
-  @Input() formgroup!: any;
+  
   @Output() formdata=new EventEmitter<any>();
   @Output() steps=new EventEmitter<boolean>();
   eventService=inject(Eventos)
@@ -38,8 +38,6 @@ export class FormBautizo {
 
   ngOnInit(){
     const savedata=this.eventService.getCelebrado_form()
-
-    console.log(savedata)
     if (savedata){
       this.form.patchValue(savedata)
     }
@@ -48,7 +46,6 @@ export class FormBautizo {
 
   next(){
     this.steps.emit(true);
-    console.log(this.form.value)
     this.eventService.saveCelebradoform(this.form.value,0)
   }
 }

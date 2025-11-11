@@ -1,1 +1,20 @@
-<p>card-events works!</p>
+<div class="event-card" [ngClass]="'event-' + event.toLowerCase().replaceAll(' ', '-')">
+    <div class="event-header">
+        <h3 class="event-name">{{ description }}</h3>
+        <span class="event-badge" [ngClass]="'event-' + event.toLowerCase().replaceAll(' ', '-')">
+            {{ event }}
+        </span>
+
+    </div>
+    
+    <div class="event-details">
+        <div class="detail-item">
+            <mat-icon class="icon">calendar_today</mat-icon>
+            <span>{{ date }}</span>
+        </div>
+        <div class="detail-item">
+            <mat-icon class="icon">access_time</mat-icon>
+            <span>{{ hour }}</span>
+        </div>
+    </div>
+</div>

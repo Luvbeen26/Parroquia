@@ -1,8 +1,8 @@
 <main class="background flex">
     <section class="Contenedor">
-        @if (step==4) {
+        @if (step==0) {
             @if(eventoId == 1){
-                <app-form-bautizo [formgroup]="bautizadoform" (steps)="next_prev_step($event)" (formdata)="updateBautizadoForm($event)"></app-form-bautizo>
+                <app-form-bautizo (steps)="next_prev_step($event)"></app-form-bautizo>
             }@else if (eventoId == 3 || 7) {
                 <app-form-con-prim  [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-con-prim>
             }@else if (eventoId == 4) {
@@ -11,12 +11,12 @@
                 <p>XV</p>
             }            
         }@else if (step==1){
-            <app-form-padres [formgroup]="parentsform" (steps)="next_prev_step($event)" (formdata)="updateParentsForm($event)"></app-form-padres>
+            <app-form-padres (steps)="next_prev_step($event)"></app-form-padres>
         }@else if (step==2) {
-            <app-form-documents [id_event]="eventoId" (steps)="next_prev_step($event)" (archivos)="updateDocumentsForm($event)"></app-form-documents>
+            <app-form-documents [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-documents>
         }@else if (step==3) {
             <app-form-date (steps)="next_prev_step($event)"></app-form-date>    
-        }@else if (step==0) {
+        }@else if (step==4) {
             <app-form-pay></app-form-pay>
         }
     </section>
