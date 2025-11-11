@@ -81,6 +81,8 @@ async def create_event(
 
         name=user_data["nombre"]
         email=user_data["correo"]
+
+        #SACAR EL MONTO DE LA BD PARA EVITAR QUE LO EDITEN EN FRONT
         comproba = schema_finanzas.Comprobante(
             id_evento=id_evento,
             nombre=name,
@@ -346,7 +348,7 @@ def show_pendients_and_prox(db:Session = Depends(get_db),user_data:dict=Depends(
             hora = evento.fecha_hora_inicio.time().strftime("%H:%M")
             pendients.append({
                 "id_evento": evento.id_evento,
-                "id_tipo" :tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
+                "tipo" :tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
                 "descripcion": evento.descripcion.split(" - ")[1],
                 "date": fecha,
                 "hour": hora,
@@ -358,7 +360,7 @@ def show_pendients_and_prox(db:Session = Depends(get_db),user_data:dict=Depends(
             hora = evento.fecha_hora_inicio.time().strftime("%H:%M")
             past.append({
                 "id_evento": evento.id_evento,
-                "id_tipo": tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
+                "tipo": tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
                 "descripcion": evento.descripcion.split(" - ")[1],
                 "date": fecha,
                 "hour": hora,

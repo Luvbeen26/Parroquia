@@ -53,18 +53,19 @@
     gap: 20px;
 }
 
-empty-state mat-icon {
-  font-size: 64px;
-  width: 64px;
-  height: 64px;
+.empty-state mat-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
   margin-bottom: 16px;
   opacity: 0.5;
 }
 
 .empty-state p {
-  font-size: 16px;
+  font-size: 20px;
   margin: 0;
   font-weight: 500;
+  min-height: 200px;
 }
 
 /* Responsive */
@@ -76,5 +77,6 @@ empty-state mat-icon {
 
   .events-filter {
     margin-bottom: 20px;
+    
   }
 }

@@ -10,6 +10,7 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import utils.security as security
 from config.setting import settings
 import bcrypt
+
 from utils.dependencies import current_user
 from utils.security import write_access_token
 
@@ -137,11 +138,11 @@ def verify_token(credentials:HTTPAuthorizationCredentials = Depends(bearer_schem
 
 
 @router.post("/refresh")
-def refresh_token(token:str):
+def refresh_token(refresh:schema_users.Refresh):
     refresh_key = settings.JWT_REFRESH_KEY
 
     try:
-        data=decode(token,key=refresh_key,algorithms=["HS256"])
+        data=decode(refresh.refresh_token,key=refresh_key,algorithms=["HS256"])
     except exceptions.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Refresh token expirado")
     except exceptions.DecodeError:

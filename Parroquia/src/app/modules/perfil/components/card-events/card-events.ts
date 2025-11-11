@@ -15,4 +15,9 @@ export class CardEvents {
   @Input() event!:string;
   @Input() date!:string;
   @Input() hour!:string;
+
+  ngOnInit(){
+    console.log(this.id)
+    console.log(this.description)
+  }
 }

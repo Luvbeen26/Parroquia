@@ -25,7 +25,8 @@ export class AllEvents {
 
     this.proxEvents$ = allEvents$.pipe(map((res: any) => res.prox));
     this.pastEvents$ = allEvents$.pipe(map((res: any) => res.past));
-    
+    console.log(this.proxEvents$)
+    console.log(this.pastEvents$)
   }
 
 

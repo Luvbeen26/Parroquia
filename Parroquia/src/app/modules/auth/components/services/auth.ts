@@ -153,7 +153,7 @@ export class Auth {
       return throwError(() => new Error('Refresh token invalido'))
     }
 
-    return this.http.post<{access_token:string}>(`${this.apiurl}/refresh`,{token:refresh_token}).pipe(
+      return this.http.post<{access_token:string}>(`${this.apiurl}/refresh`,{refresh_token:refresh_token}).pipe(
       //Se establece el nuevo access token en la cookie
       tap(response =>{
         this.cookies.set('access_token',response.access_token,1/96);
