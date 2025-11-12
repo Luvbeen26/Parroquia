@@ -1,8 +1,9 @@
-import { Component, ElementRef, EventEmitter, inject, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Eventos } from '../../../services/eventos';
+import { Eventos } from '../../../../../services/eventos';
+
 
 @Component({
   selector: 'app-form-date',
@@ -18,6 +19,7 @@ export class FormDate {
   selecteday="";
   form:FormGroup;
   eventService=inject(Eventos)
+  @Input() id_event!:number;
   @Output() steps=new EventEmitter<boolean>();
 
   meses = [
@@ -25,13 +27,14 @@ export class FormDate {
     "Mayo", "Junio", "Julio", "Agosto",
     "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
-    
+  hours_available:string[]=[]
   
 
   constructor(private frm:FormBuilder){
     //RESTRINGIR DIAS PARA SELECCIONAR
     this.minday = new Date(this.today);
-    this.minday.setDate(this.today.getDate() + 3); // día siguiente
+    const days=this.id_event==4 ? 90 : 3
+    this.minday.setDate(this.today.getDate() + days); // día siguiente
     this.isomin = this.minday.toISOString().split('T')[0]; // YYYY-MM-DD
   
 
@@ -63,6 +66,7 @@ export class FormDate {
     const selected=(event.target as any).value;
     const date_input=document.getElementById("date") as HTMLInputElement
     const fecha=this.transformDate(selected)
+    this.getAvailableHours(selected)
     this.selecteday=selected
     date_input.value=fecha
 
@@ -92,5 +96,18 @@ export class FormDate {
     const hora=hour_input.value;
     console.log(hora)
     return hora
+  }
+
+  getAvailableHours(fecha:string){
+    console.log(this.id_event)
+    this.eventService.getHorasAvailable(fecha,this.id_event).subscribe({
+      next: (res) =>{
+        console.log(res)
+        this.hours_available=res.hrs_disponibles
+      },
+      error: (err) =>{
+        console.log(err)
+      }
+    })
   }
 }

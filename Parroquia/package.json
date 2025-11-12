@@ -23,10 +23,13 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/animations": "^20.3.4",
+    "@angular/cdk": "^20.2.12",
     "@angular/common": "^20.3.0",
     "@angular/compiler": "^20.3.0",
     "@angular/core": "^20.3.0",
     "@angular/forms": "^20.3.0",
+    "@angular/material": "^20.2.12",
     "@angular/platform-browser": "^20.3.0",
     "@angular/platform-server": "^20.3.0",
     "@angular/router": "^20.3.0",
@@ -36,6 +39,7 @@
     "express": "^5.1.0",
     "jwt-decode": "^4.0.0",
     "ngx-cookie-service": "^20.1.0",
+    "ngx-toastr": "^19.1.0",
     "rxjs": "~7.8.0",
     "sass": "^1.93.3",
     "tslib": "^2.3.0"

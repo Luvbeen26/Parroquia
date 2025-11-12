@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { docs_event, get_user_docs } from '../../../models/document';
-import { environment } from '../../../environment/environment';
+
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
-import { PendientProcessClient, ProxPastEventsClient } from '../../../models/event';
+
+import { environment } from '../environment/environment';
+import { PendientProcessClient, ProxPastEventsClient } from '../models/event';
+import { docs_event } from '../models/document';
 
 @Injectable({
   providedIn: 'root'

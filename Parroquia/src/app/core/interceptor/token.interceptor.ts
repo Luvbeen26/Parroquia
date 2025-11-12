@@ -1,8 +1,9 @@
 import { HttpClient, HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject, PLATFORM_ID } from '@angular/core';
-import { Auth } from '../../modules/auth/components/services/auth';
+
 import { catchError, switchMap, throwError } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { Auth } from '../../services/auth';
 
 
 

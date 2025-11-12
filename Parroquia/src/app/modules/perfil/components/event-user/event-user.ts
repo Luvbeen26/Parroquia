@@ -2,8 +2,9 @@ import { Component, inject, Input } from '@angular/core';
 import { get_user_docs } from '../../../../models/document';
 import { CommonModule } from '@angular/common';
 import { MatIcon, MatIconModule,  } from '@angular/material/icon';
-import { Profile } from '../../services/profile';
+
 import { Router } from '@angular/router';
+import { Profile } from '../../../../services/profile';
 
 @Component({
   selector: 'app-event-user',

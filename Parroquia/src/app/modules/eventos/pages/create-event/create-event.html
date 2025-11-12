@@ -15,7 +15,7 @@
         }@else if (step==2) {
             <app-form-documents [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-documents>
         }@else if (step==3) {
-            <app-form-date (steps)="next_prev_step($event)"></app-form-date>    
+            <app-form-date [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-date>    
         }@else if (step==4) {
             <app-form-pay></app-form-pay>
         }

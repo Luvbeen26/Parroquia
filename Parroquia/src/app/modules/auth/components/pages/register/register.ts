@@ -3,8 +3,10 @@ import { AuthSideDecoration } from '../../auth-side-decoration/auth-side-decorat
 import { Router } from '@angular/router';
 import { ReactiveFormsModule,FormGroup,FormControl,Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { Auth } from '../../services/auth';
+
 import { error } from 'console';
+import { Auth } from '../../../../../services/auth';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -32,7 +34,7 @@ export class Register {
   apellidos:FormControl;
   codigo:FormControl;
 
-  constructor(private authservice:Auth,private router:Router){
+  constructor(private authservice:Auth,private router:Router,private toast:ToastrService){
     this.nombres=new FormControl("",Validators.required);
     this.apellidos=new FormControl("",Validators.required);
     
@@ -69,9 +71,7 @@ export class Register {
         const correoCtrl = this.register_form.get('correo')!;
         correoCtrl.valid ? codigoCtrl.enable() : codigoCtrl.disable();
       }); 
-      //this.register_form.statusChanges.subscribe(status => {
-        //console.log("Estado del formulario:", status);
-      //});
+   
   }
   
   passwordMatch(control:AbstractControl):ValidationErrors | null{
@@ -91,13 +91,10 @@ export class Register {
     this.text_codebtn="Enviando codigo...";
     this.authservice.send_code(correo).subscribe({
       next: (res) =>{
-        console.log(res);
-  
-        
+        this.toast.success("Codigo Enviado")
       },
       error: (err) =>{
-        console.log(err);
-        
+        this.toast.error(err.error.detail,"Error")        
       }
     });
     this.text_codebtn="Reenviar Codigo";
@@ -113,10 +110,10 @@ export class Register {
       this.authservice.register(nombres,apellidos,correo,contrasena,confirm_pswd,codigo.toString()).subscribe({
           next: (res) =>{
             this.router.navigate(["/"]);
-            //this.router.navigate(["/"],{queryParams : {user_id:res.id}});
+            this.toast.success("Cuenta Registrada", "Bienvenido")
           },
           error: (err) =>{
-            console.log(err)
+            this.toast.error(err.error.detail,"Error")        
           }
       });
 

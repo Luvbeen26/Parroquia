@@ -36,23 +36,31 @@ async def create_event(
         db:Session = Depends(get_db), user_data:dict=Depends(current_user)):
     try:
         user_id=user_data["id_usuario"]
+
+
         descripcion = ""
         #ID DE EVENTO
         id_tipo_evento = evento.id_tipo_evento
+        if id_tipo_evento not in [1,2,3,4,5,7]:
+            raise HTTPException(status_code=404, detail="Tipo de evento inexistente")
 
         #DESCRIPCION DE EVENTO
         if id_tipo_evento==1 or id_tipo_evento==2:
             descripcion="Bautizo - "
         elif id_tipo_evento==3:
             descripcion = "Primera Comunion - "
-        elif id_tipo_evento==4:
+        elif id_tipo_evento==7:
             descripcion = "Confirmacion - "
-        elif id_tipo_evento==5:
+        elif id_tipo_evento==4:
             descripcion = "Matrimonio - "
-        else:
+        elif id_tipo_evento == 5:
             descripcion = "XV Años - "
 
+
         for celebrado in evento.celebrado:
+            if len(celebrado.apellido_mat) > 50 or len(celebrado.apellido_pat) > 50 or len(celebrado.nombres) > 50:
+                raise HTTPException(status_code=404,detail="Nombres demasiados largos")
+
             if id_tipo_evento == 4:
                 descripcion+=celebrado.apellido_pat + ' ' +celebrado.apellido_mat +" & "+celebrado.apellido_pat+' '+celebrado.apellido_mat
             else:
@@ -65,6 +73,7 @@ async def create_event(
             id_tipo_evento=id_tipo_evento
         )
 
+        #CREAR EVENTO
         id_evento=register_event(register,user_id,db)
         celebrado_list=[]
 
@@ -74,6 +83,8 @@ async def create_event(
 
         participant_list=[]
         for participantes in evento.participantes:
+            if len(participantes.apellido_mat) > 50 or len(participantes.apellido_pat) > 50 or len(participantes.nombres) > 50:
+                raise HTTPException(status_code=404,detail="Nombre de Participante demasiados largos")
             id_participante=register_participant(id_evento,participantes,db)
             if id_participante != None: participant_list.append(id_participante)
 
@@ -401,8 +412,26 @@ def reagendar(chng:schema_event.ChangeDate,db:Session=Depends(get_db)):
 
     return chng
 
-"""
-def AvailableHours():
+@router.get("/horas-disponibles",response_model=schema_event.ResponseHrsDisponibles)
+def AvailableHours(fecha:str,id_tipo_evento:int,db:Session=Depends(get_db)):
     horas=[
-        time()
-    ]"""
+        datetime.time(8, 0), datetime.time(9, 0), datetime.time(10, 0),
+        datetime.time(11, 0),datetime.time(12, 0),datetime.time(13, 0),
+        datetime.time(14, 0), datetime.time(15, 0), datetime.time(16, 0),
+        datetime.time(17, 0), datetime.time(18, 0), datetime.time(19, 0)
+    ]
+
+    comunitarios=[1,3,7]
+
+    if id_tipo_evento in comunitarios:
+        ocupado=(db.query(Evento).
+                 filter(func.date(Evento.fecha_hora_inicio) == fecha,
+                        Evento.id_tipo_evento != id_tipo_evento).all())
+    else:
+        ocupado = (db.query(Evento).filter(func.date(Evento.fecha_hora_inicio) == fecha).all())
+    horas_ocupadas = [c.fecha_hora_inicio.time() for c in ocupado]
+    horas_disponibles = [h.strftime("%H:%M:%S") for h in horas if h not in horas_ocupadas]
+
+    return {"fecha": fecha, "hrs_disponibles": horas_disponibles}
+
+

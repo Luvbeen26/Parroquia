@@ -3,9 +3,9 @@ import { HeaderForm } from '../../header-form/header-form';
 import { DocumentUpload } from '../../document-upload/document-upload';
 import { Event } from '@angular/router';
 import { FormGroup } from '@angular/forms';
-import { Auth } from '../../../../auth/components/services/auth';
-import { Eventos } from '../../../services/eventos';
+
 import { take } from 'rxjs';
+import { Eventos } from '../../../../../services/eventos';
 
 @Component({
   selector: 'app-form-documents',

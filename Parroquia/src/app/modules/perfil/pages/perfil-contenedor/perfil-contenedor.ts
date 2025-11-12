@@ -4,8 +4,9 @@ import { MatChipsModule } from '@angular/material/chips';
 
 import { PendientProcess } from '../pendient-process/pendient-process';
 import { EditProfile } from '../edit-profile/edit-profile';
-import { Auth } from '../../../auth/components/services/auth';
+
 import { AllEvents } from '../all-events/all-events';
+import { Auth } from '../../../../services/auth';
 
 
 

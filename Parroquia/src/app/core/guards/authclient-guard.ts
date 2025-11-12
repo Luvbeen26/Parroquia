@@ -1,6 +1,7 @@
 import { inject, PLATFORM_ID } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { Auth } from '../../modules/auth/components/services/auth';
+import { Auth } from '../../services/auth';
+
 
 export const authclientGuard: CanActivateFn = (route, state) => {
   const platformId=inject(PLATFORM_ID)

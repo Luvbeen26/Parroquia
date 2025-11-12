@@ -53,3 +53,8 @@ class ChangeDate(BaseModel):
     fecha_inicio: str
     fecha_fin: str
     id_evento:int
+
+
+class ResponseHrsDisponibles(BaseModel):
+    fecha:str
+    hrs_disponibles:List[str]

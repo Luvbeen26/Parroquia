@@ -20,14 +20,16 @@
         <form action="" class="form flex-column">
             <span class="Campo flex-column">
                 <h4>Fecha Seleccionada</h4>
-                <input type="text" id="date" class="Input" placeholder="1 de Enero de 2025" >
+                <input type="text" id="date" class="Input" >
             </span>
             <span class="Campo flex-column">
                 <h4>Hora</h4>
                 <select name="" id="hora" class="Input">
-                    <option value="12:00 - 13:00" class="">12:00 - 13:00</option>
-                    <option value="13:00 - 14:00">13:00 - 14:00</option>
-                    <option value="14:00 - 15:00">14:00 - 15:00</option>
+                    @for (item of hours_available; track $index) {
+                        <option [value]='item' class="">{{item}}</option>
+                    
+                    }
+                    
                 </select>
             </span>
             

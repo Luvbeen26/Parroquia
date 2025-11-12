@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Profile } from '../../services/profile';
+import { Profile } from '../../../../services/profile';
+
 
 @Component({
   selector: 'app-edit-profile',

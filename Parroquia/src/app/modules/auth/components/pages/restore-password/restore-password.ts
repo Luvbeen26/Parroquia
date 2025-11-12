@@ -3,8 +3,10 @@ import { AuthSideDecoration } from '../../auth-side-decoration/auth-side-decorat
 import { Form, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Router } from '@angular/router';
-import { Auth } from '../../services/auth';
+
 import { Toast } from '../../../../../shared/toast/toast';
+import { Auth } from '../../../../../services/auth';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-restore-password',
@@ -23,7 +25,7 @@ export class RestorePassword {
   contrasena:FormControl;
   code:FormControl;
 
-  constructor(private authservice:Auth,private router:Router){
+  constructor(private authservice:Auth,private router:Router,private toast:ToastrService){
     this.correo=new FormControl("",[
       Validators.required,
       Validators.pattern('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
@@ -61,10 +63,10 @@ export class RestorePassword {
     const correo=this.restore_form.get("correo")?.value;
     this.authservice.send_code(correo).subscribe({
       next: (res) =>{
-        console.log(res);
+        this.toast.success("Codigo Enviado Exitosamente")
       },
       error: (err) =>{
-        console.log(err);
+        this.toast.error(err.error.detail,"Error")        
       }
     });
     this.text_codebtn="Reenviar Codigo";

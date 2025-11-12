@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, switchMap, tap, throwError } from 'rxjs';
-import { AuthTokens, ChangePassword, LoginUser, RegisterUser, Send_codeResponse, UserData } from '../../../../models/auth';
+
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { response } from 'express';
-import { environment } from '../../../../environment/environment';
+
 import { isPlatformBrowser } from '@angular/common';
 import { jwtDecode } from 'jwt-decode';
+import { environment } from '../environment/environment';
+import { AuthTokens, ChangePassword, LoginUser, RegisterUser, Send_codeResponse, UserData } from '../models/auth';
 
 
 @Injectable({

@@ -3,8 +3,9 @@ import { CardEvents } from '../../components/card-events/card-events';
 import { getEventInfo, ProxPastEventsClient } from '../../../../models/event';
 import { MatIconModule } from '@angular/material/icon';
 import { map, Observable } from 'rxjs';
-import { Profile } from '../../services/profile';
+
 import { CommonModule } from '@angular/common';
+import { Profile } from '../../../../services/profile';
 
 @Component({
   selector: 'app-all-events',

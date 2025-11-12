@@ -1,8 +1,9 @@
 import { httpResource } from '@angular/common/http';
 import { Component, ElementRef, PLATFORM_ID, ViewChild,inject,input} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Auth } from '../../modules/auth/components/services/auth';
+
 import { isPlatformBrowser } from '@angular/common';
+import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-header',

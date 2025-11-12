@@ -39,6 +39,12 @@ export interface getEventInfo{
 }
 
 export interface ProxPastEventsClient{
-    prox:getEventInfo[]
+    prox:getEventInfo[],
     past:getEventInfo[]
+}
+
+
+export interface DateTime{
+    fecha:string,
+    hrs_disponibles:string[]
 }

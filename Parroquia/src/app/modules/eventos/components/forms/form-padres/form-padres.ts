@@ -2,7 +2,8 @@ import { Component,EventEmitter,inject,Input,Output } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Eventos } from '../../../services/eventos';
+import { Eventos } from '../../../../../services/eventos';
+
 
 @Component({
   selector: 'app-form-padres',

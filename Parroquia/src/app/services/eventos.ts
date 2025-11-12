@@ -1,13 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../environment/environment';
-import { Celebrate, Parents } from '../../../models/event';
+import { environment } from '../environment/environment';
+import { Celebrate, DateTime, Parents } from '../models/event';
+import { Observable } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class Eventos {
-  private apiurl=`${environment.apiurl}/events`
+  private apiurl=`${environment.apiurl}/event`
   
   public files_Bautizo:string[]=["Acta de nacimiento","Copia de la credencial de padrio/madrina","Copia de fe de bautismo de los padrino"];
   public files_Conf=["Acta de nacimiento","Copia de la credencial de padrio/madrina","Copia de fe de confirmacion de los padrinos"];
@@ -113,5 +115,7 @@ export class Eventos {
     
   }
 
-  
+  getHorasAvailable(fecha:string,id_tipo_evento:number):Observable <DateTime>{
+    return this.http.get<DateTime>(`${this.apiurl}/horas-disponibles`,{params:{fecha,id_tipo_evento}})
+  }
 }

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Eventos } from '../../services/eventos';
+
 import { FormBautizo } from '../../components/forms/form-bautizo/form-bautizo';
 import { FormPadres } from '../../components/forms/form-padres/form-padres';
 import { FormDocuments } from '../../components/forms/form-documents/form-documents';
@@ -8,6 +8,7 @@ import { FormPay } from '../../components/forms/form-pay/form-pay';
 import { ActivatedRoute } from '@angular/router';
 import { FormConPrim } from '../../components/forms/form-con-prim/form-con-prim';
 import { FormGroup } from '@angular/forms';
+import { Eventos } from '../../../../services/eventos';
 
 @Component({
   selector: 'app-create-event',

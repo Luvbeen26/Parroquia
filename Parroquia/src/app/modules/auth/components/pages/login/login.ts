@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { AuthSideDecoration } from '../../auth-side-decoration/auth-side-decoration';
 import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Auth } from '../../services/auth';
-import { HttpClientModule } from '@angular/common/http';
 
+import { HttpClientModule } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
+import { Auth } from '../../../../../services/auth';
 
 
 @Component({
@@ -20,7 +21,7 @@ export class Login {
   correo:FormControl;
   contrasena:FormControl;
 
-  constructor(private authservice:Auth,private router:Router){
+  constructor(private authservice:Auth,private router:Router, private toast:ToastrService){
     this.correo=new FormControl("",Validators.required);
     
     this.contrasena=new FormControl("",Validators.required);
@@ -36,11 +37,12 @@ export class Login {
       const {correo,contrasena} = this.login_form.value; //extrae los valores haciendo desestructuracion
       this.authservice.login(correo,contrasena).subscribe({ 
         next: (res) =>{
+          this.toast.success("Inicio de Sesion Exitoso", "Bienvenido")
           this.router.navigate(["/"]);
           //this.router.navigate(["/"],{queryParams : {user_id:res.id}});
         },
         error: (err) =>{
-          console.log("Error al iniciar sesion");
+          this.toast.error(err.error.detail,"Error")
         }
       });
     }else{

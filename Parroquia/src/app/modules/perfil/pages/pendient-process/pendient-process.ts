@@ -3,9 +3,10 @@ import { PendientProcessClient } from '../../../../models/event';
 
 import { MatIcon, MatIconModule,  } from '@angular/material/icon';
 import { EventUser } from '../../components/event-user/event-user';
-import { Profile } from '../../services/profile';
+
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { Profile } from '../../../../services/profile';
 
 
 @Component({

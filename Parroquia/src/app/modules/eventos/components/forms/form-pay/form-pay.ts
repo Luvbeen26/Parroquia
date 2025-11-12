@@ -1,6 +1,7 @@
 import { Component,inject,input } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
-import { Eventos } from '../../../services/eventos';
+import { Eventos } from '../../../../../services/eventos';
+
 
 @Component({
   selector: 'app-form-pay',

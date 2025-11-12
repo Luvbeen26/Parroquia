@@ -1,7 +1,8 @@
 import { Component,Input, Output,EventEmitter, inject, Inject } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Eventos } from '../../../services/eventos';
+import { Eventos } from '../../../../../services/eventos';
+
 
 
 
@@ -27,7 +28,7 @@ export class FormBautizo {
     this.form=frm.group({
       nombres: ['',Validators.required],
       ap_pat:['',Validators.required],
-      ap_mat:['',Validators.required],
+      ap_mat:[''],
       genero:['',Validators.required],
       fecha_nac:['',Validators.required],
       edad:['',Validators.required],

@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Profile } from '../../services/profile';
+
 import { docs_event, get_user_docs } from '../../../../models/document';
 import { Router, RouterEvent } from '@angular/router';
 import { CardRejected } from '../../components/card-rejected/card-rejected';
@@ -9,6 +9,7 @@ import { catchError, Observable, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { nextTick } from 'process';
 import { response } from 'express';
+import { Profile } from '../../../../services/profile';
 
 @Component({
   selector: 'app-re-upload-doc',
