@@ -21,13 +21,13 @@ export class CreateEvent {
   eventService=inject(Eventos)
 
   celebrado_form!:FormGroup
-  files:string[]=[];
+  //files:string[]=[];
   eventoId!:number
   
   constructor(){
     this.eventoId = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.files=this.eventService.files_Bautizo;
+    //this.files=this.eventService.files_Bautizo;
   }
 
   ngOnInit(){

@@ -6,6 +6,7 @@ import { FormGroup } from '@angular/forms';
 
 import { take } from 'rxjs';
 import { Eventos } from '../../../../../services/eventos';
+import { document, infoDoc, UploadDoc } from '../../../../../models/document';
 
 @Component({
   selector: 'app-form-documents',
@@ -14,55 +15,63 @@ import { Eventos } from '../../../../../services/eventos';
   styleUrl: './form-documents.css'
 })
 export class FormDocuments {
-  eventService=inject(Eventos)
-  @Input() id_event!:number;
+  eventService = inject(Eventos)
+  @Input() id_event!: number;
 
-  @Output() archivos=new EventEmitter<File[]>();
-  @Output() steps=new EventEmitter<boolean>();
-  //NOMBRES DE ARCHIVOS
-  fileList:string[]=[]
-  //INPUTS DEL FORMULARIO FILE
-  fileinputs:File[]=[];
+  @Output() archivos = new EventEmitter<File[]>();
+  @Output() steps = new EventEmitter<boolean>();
 
-  ngOnInit(){
-    //AGARRA LOS NOMBRES DE LOS ARCHIVOS
-    const take_events=this.eventService.sendDocumentArray(this.id_event)
-    //DA LOS NOMBRES DE LOS ARCHIVOS
-    this.fileList=take_events
+  fileList: infoDoc[] = []
+  
+  uploadDocs: UploadDoc[] = [];
+  isAllFilesUploaded: boolean = false; 
 
-    this.fileinputs=new Array(this.fileList.length).fill(null);
-
-    if (this.fileList.length > 0) {
-      this.fileinputs=this.eventService.getFilesForm();
-    } 
-
-    const val=this.ValidateAllInputs()
-    console.log(this.fileList)
-    console.log(this.fileinputs)
+  ngOnInit() {
+    this.fileList = this.eventService.sendDocumentArray(this.id_event);
     
-
+    // Primero crea el array base
+    this.uploadDocs = this.fileList.map(doc => ({
+      id_doc: doc.id_doc,
+      files: []
+    }));
+    
+    // Luego restaura los archivos guardados EN LOS ÍNDICES CORRECTOS
+    const savedDocs = this.eventService.getFilesForm();
+    if (savedDocs && savedDocs.length > 0) {
+      savedDocs.forEach((savedDoc, index) => {
+        if (this.uploadDocs[index] && savedDoc.files.length > 0) {
+          this.uploadDocs[index].files = savedDoc.files;
+        }
+      });
+    }
+    
+    this.isAllFilesUploaded = this.ValidateAllInputs();
   }
 
-  ValidateAllInputs():boolean{
-    return this.fileinputs.length > 0 && this.fileinputs.every(f => f != null);
+  ValidateAllInputs(): boolean {
+    return this.uploadDocs.length > 0 && 
+           this.uploadDocs.every(doc => doc.files.length > 0);
   }
 
-  next(){
+  next() {
+    this.SaveFileService(this.uploadDocs);
     this.steps.emit(true);
-    this.SaveFileService(this.fileinputs)
-    
   }
 
-  prev(){
+  prev() {
+    this.SaveFileService(this.uploadDocs);
     this.steps.emit(false);
-    this.SaveFileService(this.fileinputs)
   }
 
-  SaveFile(file:File,index:number){
-    this.fileinputs[index]=file;
+  SaveFile(file: File, index: number) {
+    // Guardar el archivo en el UploadDoc correspondiente
+    this.uploadDocs[index].files = [file];
+    this.isAllFilesUploaded = this.ValidateAllInputs();
   }
   
-  SaveFileService(file:File[]){
-    this.eventService.saveFilesForm(file)
+  SaveFileService(docs: UploadDoc[]) {
+    console.log(docs)
+    return this.eventService.saveFilesForm(docs);
   }
+
 }

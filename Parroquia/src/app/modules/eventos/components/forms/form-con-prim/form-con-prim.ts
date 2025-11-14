@@ -28,12 +28,11 @@ export class FormConPrim {
   constructor(private frm:FormBuilder){
     this.form=frm.group({
       nombres: ['',Validators.required],
-      ap_pat:['',Validators.required],
-      ap_mat:['',Validators.required],
+      apellido_pat:['',Validators.required],
+      apellido_mat:['',Validators.required],
       genero:['',Validators.required],
       fecha_nac:['',Validators.required],
-      edad:['',Validators.required],
-      tipo:[this.id_event],
+      edad:['',Validators.required]
     })
   }
 
@@ -47,13 +46,22 @@ export class FormConPrim {
     if (savedata){
       this.form.patchValue(savedata)
     }
+
+    
   }
 
   next(){
     this.steps.emit(true);
-    console.log(this.form.value)
-    this.eventService.saveCelebradoform(this.form.value,0)
+
+    this.eventService.saveTipoEvento(this.id_event)
+    const celebradoData = {
+      ...this.form.value
+    };
+    console.log(celebradoData)
+    this.eventService.saveCelebradoform(celebradoData,0)
+    
   }
 
+  
   
 }

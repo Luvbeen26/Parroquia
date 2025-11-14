@@ -1,8 +1,10 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
-import { Celebrate, DateTime, Parents } from '../models/event';
-import { Observable } from 'rxjs';
+import { Celebrate, CreateEvent, DateTime, Parents} from '../models/event';
+import { Observable, switchMap, tap } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
+import { document, infoDoc, UploadDoc } from '../models/document';
 
 
 @Injectable({
@@ -10,28 +12,75 @@ import { Observable } from 'rxjs';
 })
 export class Eventos {
   private apiurl=`${environment.apiurl}/event`
+  private apiurldocs=`${environment.apiurl}/docs`
   
-  public files_Bautizo:string[]=["Acta de nacimiento","Copia de la credencial de padrio/madrina","Copia de fe de bautismo de los padrino"];
-  public files_Conf=["Acta de nacimiento","Copia de la credencial de padrio/madrina","Copia de fe de confirmacion de los padrinos"];
-  public files_Prim=["Acta de nacimiento","Copia de la credencial de padrio/madrina","Copia de fe de primera comunion de los padrinos"];
-  public files_Mat=["Acta de nacimiento del novio","Acta de nacimiento de la novio","Fe de bautismo del novio","Fe de bautismo del novia",
-    "Fe de confirmacion del novio","Fe de confirmacion del novia","Copia de la credencial del novio","Copia de la credencial de la novia","Copia de la credencial de padrino/madrina"]
-  public files_XV=["Acta de nacimiento","Fe de bautismo","Fe primera comunion", "Fe de confirmación"]
+  private id_tipo_evento:number=0;
+    
+  public files_Bautizo: infoDoc[] = [
+    { nombre: "Acta de nacimiento", id_doc: 1 },
+    { nombre: "Copia de la credencial de padrio/madrina", id_doc: 5 },
+    { nombre: "Copia de fe de bautismo de los padrino", id_doc: 2 }
+  ];
 
-  public fecha=""
-  public hora=""
+  public files_Conf: infoDoc[] = [
+    { nombre: "Acta de nacimiento", id_doc: 1 },
+    { nombre: "Copia de la credencial de padrio/madrina", id_doc: 5 },
+    { nombre: "Copia de fe de confirmacion de los padrinos", id_doc: 3 }
+  ];
 
-  public prices=[250,500,1000];
+  public files_Prim: infoDoc[] = [
+    { nombre: "Acta de nacimiento", id_doc: 1 },
+    { nombre: "Copia de la credencial de padrio/madrina", id_doc: 5 },
+    { nombre: "Copia de fe de primera comunion de los padrinos", id_doc: 4 }
+  ];
+
+  public files_Mat: infoDoc[] = [
+    { nombre: "Acta de nacimiento del novio", id_doc: 1 },
+    { nombre: "Acta de nacimiento de la novia", id_doc: 1 },
+    { nombre: "Fe de bautismo del novio", id_doc: 2 },
+    { nombre: "Fe de bautismo de la novia", id_doc: 2 },
+    { nombre: "Fe de confirmacion del novio", id_doc: 3 },
+    { nombre: "Fe de confirmacion de la novia", id_doc: 3 },
+    { nombre: "Fe de primera comunion del novio", id_doc: 4 },
+    { nombre: "Fe de primera comunion de la novia", id_doc: 4 },
+    { nombre: "Copia de la credencial del novio", id_doc: 5 },
+    { nombre: "Copia de la credencial de la novia", id_doc: 5 },
+    { nombre: "Copia de la credencial de padrino/madrina", id_doc: 5 }
+  ];
+
+  public files_XV: infoDoc[] = [
+    { nombre: "Acta de nacimiento", id_doc: 1 },
+    { nombre: "Fe de bautismo", id_doc: 2 },
+    { nombre: "Fe primera comunion", id_doc: 4 },
+    { nombre: "Fe de confirmación", id_doc: 3 }
+  ];
+
+  private fecha=""
+  private hora=""
+
+  
+
+  private prices=[150,350,500,500,2000,0,350];
 
   public celebrado_form:Celebrate[]=[]
   public parents_form:Parents[]=[];
   public padrinos_form:Parents[]=[]
-  public files_form:File[]=[]
-  
-  constructor(private http: HttpClient){}
+  private files_form: UploadDoc[] = []
 
-  getPrice(){
-    return this.prices[2]
+  
+  constructor(private http: HttpClient,private cookies:CookieService){}
+
+
+  saveTipoEvento(id_tipo_evento: number) {
+    this.id_tipo_evento = id_tipo_evento;
+  }
+  
+  getTipoEvento(): number {
+    return this.id_tipo_evento;
+  }
+
+  getPrice(id_event:number){
+    return this.prices[id_event-1]
   }
 
   saveFecha(fecha:string){
@@ -68,20 +117,37 @@ export class Eventos {
     }
   }
 
-  saveFilesForm(files:File[]){
-    this.files_form=files;
+  saveFilesForm(docs: UploadDoc[]) {
+    this.files_form = docs;
   }
 
-  getFilesForm():File[]{
+  getFilesForm(): UploadDoc[] {
     return this.files_form;
   }
 
 
-  saveCelebradoform(celebrado:Celebrate,index:number=0){
+  saveCelebradoform(celebrado: Celebrate, index: number = 0) {
+    let id_rol!:number
+
+    if(this.id_tipo_evento == 1 || this.id_tipo_evento == 2)
+      id_rol=1
+    else if(this.id_tipo_evento == 3)
+      id_rol=6
+    //else if(this.id_tipo_evento == 4) //matrimonio
+    else if(this.id_tipo_evento == 5)
+      id_rol=8
+    else if(this.id_tipo_evento == 7)
+      id_rol=7
+
+    const celebradoConRol = {
+      ...celebrado,
+      id_rol: id_rol
+    };
+    
     if(this.celebrado_form[index]){
-      this.celebrado_form[index] = {...celebrado};
+      this.celebrado_form[index] = celebradoConRol;
     }else{
-      this.celebrado_form.push({...celebrado})
+      this.celebrado_form.push(celebradoConRol)
     }
   }
 
@@ -117,5 +183,61 @@ export class Eventos {
 
   getHorasAvailable(fecha:string,id_tipo_evento:number):Observable <DateTime>{
     return this.http.get<DateTime>(`${this.apiurl}/horas-disponibles`,{params:{fecha,id_tipo_evento}})
+  }
+
+
+  CreateEvent(): Observable<Object>{
+    const fecha_inicio=`${this.fecha} ${this.hora}`;
+
+    const fechaobj=new Date(fecha_inicio);
+    fechaobj.setHours(fechaobj.getHours() + 1);
+
+    const nuevaHora = fechaobj.toTimeString().slice(0,8);
+    const nuevaFecha = fechaobj.toISOString().split("T")[0];
+
+    const participantes=[...this.parents_form,...this.padrinos_form]
+    const token=this.cookies.get('access_token')
+    const headers=new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    const body={
+      "id_tipo_evento" : this.id_tipo_evento,
+      "fecha_inicio" : fecha_inicio,
+      "fecha_fin" : `${nuevaFecha} ${nuevaHora}`,
+      "celebrado" : this.celebrado_form,
+      "participantes" : participantes
+    }
+    return this.http.post<CreateEvent>(`${this.apiurl}/create/Event`,body,{headers}).pipe(
+      //switchMap
+      /*
+        tiposdocs como csv ya
+        id_evento
+        id_participante //FALTA HACER QUE DEVUELVA LOS ID DE PARTICIPANTES Y CELEBRADOS
+        id_celebrado 
+        arreglo de archivos ya
+      */ 
+      switchMap((response: any) =>{
+        const formdata=new FormData();
+        
+        let tipos_docs=this.files_form.map(f => f.id_doc).join(",")
+        let id_celebrado:string= response.res.id_celebrados.join(",");
+        let id_participante:string=response.res.ids_participantes.join(",")
+        
+
+        formdata.append("tipos_docs",tipos_docs)
+        formdata.append("id_evento",response.res.evento)
+        if (id_participante) formdata.append("id_participante", id_participante);
+
+        formdata.append("id_celebrado",id_celebrado)
+        this.files_form.forEach((f: any) => {
+          if (f.files && f.files.length > 0) {
+            formdata.append("files", f.files[0], f.files[0].name);
+          }
+        });
+        
+        console.log(this.files_form)
+        console.log(response)
+        return this.http.post(`${this.apiurldocs}/upload_file`,formdata,{headers});
+      }));
   }
 }

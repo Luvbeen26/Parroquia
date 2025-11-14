@@ -19,7 +19,7 @@ class CelebratedModel(ParticipantModel):
     edad:int
 
 class Pago(BaseModel):
-    monto:float
+    #monto:float
     descripcion:str
 
 class RegisterModel(BaseModel):
@@ -35,7 +35,6 @@ class EventCreateModel(BaseModel):
     fecha_fin:str
     celebrado:List[CelebratedModel]
     participantes: List[ParticipantModel]
-    pago:Pago
 
 class ParroquialEvent(BaseModel):
     fecha_inicio:str

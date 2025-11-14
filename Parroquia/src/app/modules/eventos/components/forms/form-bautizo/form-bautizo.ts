@@ -27,8 +27,8 @@ export class FormBautizo {
   constructor(private frm:FormBuilder){
     this.form=frm.group({
       nombres: ['',Validators.required],
-      ap_pat:['',Validators.required],
-      ap_mat:[''],
+      apellido_pat:['',Validators.required],
+      apellido_mat:[''],
       genero:['',Validators.required],
       fecha_nac:['',Validators.required],
       edad:['',Validators.required],
@@ -41,12 +41,22 @@ export class FormBautizo {
     const savedata=this.eventService.getCelebrado_form()
     if (savedata){
       this.form.patchValue(savedata)
+
+      const tipo=this.eventService.getTipoEvento()
+      this.form.patchValue({
+        tipo: tipo
+      });
     }
     
   }
 
   next(){
     this.steps.emit(true);
-    this.eventService.saveCelebradoform(this.form.value,0)
+    this.eventService.saveTipoEvento(this.form.value["tipo"])
+    const celebradoData = {
+      ...this.form.value
+    };
+    this.eventService.saveCelebradoform(celebradoData, 0)
+    
   }
 }

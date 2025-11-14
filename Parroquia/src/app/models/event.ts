@@ -9,18 +9,20 @@ export interface parroquial{
 
 export interface Parents{
     nombres: string,
-    ap_pat: string,
-    ap_mat: string
+    apellido_pat: string,
+    apellido_mat: string,
+    id_rol:number
 }
 
 export interface Celebrate{
     nombres: string,
-    ap_pat: string,
-    ap_mat: string,
+    apellido_pat: string,
+    apellido_mat: string,
+    id_rol:number,
     genero: string,
     fecha_nac: string, 
-    edad: number,
-    tipo: number
+    edad: number
+    //tipo: number
 }
 
 export interface PendientProcessClient{
@@ -48,3 +50,13 @@ export interface DateTime{
     fecha:string,
     hrs_disponibles:string[]
 }
+
+export interface CreateEvent{
+    id_tipo_evento:number,
+    fecha_inicio:string,
+    fecha_fin:string,
+    celebrado:Celebrate[],
+    participantes:Parents[]
+}
+
+

@@ -3,12 +3,17 @@
 <form action="" class="form">    
     <section class="cards">
         @for (file of fileList; track $index) {   
-            <app-document-upload [id]="$index" [archivoreal]="fileinputs[$index]" [tipo]="file" (archivo)="SaveFile($event,$index)"></app-document-upload>
+            <app-document-upload 
+                [id]="$index" 
+                [archivoreal]="uploadDocs[$index].files[0]!" 
+                [tipo]="file" 
+                (archivo)="SaveFile($event, $index)">
+            </app-document-upload>
         }
     </section>
     <div class="buttons">
         <button type="button" class="two-button" (click)="prev()">Volver</button> 
-        <button type="button" [disabled]="!ValidateAllInputs()" class="button" (click)="next()">Continuar</button> 
+        <button type="button" [disabled]="!isAllFilesUploaded" class="button" (click)="next()">Continuar</button> 
     </div>
     
 </form>

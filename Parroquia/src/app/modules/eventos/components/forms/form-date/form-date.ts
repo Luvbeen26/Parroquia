@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -19,6 +19,7 @@ export class FormDate {
   selecteday="";
   form:FormGroup;
   eventService=inject(Eventos)
+  
   @Input() id_event!:number;
   @Output() steps=new EventEmitter<boolean>();
 
@@ -47,19 +48,18 @@ export class FormDate {
 
   ngOnInit(){
     const fecha_service=this.eventService.getFecha()
+    const hour_service=this.eventService.getHour();
+
     if(fecha_service){
       const date_input=document.getElementById("date") as HTMLInputElement
       const fecha_alter=this.transformDate(fecha_service)
       date_input.value=fecha_alter
+      
+
+      this.getAvailableHours(fecha_service, hour_service)
     }
 
-    const hour_service=this.eventService.getHour();
-    console.log(hour_service)
-    if(hour_service){
-      const hour_input=document.getElementById("hora") as HTMLSelectElement;
-      console.log(hour_service)
-      hour_input.value=hour_service
-    }
+    
   }
 
   DateChange(event:Event){
@@ -67,6 +67,7 @@ export class FormDate {
     const date_input=document.getElementById("date") as HTMLInputElement
     const fecha=this.transformDate(selected)
     this.getAvailableHours(selected)
+    
     this.selecteday=selected
     date_input.value=fecha
 
@@ -75,6 +76,7 @@ export class FormDate {
   next(){
     this.eventService.saveFecha(this.selecteday);
     this.eventService.saveHour(this.takeHour())
+    console.log(this.takeHour())
     this.steps.emit(true);
   }
 
@@ -98,15 +100,28 @@ export class FormDate {
     return hora
   }
 
-  getAvailableHours(fecha:string){
+  getAvailableHours(fecha:string, horaGuardada?: string){
     console.log(this.id_event)
     this.eventService.getHorasAvailable(fecha,this.id_event).subscribe({
       next: (res) =>{
-        console.log(res)
-        this.hours_available=res.hrs_disponibles
+        
+        const selectHora = document.getElementById("hora") as HTMLSelectElement;
+
+        selectHora.innerHTML = ''; 
+        res.hrs_disponibles.forEach((hora: string) => {
+          const option = document.createElement('option');
+          option.value = hora;
+          option.textContent = hora;
+          selectHora.appendChild(option);
+        });
+
+         if(horaGuardada && res.hrs_disponibles.includes(horaGuardada)){
+          selectHora.value = horaGuardada;
+        }
       },
       error: (err) =>{
         console.log(err)
+        
       }
     })
   }

@@ -1,6 +1,16 @@
+export interface infoDoc{
+    nombre:string,
+    id_doc:number
+}
+
 export interface document{
     tipo:string;
     archivo:File;    
+}
+
+export interface UploadDoc{
+    id_doc:number,
+    files:File[]
 }
 
 export interface get_user_docs{

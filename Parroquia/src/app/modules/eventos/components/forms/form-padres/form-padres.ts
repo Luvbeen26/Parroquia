@@ -48,13 +48,12 @@ export class FormPadres {
     const savedataParents=this.eventService.getParents_form('Parents')
     const savedataPadrino=this.eventService.getParents_form('Padrinos')
 
-
     if (savedataPadrino && savedataPadrino.length > 0) {
       const padrino = savedataPadrino[0];
       this.form.patchValue({
         nombres_p: padrino.nombres || '',
-        ap_pat_p: padrino.ap_pat || '',
-        ap_mat_p: padrino.ap_mat || ''
+        ap_pat_p: padrino.apellido_pat || '',
+        ap_mat_p: padrino.apellido_mat || ''
       });
     }
 
@@ -64,11 +63,11 @@ export class FormPadres {
       const madre = savedataParents[1];
       this.form.patchValue({
         nombres_f: padre.nombres || '',
-        ap_pat_f: padre.ap_pat || '',
-        ap_mat_f: padre.ap_mat || '',
+        ap_pat_f: padre.apellido_pat || '',
+        ap_mat_f: padre.apellido_mat || '',
         nombres_m: madre.nombres || '',
-        ap_pat_m: madre.ap_pat || '',
-        ap_mat_m: madre.ap_mat || '',
+        ap_pat_m: madre.apellido_pat || '',
+        ap_mat_m: madre.apellido_mat || '',
       });
     }
   }
@@ -79,24 +78,31 @@ export class FormPadres {
     this.eventService.saveParentsForm(
       {
         nombres: formValue.nombres_f,
-        ap_pat: formValue.ap_pat_f,
-        ap_mat: formValue.ap_mat_f
+        apellido_pat: formValue.ap_pat_f,
+        apellido_mat: formValue.ap_mat_f,
+        id_rol:2
       },'Parents',0);
 
     
     this.eventService.saveParentsForm(
       {
         nombres: formValue.nombres_m,
-        ap_pat: formValue.ap_pat_m,
-        ap_mat: formValue.ap_mat_m
+        apellido_pat: formValue.ap_pat_m,
+        apellido_mat: formValue.ap_mat_m,
+        id_rol:3
       },'Parents',1);
 
-    
+    const cel=this.eventService.getCelebrado_form()
+    /*if(cel.genero=="H"){
+      4 padrino
+      5 madrina
+    }*/
     this.eventService.saveParentsForm(
       {
         nombres: formValue.nombres_p,
-        ap_pat: formValue.ap_pat_p,
-        ap_mat: formValue.ap_mat_p
+        apellido_pat: formValue.ap_pat_p,
+        apellido_mat: formValue.ap_mat_p,
+        id_rol:4
       },'Padrinos',0);
 
   }

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { getEventInfo } from '../../../../models/event';
 
 
 @Component({
@@ -10,14 +11,18 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './card-events.css'
 })
 export class CardEvents {
-  @Input() id!:number;
+  @Input() eventInfo!:getEventInfo;
+  /*@Input() id!:number;
   @Input() description!:string;
   @Input() event!:string;
   @Input() date!:string;
-  @Input() hour!:string;
+  @Input() hour!:string;*/
 
   ngOnInit(){
-    console.log(this.id)
-    console.log(this.description)
+   
+  }
+
+  shouldShowStatus(): boolean {
+    return this.eventInfo.status === 'Asistido' || this.eventInfo.status === 'No Asistido';
   }
 }

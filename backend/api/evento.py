@@ -13,7 +13,7 @@ from api.notif import send_notification
 from models.celebrado import Celebrado
 from schema import evento as schema_event
 from schema import finanzas as schema_finanzas
-from models import evento as models_event, Evento
+from models import evento as models_event, Evento, TipoEvento
 from models import evento_participantes as event_part
 from api import finanzas
 from models.pagos import Pagos
@@ -61,8 +61,8 @@ async def create_event(
             if len(celebrado.apellido_mat) > 50 or len(celebrado.apellido_pat) > 50 or len(celebrado.nombres) > 50:
                 raise HTTPException(status_code=404,detail="Nombres demasiados largos")
 
-            if id_tipo_evento == 4:
-                descripcion+=celebrado.apellido_pat + ' ' +celebrado.apellido_mat +" & "+celebrado.apellido_pat+' '+celebrado.apellido_mat
+            if id_tipo_evento == 4 and len(evento.celebrado) == 2:
+                descripcion += (f"{evento.celebrado[0].apellido_pat} {evento.celebrado[0].apellido_mat} & "f"{evento.celebrado[1].apellido_pat} {evento.celebrado[1].apellido_mat}")
             else:
                 descripcion+=celebrado.nombres+' '+celebrado.apellido_pat+' '+celebrado.apellido_mat
 
@@ -88,7 +88,11 @@ async def create_event(
             id_participante=register_participant(id_evento,participantes,db)
             if id_participante != None: participant_list.append(id_participante)
 
-        metodo_pago(user_id,evento.pago,db)
+
+        price = db.query(TipoEvento).filter_by(id_tipo_evento=id_tipo_evento).first().costo_programar
+
+
+        metodo_pago(user_id,price,descripcion,db)
 
         name=user_data["nombre"]
         email=user_data["correo"]
@@ -99,7 +103,7 @@ async def create_event(
             nombre=name,
             correo=email,
             concepto=f"Pago {descripcion}",
-            monto=evento.pago.monto,
+            monto=float(price),
             fecha=datetime.datetime.now(MAZATLAN_TZ).strftime("%Y-%m-%d %H:%M:%S")
         )
 
@@ -162,9 +166,9 @@ def register_participant(id_evento:int,participant:schema_event.ParticipantModel
         raise HTTPException(status_code=404, detail=str(error))
 
 
-def metodo_pago(user_id:int,pago:schema.evento.Pago,db:Session):
+def metodo_pago(user_id:int, monto: float, descripcion: str,db:Session):
     try:
-        pay=Pagos(fecha_hora=datetime.datetime.now(MAZATLAN_TZ),monto=pago.monto,id_usuario=user_id,descripcion=pago.descripcion)
+        pay=Pagos(fecha_hora=datetime.datetime.now(MAZATLAN_TZ),monto=monto,id_usuario=user_id,descripcion=descripcion)
         db.add(pay)
         db.commit()
         db.refresh(pay)
@@ -435,3 +439,11 @@ def AvailableHours(fecha:str,id_tipo_evento:int,db:Session=Depends(get_db)):
     return {"fecha": fecha, "hrs_disponibles": horas_disponibles}
 
 
+@router.get("/show/event_price")
+def price(id_tipo_evento:int,db:Session=Depends(get_db)):
+    try:
+        price = db.query(TipoEvento).filter_by(id_tipo_evento=id_tipo_evento).first().costo_programar
+
+        return { "price" : price}
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
