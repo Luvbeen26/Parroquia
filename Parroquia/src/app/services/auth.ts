@@ -135,6 +135,14 @@ export class Auth {
     return user ? user.es_admin :null;
   }
 
+  public get_UserName(): string | null{
+    if(!this.isBrowser)
+      return null
+
+    const user=this.getCurrentUser();
+    return user ? user.nombre :null;
+  }
+
   public logout(){
     if(this.isBrowser){
       this.cookies.delete('access_token');

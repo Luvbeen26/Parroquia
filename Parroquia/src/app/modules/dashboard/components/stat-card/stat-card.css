@@ -1,0 +1,105 @@
+/* stat-card.component.css */
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+  min-width: 180px;
+  max-width: 270px;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-title {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Colores automáticos según el ícono */
+.value-\$ {
+  color: #4A90E2;
+}
+
+.value-calendar {
+  color: #E74C3C;
+}
+
+.value-document {
+  color: #F39C12;
+}
+
+/* Íconos */
+.stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+
+.icon-\$ {
+  background-color: #4A90E2;
+}
+
+.icon-calendar {
+  background-color: #E74C3C;
+}
+
+.icon-document {
+  background-color: #F39C12;
+}
+
+.stat-icon svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+
+mat-icon,lucide-icon{
+  color: #FFF;
+}
+
+
+@media (max-width: 768px) {
+  .stat-card {
+    min-width: 90%;
+    padding: 20px;
+  }
+  
+  .stat-value {
+    font-size: 28px;
+  }
+  
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .stat-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+}

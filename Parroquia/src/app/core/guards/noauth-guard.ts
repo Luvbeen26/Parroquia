@@ -4,7 +4,7 @@ import { Auth } from '../../services/auth';
 
 
 export const noauthGuard: CanActivateFn = (route, state) => {
-const platformId=inject(PLATFORM_ID)
+  const platformId=inject(PLATFORM_ID)
 
   if(!platformId)
     return true
@@ -13,11 +13,16 @@ const platformId=inject(PLATFORM_ID)
   const router=inject(Router)
 
   const isAuth=authService.isAuthenticated();
+  const es_admin=authService.get_userRol();
 
   if(!isAuth){
     return true;
   }
   
+  if(es_admin){
+    router.navigate(["/admin"])
+    return false
+  }
 
   router.navigate(["/"])
   return false;

@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     SMTP_PASSWORD:str
     JWT_ACCESS_KEY:str
     JWT_REFRESH_KEY:str
+    GEMINI_KEY:str
+
 
     class Config:
         env_file=".env"

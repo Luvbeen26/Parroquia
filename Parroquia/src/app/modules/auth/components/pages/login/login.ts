@@ -37,9 +37,14 @@ export class Login {
       const {correo,contrasena} = this.login_form.value; //extrae los valores haciendo desestructuracion
       this.authservice.login(correo,contrasena).subscribe({ 
         next: (res) =>{
+
           this.toast.success("Inicio de Sesion Exitoso", "Bienvenido")
-          this.router.navigate(["/"]);
-          //this.router.navigate(["/"],{queryParams : {user_id:res.id}});
+          
+          if(!this.authservice.get_userRol())
+            this.router.navigate(["/"]);
+          else
+            this.router.navigate(["admin"])
+          
         },
         error: (err) =>{
           this.toast.error(err.error.detail,"Error")

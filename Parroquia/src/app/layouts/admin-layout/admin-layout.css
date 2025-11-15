@@ -1,0 +1,21 @@
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 250px; /* ✅ Mismo ancho que el sidebar */
+    padding: 20px;
+    background: var(--color-background);
+    transition: margin-left 0.3s ease;
+    overflow-x: hidden;
+}
+
+/* Responsive */
+@media (max-width: 1060px) {
+    .main-content {
+    margin-left: 0; /* ✅ En móvil no hay margin */
+    padding: 80px 15px 15px; /* Espacio para el botón hamburguesa */
+    }
+}

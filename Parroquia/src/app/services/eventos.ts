@@ -208,14 +208,6 @@ export class Eventos {
       "participantes" : participantes
     }
     return this.http.post<CreateEvent>(`${this.apiurl}/create/Event`,body,{headers}).pipe(
-      //switchMap
-      /*
-        tiposdocs como csv ya
-        id_evento
-        id_participante //FALTA HACER QUE DEVUELVA LOS ID DE PARTICIPANTES Y CELEBRADOS
-        id_celebrado 
-        arreglo de archivos ya
-      */ 
       switchMap((response: any) =>{
         const formdata=new FormData();
         

@@ -1,0 +1,63 @@
+<main>
+    <div class="dashboard-stats flex">
+        
+        <app-stat-card title="Ganancias del día" [value]="items?.Show_Earnings && items!.Show_Earnings > 0 
+        ? '$' + items?.Show_Earnings
+        : 'Sin ganancias'"    icon="$"></app-stat-card>
+        <app-stat-card title="Eventos de Hoy" [value]="items?.Show_Events ?? 'No hay eventos'" icon="calendar"> </app-stat-card>
+        <app-stat-card title="Documentos por Revisar" [value]="items?.Docs_pendients ?? 'Sin Pendientes'" icon="document"></app-stat-card>
+    </div>
+
+    <div class="btn-Section flex">
+        <button class="button flex" (click)="openResumeModal()">
+            <mat-icon>equalizer</mat-icon>
+            Ver Resumen con IA
+        </button>
+    </div>
+    
+
+ 
+    <div class="charts-section flex-column">
+        <div class="charts-bar">
+            <h3>Ingresos y Gastos (Últimos 6 meses)</h3>
+            @if (dataChart$ | async; as chartData) {
+                <canvas 
+                    baseChart
+                    [data]="chartData"
+                    [options]="chartOptions"
+                    [type]="'bar'">
+                </canvas>
+            }
+        </div>
+        <div class="charts-pie">
+            <h3>Proporción de Ingresos/Egresos</h3>
+            @if (pieChart$ | async; as pieData) {
+                <canvas 
+                    baseChart
+                    [data]="pieData"
+                    [type]="'pie'">
+                </canvas>
+            }
+        </div>
+    </div>
+
+    <app-modalcomponent
+        [isOpen]="isModalOpen"
+        [title]="'Resumen Generado por IA'"
+        [showFooter]="true"
+        [showConfirmButton]="false"
+        (onClose)="closeResumeModal()">
+        
+        <div class="resume-content">
+            @if (resume$ | async; as r) {
+                <p class="resume-text">{{ r.resumen }}</p>
+            } @else {
+                <div class="loading">
+                    <span class="spinner"></span>
+                    <p>Cargando resumen...</p>
+                </div>
+            }
+        </div>
+    </app-modalcomponent>
+
+</main>

@@ -1,0 +1,25 @@
+<!-- stat-card.component.html -->
+<div class="stat-card">
+    <div class="stat-content">
+        <h3 class="stat-title">{{ title }}</h3>
+        <p class="stat-value" [class]="'value-' + icon">{{ value }}</p>
+    </div>
+    
+    <div class="stat-icon" [class]="'icon-' + icon">
+        @switch (icon) {
+        @case ('$') {
+            <mat-icon>
+                attach_money    
+            </mat-icon>
+        }
+        @case ('calendar') {
+            <mat-icon>
+                calendar_today
+            </mat-icon>
+        }
+        @case ('document') {
+            <lucide-icon [img]="FileText" [size]="24"></lucide-icon>
+        }
+        }
+    </div>
+</div>

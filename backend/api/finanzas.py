@@ -30,61 +30,9 @@ router=APIRouter(prefix="/finanzas", tags=["finanzas"])
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
-@router.get("/show/lastest_months")
-def show_lastesmonths(db:Session = Depends(get_db)):
-    try:
-        hoy = datetime.datetime.now(MAZATLAN_TZ).date()
-        meses = []
-        for i in range(6, 0, -1):
-            mes_fecha = hoy - relativedelta(months=i)
-            meses.append({"anio": mes_fecha.year, "mes": mes_fecha.month})
-        sixmonths=hoy-relativedelta(months=6)
-
-        res_ingresos=db.query(
-            #estructura de tabla y de donde saca los valores
-            extract('year',Pagos.fecha_hora).label('anio'),
-            extract('month', Pagos.fecha_hora).label('mes'),
-            func.sum(Pagos.monto).label('total_ingresos')
-        ).filter(Pagos.fecha_hora >= sixmonths).group_by(
-            'anio','mes'
-        ).all()
-
-        res_gastos = db.query(
-            # estructura de tabla y de donde saca los valores
-            extract('year', Gastos.fecha_hora).label('anio'),
-            extract('month', Gastos.fecha_hora).label('mes'),
-            func.sum(Gastos.monto).label('total_egresos')
-        ).filter(Gastos.fecha_hora >= sixmonths).group_by(
-            'anio', 'mes'
-        ).all()
-
-        ingresos = {(int(i.anio), int(i.mes)): float(i.total_ingresos) for i in res_ingresos}
-        egresos = {(int(g.anio), int(g.mes)): float(g.total_egresos) for g in res_gastos}
-
-        data=[]
-        for m in meses:
-            key = (m["anio"], m["mes"])
-            data.append({
-                "anio": m["anio"],
-                "mes": m["mes"],
-                "ingresos": ingresos.get(key, 0),
-                "egresos":  egresos.get(key, 0),
-            })
-
-        return data
-    except Exception as error:
-        print(error)
 
 
-@router.post("/show/earnings")
-def ver_ganancias(db:Session = Depends(get_db)):
-    try:
-        hoy = datetime.datetime.now(MAZATLAN_TZ).date()
-        total_monto=db.query(func.sum(Pagos.monto)).filter(cast(Pagos.fecha_hora, Date) == hoy).scalar()
-        total_monto=total_monto or 0
-        return total_monto
-    except Exception as error:
-        print(error)
+
 
 @router.post("/register/pago")
 def crear_pago(datos_pago:finanzas.Pago,db: Session = Depends(get_db),admin_data:dict=Depends(admin_required)):

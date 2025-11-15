@@ -4,7 +4,7 @@ import { Form, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@
 
 import { Router } from '@angular/router';
 
-import { Toast } from '../../../../../shared/toast/toast';
+
 import { Auth } from '../../../../../services/auth';
 import { ToastrService } from 'ngx-toastr';
 

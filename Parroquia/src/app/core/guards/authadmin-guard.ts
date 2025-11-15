@@ -2,8 +2,7 @@ import { inject, PLATFORM_ID } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { Auth } from '../../services/auth';
 
-
-export const authclientGuard: CanActivateFn = (route, state) => {
+export const authadminGuard: CanActivateFn = (route, state) => {
   const platformId=inject(PLATFORM_ID)
 
   if(!platformId)
@@ -14,13 +13,10 @@ export const authclientGuard: CanActivateFn = (route, state) => {
 
   const isAuth=authService.isAuthenticated();
   const es_admin=authService.get_userRol();
-  if(es_admin){
-    router.navigate(["/admin"])
-    return false
-  }
+  
 
   //es_admin false cliente
-  if(!isAuth){
+  if(!isAuth || !es_admin){
     router.navigate(["/"])
     return false;
   }

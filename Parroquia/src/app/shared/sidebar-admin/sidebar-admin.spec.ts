@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Toast } from './toast';
+import { SidebarAdmin } from './sidebar-admin';
 
-describe('Toast', () => {
-  let component: Toast;
-  let fixture: ComponentFixture<Toast>;
+describe('SidebarAdmin', () => {
+  let component: SidebarAdmin;
+  let fixture: ComponentFixture<SidebarAdmin>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Toast]
+      imports: [SidebarAdmin]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Toast);
+    fixture = TestBed.createComponent(SidebarAdmin);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

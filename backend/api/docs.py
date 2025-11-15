@@ -28,7 +28,7 @@ def show_rejectdocs(id:int,db:Session = Depends(get_db),user_data:dict=Depends(c
         result=[]
         for i in rejectFiles:
             if i.evento_documento.id_usuario != user_data["id_usuario"]:
-                raise HTTPException(status_code=401, detail="Usuario no coincide")
+                raise HTTPException(status_code=404, detail="Usuario no coincide")
 
 
 
@@ -41,17 +41,6 @@ def show_rejectdocs(id:int,db:Session = Depends(get_db),user_data:dict=Depends(c
         return result
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
-
-@router.get("/show/pendient")
-def show_pendientdocs(db:Session = Depends(get_db)):
-    try:
-        cantidad=db.query(func.count(Documento.id_evento)).filter(Documento.status == "Pendiente").scalar()
-        cantidad=cantidad or 0
-        return cantidad
-    except Exception as error:
-        print(error)
-
-
 
 
 @router.post("/upload_file")

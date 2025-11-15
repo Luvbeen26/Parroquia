@@ -293,15 +293,7 @@ def update_parroquial(id_evento:int,parroquial:schema_event.ParroquialEvent,db:S
 
 
 
-@router.get("/show/today_events")
-def show_manyevents(db:Session = Depends(get_db)):
-    try:
-        hoy = datetime.datetime.now(MAZATLAN_TZ).date()
-        cantidad=db.query(func.count(Evento.id_evento)).filter(cast(Evento.fecha_hora_inicio, Date) == hoy).scalar()
-        cantidad=cantidad or 0
-        return cantidad
-    except Exception as error:
-        print(error)
+
 
 @router.get("/show/user/eventos")
 def show_userevents(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):

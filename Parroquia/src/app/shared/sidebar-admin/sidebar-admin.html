@@ -1,0 +1,64 @@
+<div class="sidebar-container">
+    <button class="hamburger" (click)="toggleMenu()" [class.active]="isMenuOpen">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="overlay" [class.active]="isMenuOpen" (click)="closeMenu()"></div>
+
+    <aside class="sidebar" [class.open]="isMenuOpen">
+        <div class="sidebar-header">
+            <div class="logo">
+                <img class="img_logo" src="img/logo.png" alt="">
+            </div>
+        </div>
+
+        <div class="user-info">
+            <p class="user-label">Usuario:</p>
+            <p class="user-name">{{ userName }}</p>
+        </div>
+
+        <nav class="sidebar-nav">
+        @for (item of menuItems; track item.route; let i = $index) {
+            <a 
+            [routerLink]="item.route" 
+            class="nav-item" 
+            [class.active]="item.active"
+            (click)="setActive(i); closeMenu()">
+            
+            <div class="nav-icon">
+                @switch (item.icon) {
+                    @case ('dashboard') {
+                        <mat-icon>
+                            dashboard
+                        </mat-icon>
+                    }
+                    @case ('publication') {
+                        <lucide-icon [img]="Newspaper" [size]="24"></lucide-icon>
+                    }
+                    @case ('event') {
+                        <mat-icon>calendar_today</mat-icon>
+                    }
+                    @case ('document') {
+                        <lucide-icon [img]="FileText" [size]="24"></lucide-icon>
+                    }
+                    @case ('finanzas'){
+                        <mat-icon> attach_money</mat-icon>
+                    }
+                }
+            </div>
+            
+            <span class="nav-label">{{ item.label }}</span>
+            </a>
+        }
+        </nav>
+
+        <button class="logout-btn" (click)="logout()">
+            <div class="nav-icon">
+                <lucide-icon [img]="LogOut" [size]="24"></lucide-icon>
+            </div>
+            <span class="nav-label">Cerrar Sesión</span>
+        </button>
+    </aside>
+</div>
