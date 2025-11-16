@@ -133,3 +133,31 @@ h2 {
   scrollbar-width: none; 
   padding-right: 5px;
 }
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.upload-description {
+  color: #374151;
+  font-size: 14px;
+  margin: 0;
+}
+
+.filebutton {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 10px;
+}
+
+.two-button {
+  width: fit-content;
+}
+
+.filename {
+  font-size: 14px;
+  color: var(--color-principal-button);
+}

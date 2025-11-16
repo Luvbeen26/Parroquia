@@ -124,7 +124,7 @@ input:disabled{
 .button:disabled{
     background-color: var(--color-button-disabled);
     border:none;
-    cursor:default;
+    cursor:not-allowed;
 }
 
 .two-button{

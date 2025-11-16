@@ -14,24 +14,45 @@
   </div>
 
   <div class="card-actions">
-    <button class="action-btn accept-btn" matTooltip="Marcar Asistencia">
-        <mat-icon>check</mat-icon>
-    </button>
-    <button class="action-btn reject-btn" matTooltip="Marcar No Asistencia">
-        <mat-icon>close</mat-icon>
-    </button>
-    @if (eventObj.evidencia != null) {
-        <button class="action-btn view-btn" matTooltip="Ver evidencia">
+    
+    @if (eventObj.tipo != "Parroquial") {
+        <button class="action-btn accept-btn" matTooltip="Marcar Asistencia" (click)="AbrirModal('check')">
+            <mat-icon>check</mat-icon>
+        </button>
+        <button class="action-btn reject-btn" matTooltip="Marcar No Asistencia" (click)="AbrirModal('noasist')">
+            <mat-icon>close</mat-icon>
+        </button>
+    }
+    @if (eventObj.evidencia != null && eventObj.tipo != "Parroquial") {
+        <button class="action-btn view-btn" matTooltip="Ver evidencia" (click)="AbrirModal('ver_evidencia')">
             <mat-icon>visibility</mat-icon>
         </button>
     }
 
-    @if(eventObj.status != "A" && eventObj.status != "N"){
-        <button class="action-btn reschedule-btn" matTooltip="Pedir Reagendación">
+    @if(eventObj.status == "P" && eventObj.tipo!="Parroquial"){
+        <button class="action-btn reschedule-btn" matTooltip="Pedir Reagendación" >
+            <mat-icon>event_repeat</mat-icon>
+        </button>
+    }
+    @if(eventObj.tipo =="Parroquial"){
+        <button class="action-btn reschedule-btn" matTooltip="Marcar como realizado" >
             <mat-icon>event_repeat</mat-icon>
         </button>
     }
     
+
+    @if(eventObj.tipo =="Parroquial"){
+        <button class="action-btn reschedule-btn" matTooltip="Editar" >
+            <mat-icon>event_repeat</mat-icon>
+        </button>
+    }
+    
+    @if(eventObj.tipo =="Parroquial"){
+        <button class="action-btn reschedule-btn" matTooltip="Eliminar" >
+            <mat-icon>event_repeat</mat-icon>
+        </button>
+    }
+
     
   </div>
 </div>

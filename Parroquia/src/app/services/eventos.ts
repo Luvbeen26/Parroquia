@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
-import { Celebrate, CreateEvent, DateTime, GetMonthEvents, Parents} from '../models/event';
+import { Celebrate, CreateEvent, DateTime, GetMonthEvents, MarkNorealized, MarkRealized, Parents} from '../models/event';
 import { Observable, switchMap, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { document, infoDoc, UploadDoc } from '../models/document';
@@ -245,5 +245,28 @@ export class Eventos {
     return this.http.get<GetMonthEvents[]>(`${this.apiurl}/show/month_events`,{params:{year,month}})
   }
 
+  MarkasRealized(id:number,evidence:File): Observable<MarkRealized>{
+    const formdata=new FormData();
+    formdata.append("id_evento",id.toString());
+    formdata.append("image",evidence);
+    const token=this.cookies.get('access_token')
+    const headers=new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    
+    return this.http.put<MarkRealized>(`${this.apiurl}/update/mark_realized_evento`,formdata,{headers})
+  }
 
+  MarkNoRealized(id:number): Observable<MarkNorealized>{
+    const body={
+      id_evento : id,
+      image: null,
+      status : "N"
+    }
+    const token=this.cookies.get('access_token')
+    const headers=new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.http.put<MarkNorealized>(`${this.apiurl}/update/mark_notorpendient_event`,body,{headers})
+  }
 }

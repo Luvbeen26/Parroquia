@@ -83,3 +83,14 @@ export interface CardsDayEvents{
     status:string,
     evidencia:string | null
 }
+
+export interface MarkRealized{
+    id:number,
+    evidence:File
+}
+
+
+export interface MarkNorealized{
+    id:number,
+    status:string
+}

@@ -10,12 +10,14 @@ import { CardAdminevents } from '../../components/card-adminevents/card-admineve
 import { Eventos } from '../../../../../services/eventos';
 import { CardsDayEvents, GetMonthEvents } from '../../../../../models/event';
 import { BehaviorSubject } from 'rxjs';
-
+import { Modalcomponent } from '../../../../../shared/modalcomponent/modalcomponent';
+import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-eventosadmin',
   imports: [CommonModule,CalendarMonthViewComponent,CalendarPreviousViewDirective,CalendarNextViewDirective,
-    CalendarTodayDirective,MatIconModule,CardAdminevents
+    CalendarTodayDirective,MatIconModule,CardAdminevents,Modalcomponent
   ],
   providers: [{provide: DateAdapter, useFactory:adapterFactory},CalendarUtils,CalendarA11y,CalendarDateFormatter,
     CalendarEventTitleFormatter],
@@ -23,12 +25,21 @@ import { BehaviorSubject } from 'rxjs';
   styleUrl: './eventosadmin.css'
 })
 export class Eventosadmin {
+  router=inject(Router)
   eventService=inject(Eventos);
+  toast=inject(ToastrService)
   viewDate:Date=new Date();
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
+  titleModal="ASD"
   searchText=""
-  
+
+  isModalOpen=signal(false);
+  operation=signal<string>("")
+  archivoSeleccionado: File | null = null;
+  filename: string | null = null;
+  id_eventSelected:number | null = null
+  currentSelectedDate: Date | null = null;
 
   private eventsSubject = new BehaviorSubject<CalendarEvent[]>([]);
   events$ = this.eventsSubject.asObservable();
@@ -61,6 +72,7 @@ export class Eventosadmin {
         title: `${e.tipo} - ${e.descripcion ?? e.nombre_c}`,
         color: this.eventColors[e.tipo] ?? { primary: '#000', secondary: '#ccc' },
         meta:{
+          descripcion:e.descripcion,
           name:e.nombre_c,
           id:e.id_evento,
           status:e.status,
@@ -86,17 +98,84 @@ export class Eventosadmin {
   }
 
   dayClicked({date,events}: {date:Date,events:CalendarEvent[]}):void{
-
     const eventos=events.map(e =>({
       id_evento:e.meta.id,
-      nombre_c:e.meta.name,
+      nombre_c: e.meta.name ?? e.meta.descripcion,
       fecha_inicio:`${e.start.getHours().toString().padStart(2, '0')}:${e.start.getMinutes().toString().padStart(2, '0')}`,
       tipo:e.meta.tipo,
       status:e.meta.status,
       evidencia:e.meta.evidencia
     }))
-
+    
+    console.log(events)
     this.dayeventsSubject.next(eventos);
     console.log(this.dayeventsSubject)
+  }
+
+  closeModal() {
+    this.isModalOpen.set(false)
+    this.operation.set('');
+    this.filename = null;
+    this.archivoSeleccionado = null;
+    this.id_eventSelected=null;
+  }
+
+  openModal(data: {operation: string, id: number}) {
+    this.operation.set(data.operation);
+    this.id_eventSelected=data.id
+    this.isModalOpen.set(true);
+    
+    if(this.operation() == "check")
+      this.titleModal="Marcar Asistencia de Evento"
+    if(this.operation() == "noasist")
+      this.titleModal="Marcar Falta del Evento"
+  }
+  
+  onArchivoSelect(event: Event) {
+    const inputfile = event.target as HTMLInputElement;
+
+    if (inputfile.files) {
+      this.filename = inputfile.files[0].name;
+      this.archivoSeleccionado = inputfile.files[0];
+    } else {
+      this.filename = null;
+      this.archivoSeleccionado = null;
+    }
+  }
+
+  AccionModal(){
+    if(this.operation() == "check")
+      this.UploadEvidence
+    else if(this.operation() == "noasist")
+      this.Marknoasist()
+
+  }
+
+  Marknoasist(){
+    this.eventService.MarkNoRealized(this.id_eventSelected!).subscribe({
+      next: res=> {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
+        this.toast.success("Evento marcado como no asistido")
+      },
+      error: err=> this.toast.error("Error al cambiar estado")
+    })
+  }
+
+  UploadEvidence() {
+    this.eventService.MarkasRealized(this.id_eventSelected!,this.archivoSeleccionado!).subscribe({
+      next: res=> {
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
+        this.toast.success("Evento marcado como asistido")
+      },
+      error: err=> this.toast.error("Error al cambiar estado")
+    });
+    
+    this.closeModal();
   }
 }

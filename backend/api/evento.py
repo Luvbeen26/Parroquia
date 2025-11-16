@@ -240,13 +240,13 @@ async def mark_realized(id_evento:int = Form(...),image:UploadFile=File(...),db:
     try:
         os.makedirs(f"Images/realized/{id_evento}", exist_ok=True)
 
-        # 🔹 Obtener extensión del tipo MIME
-        mime_type = image.content_type  # ejemplo: "image/png"
-        extension = mime_type.split("/")[-1]  # -> "png"
+
+        mime_type = image.content_type
+        extension = mime_type.split("/")[-1]
 
         new_filename = f"evidence_{id_evento}.{extension}"
 
-        file_path=os.path.join("Images","realized",str(id_evento),new_filename) #combina rutas
+        file_path=os.path.join("Images","realized",str(id_evento),new_filename)
         with open(file_path,"wb") as f: #crea un archivo nuevo
             shutil.copyfileobj(image.file, f) #copia el contenido del archivo original al nuevo
 
@@ -268,6 +268,7 @@ def mark_notorpendient(status:schema_event.StatusEvent,db:Session = Depends(get_
         raise HTTPException(status_code=404, detail=str(error))
 
 def change_status_event(status:schema_event.StatusEvent,db:Session):
+
     db.query(models_event.Evento).filter(models_event.Evento.id_evento == status.id_evento).update({"status": status.status,"evidencia":status.image})
     db.commit()
     return {"msg":True}
@@ -330,7 +331,7 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
             else:
                 descripcion = " ".join(nombres)
 
-            print(descripcion)
+
             result.append({
                 "id_evento": evento.id_evento,
                 "tipo" :f"{tipos[evento.id_tipo_evento-1]}",
@@ -485,7 +486,7 @@ def price(id_tipo_evento:int,db:Session=Depends(get_db)):
 @router.get("/show/month_events")
 def month_events(year:int,month:int,db:Session=Depends(get_db)):
     try:
-        print(1)
+
         tipos_evento = {1: "Bautizo",2: "Bautizo",3: "Primera Comunión",4: "Matrimonio",5: "XV Años",6:"Parroquial",7: "Confirmación"}
         eventos_month=(db.query(Evento).filter(extract('month', Evento.fecha_hora_inicio) == month)
         .filter(extract('year',Evento.fecha_hora_inicio) ==year).order_by(Evento.fecha_hora_inicio).all())
@@ -503,7 +504,7 @@ def month_events(year:int,month:int,db:Session=Depends(get_db)):
             fecha_f, hora_f = str(e.fecha_hora_fin).split(" ")
             result.append(
                 {
-                    "nombre_c":nombre_c,
+                    "nombre_c":nombre_c if nombre_c != "" else None,
                     "status": e.status,
                     "descripcion": e.descripcion,
                     "evidencia": e.evidencia,

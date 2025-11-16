@@ -13,7 +13,7 @@ export class Modalcomponent {
   @Input() showFooter: boolean = true;
   @Input() showConfirmButton: boolean = false;
   @Input() confirmText: string = 'Confirmar';
-  
+  @Input() disableConfirm: boolean = false;
   
   @Output() onClose = new EventEmitter<void>();
   @Output() onConfirmClick = new EventEmitter<void>();

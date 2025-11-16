@@ -38,13 +38,54 @@
 
     <div class="EventList flex-column">
       @let events = (dayevents$ | async);
+       
       @if (events && events.length > 0) {
         @for (e of events; track $index) {
-          <app-card-adminevents [eventObj]="e"></app-card-adminevents>
+       
+
+          <app-card-adminevents [eventObj]="e" (abrir)="openModal($event)">></app-card-adminevents>
         }
       } @else {
         <p>No hay eventos para mostrar</p>
       }
     </div>
   </div>
+
+  <app-modalcomponent
+      [isOpen]="isModalOpen()"
+      [title]="titleModal"
+      [showFooter]="true"
+      [showConfirmButton]="true"
+      [disableConfirm]="operation() === 'check' && !archivoSeleccionado"
+      (onClose)="closeModal()"
+      (onConfirmClick)="AccionModal()">
+
+      @if (operation() == 'check') {
+        <div class="upload-content">
+          <h3 class="upload-description">Selecciona una imagen de asistencia 
+            <br>Solo Formatos JPEG, JPG y PNG</h3>
+        
+          <div class="filebutton">
+            <label for="archivo-input" class="two-button flex">
+                <mat-icon>insert_drive_file</mat-icon>
+                Seleccionar Archivo
+              </label>
+              <input 
+                type="file" 
+                id="archivo-input" 
+                accept=".jpg, .jpeg, .png"
+                (change)="onArchivoSelect($event)"
+                hidden>
+
+              @if (filename) {
+                <span class="filename">{{ filename }}</span>
+              }
+            </div>
+        </div>
+      } @else if (operation() === 'noasist') {
+        <p>Se marcará como que no se asistio al evento.Presione Confirmar para continuar.</p>
+      } @else if (operation() === 'reagendar') {
+        <p>Se solicitará reagendar el evento. Presiona Confirmar para continuar.</p>
+      }
+  </app-modalcomponent>
 </div>
