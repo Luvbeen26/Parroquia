@@ -32,7 +32,7 @@ export class Profile {
       Authorization: `Bearer ${token}`
     });
 
-    return this.http.get<ProxPastEventsClient>(`${this.apiurl}/event/show/user/pendientes&prox`,{ headers });
+    return this.http.get<ProxPastEventsClient>(`${this.apiurl}/event/show/user/past&prox`,{ headers });
   }
 
   GetRejectedDocs(id_evento:number): Observable<docs_event[]>{

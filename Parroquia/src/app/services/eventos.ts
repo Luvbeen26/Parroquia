@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
-import { Celebrate, CreateEvent, DateTime, Parents} from '../models/event';
+import { Celebrate, CreateEvent, DateTime, GetMonthEvents, Parents} from '../models/event';
 import { Observable, switchMap, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { document, infoDoc, UploadDoc } from '../models/document';
@@ -70,6 +70,15 @@ export class Eventos {
   
   constructor(private http: HttpClient,private cookies:CookieService){}
 
+  reset_data(){
+    this.id_tipo_evento=0;
+    this.fecha="";
+    this.hora="";
+    this.celebrado_form=[];
+    this.parents_form=[];
+    this.padrinos_form=[];
+    this.files_form=[];
+  }
 
   saveTipoEvento(id_tipo_evento: number) {
     this.id_tipo_evento = id_tipo_evento;
@@ -227,9 +236,14 @@ export class Eventos {
           }
         });
         
-        console.log(this.files_form)
-        console.log(response)
+
         return this.http.post(`${this.apiurldocs}/upload_file`,formdata,{headers});
       }));
   }
+
+  GetEventsMonth(year:number,month:number): Observable<GetMonthEvents[]>{
+    return this.http.get<GetMonthEvents[]>(`${this.apiurl}/show/month_events`,{params:{year,month}})
+  }
+
+
 }

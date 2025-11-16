@@ -1,0 +1,37 @@
+<div class="Contenedor-card">
+  <div class="card-header">
+    <div class="info-section flex-column">
+      <h3 class="celebrante-name">{{eventObj.nombre_c}}</h3>
+      <span class="tipo-badge" [ngClass]="'badge-' + eventObj.tipo.toLowerCase().replaceAll(' ', '-')">
+        {{eventObj.tipo}}
+      </span>
+    </div>
+    
+    <div class="time-info">
+      <mat-icon class="icon-time">schedule</mat-icon>
+      <span>{{eventObj.fecha_inicio}} Hrs </span>
+    </div>
+  </div>
+
+  <div class="card-actions">
+    <button class="action-btn accept-btn" matTooltip="Marcar Asistencia">
+        <mat-icon>check</mat-icon>
+    </button>
+    <button class="action-btn reject-btn" matTooltip="Marcar No Asistencia">
+        <mat-icon>close</mat-icon>
+    </button>
+    @if (eventObj.evidencia != null) {
+        <button class="action-btn view-btn" matTooltip="Ver evidencia">
+            <mat-icon>visibility</mat-icon>
+        </button>
+    }
+
+    @if(eventObj.status != "A" && eventObj.status != "N"){
+        <button class="action-btn reschedule-btn" matTooltip="Pedir Reagendación">
+            <mat-icon>event_repeat</mat-icon>
+        </button>
+    }
+    
+    
+  </div>
+</div>

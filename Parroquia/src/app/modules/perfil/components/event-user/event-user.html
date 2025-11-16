@@ -1,6 +1,9 @@
 <div class="contenedor carding flex-column">
-    <div class="Description">
+    <div class="Description flex-column">
         <h2>{{descripcion}}</h2>
+        <span class="tipo-badge" [ngClass]="'event-type-' + tipo.toLowerCase().replaceAll(' ', '-')">
+            {{tipo}}
+        </span>
     </div>
     
     <div class="ListDocs flex-column">

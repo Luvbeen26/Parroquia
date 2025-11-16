@@ -16,6 +16,7 @@ export class EventUser {
   @Input() id!:number;
   @Input() descripcion!:string;
   @Input() docs!:get_user_docs[];
+  @Input() tipo!:string;
   prof=inject(Profile)
   router=inject(Router)
 

@@ -1,13 +1,14 @@
 import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { StatCard } from '../../components/stat-card/stat-card';
-import { DashboardS } from '../../../../services/dashboardS';
-import { CardsInfo, PieEvents,ChartGetData, ChartGetDataPie, ResumeIA } from '../../../../models/dashboardModels';
 import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts'; 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
-import { Modalcomponent } from '../../../../shared/modalcomponent/modalcomponent';
+import { Modalcomponent } from '../../../../../shared/modalcomponent/modalcomponent';
+import { CardsInfo, PieEvents,ChartGetData, ChartGetDataPie, ResumeIA } from '../../../../../models/dashboardModels';
+import { DashboardS } from '../../../../../services/dashboardS';
+
 
 
 @Component({

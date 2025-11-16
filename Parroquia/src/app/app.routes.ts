@@ -1,10 +1,6 @@
 import { Routes } from '@angular/router';
-import { Home } from './modules/home/pages/home/home';
 import { authclientGuard } from './core/guards/authclient-guard';
 import { noauthGuard } from './core/guards/noauth-guard';
-import { PerfilContenedor } from './modules/perfil/pages/perfil-contenedor/perfil-contenedor';
-import { ReUploadDoc } from './modules/perfil/pages/re-upload-doc/re-upload-doc';
-import { Dashboard } from './modules/dashboard/pages/dashboard/dashboard';
 import { authadminGuard } from './core/guards/authadmin-guard';
 import { homeguardGuard } from './core/guards/homeguard-guard';
 
@@ -23,7 +19,7 @@ export const routes: Routes = [
     },
     {path:'admin',canActivate:[authadminGuard],canActivateChild:[authadminGuard],loadComponent: ()=> import('./layouts/admin-layout/admin-layout').then(m=>m.AdminLayout),
         children:[
-            {path:'',component:Dashboard}
+            {path:'',loadChildren:()=> import('./modules/admin/admin.route').then(m=>m.ADMIN_ROUTES)}
         ]
 
     },

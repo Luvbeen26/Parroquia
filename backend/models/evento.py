@@ -11,9 +11,10 @@ class Evento(Base):
     fecha_hora_inicio = Column(DATETIME, nullable=False)
     status=Column(String,nullable=False)
     id_tipo_evento=Column(Integer, ForeignKey("tipo_evento.id_tipo_evento"), nullable=False)
-    descripcion=Column(String,nullable=False)
+    descripcion=Column(String,nullable=True)
     fecha_hora_fin= Column(DATETIME, nullable=False)
     evidencia=Column(String, nullable=False)
+    reagendar=Column(Boolean,nullable=False)
     # FK DE LA TABLA
     usuario_evento=relationship("User",back_populates="evento")
     tipo_evento=relationship("TipoEvento",back_populates="evento")

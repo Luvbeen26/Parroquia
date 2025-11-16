@@ -54,3 +54,65 @@
     height: 16px;
     width: 16px;
 }
+
+.Description{
+    gap:10px;
+}
+
+
+.event-type-Bautizo { 
+    border-color: #6366f1;
+}
+
+.event-type-Confirmacion { 
+    border-color: #1F734F;
+}
+
+.event-type-Primera-Comunion { 
+    border-color: #742FD3;
+}
+
+.event-type-Matrimonio { 
+    border-color: #EF4444;
+}
+
+.event-type-XV-Años { 
+    border-color: #EC4899;
+}
+
+.tipo-badge {
+    padding: 6px 16px;
+    background: white;
+    border: 1.5px solid;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    max-width: fit-content;
+}
+
+/* Colores del badge según tipo */
+.tipo-badge.event-type-bautizo {
+    color: #6366f1;
+    border-color: #6366f1;
+}
+
+.tipo-badge.event-type-confirmacion {
+    color: #1F734F;
+    border-color: #1F734F;
+}
+
+.tipo-badge.event-type-primera-comunion {
+    color: #742FD3;
+    border-color: #742FD3;
+}
+
+.tipo-badge.event-type-matrimonio {
+    color: #EF4444;
+    border-color: #EF4444;
+}
+
+.tipo-badge.event-type-XV-Años {
+    color: #EC4899;
+    border-color: #EC4899;
+}

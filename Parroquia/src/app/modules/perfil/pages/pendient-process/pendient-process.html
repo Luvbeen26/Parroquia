@@ -2,13 +2,13 @@
     @if (Process$ | async; as Process) {
         @if (Process && Process.length > 0) {
             @for (p of Process; track $index) {
-                <app-event-user [id]="p.id_evento" [descripcion]="p.descripcion" [docs]="p.documentos" ></app-event-user>
+                <app-event-user [id]="p.id_evento" [descripcion]="p.descripcion" [tipo]="p.tipo" [docs]="p.documentos" ></app-event-user>
             }
         }@else {
             <div class="no-events">
                 <mat-icon>event_busy</mat-icon>
                 <h3>No hay eventos pendientes</h3>
-                <p>Cuando tengas nuevos procesos, aparecerán aquí.</p>
+                
             </div>
         }
     }

@@ -43,4 +43,8 @@ export class CreateEvent {
     this.step=(next==true) ? this.step+1 : this.step-1;
   }
  
+
+  ngOnDestroy(): void {
+    this.eventService.reset_data();
+  }
 }

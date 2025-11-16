@@ -2,7 +2,7 @@ import os
 import shutil
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import and_, func, cast, Date, or_
+from sqlalchemy import and_, func, cast, Date, or_, extract, desc
 from sqlalchemy.orm import Session, joinedload
 import datetime
 from utils.scheduler import scheduler
@@ -45,6 +45,7 @@ async def create_event(
             raise HTTPException(status_code=404, detail="Tipo de evento inexistente")
 
         #DESCRIPCION DE EVENTO
+
         if id_tipo_evento==1 or id_tipo_evento==2:
             descripcion="Bautizo - "
         elif id_tipo_evento==3:
@@ -67,7 +68,7 @@ async def create_event(
                 descripcion+=celebrado.nombres+' '+celebrado.apellido_pat+' '+celebrado.apellido_mat
 
         register = schema_event.RegisterModel(
-            descripcion=descripcion,
+            descripcion=None,
             fecha_inicio=evento.fecha_inicio,
             fecha_fin=evento.fecha_fin,
             id_tipo_evento=id_tipo_evento
@@ -249,7 +250,7 @@ async def mark_realized(id_evento:int = Form(...),image:UploadFile=File(...),db:
         with open(file_path,"wb") as f: #crea un archivo nuevo
             shutil.copyfileobj(image.file, f) #copia el contenido del archivo original al nuevo
 
-        status_schema=schema_event.StatusEvent(id_evento=id_evento,status="R",image=file_path)
+        status_schema=schema_event.StatusEvent(id_evento=id_evento,status="A",image=file_path)
         change_status_event(status_schema,db)
 
         return {"msg" : "Evento realizado con evidencia"}
@@ -314,15 +315,26 @@ def show_userevents(db:Session = Depends(get_db),user_data:dict=Depends(current_
 @router.get("/show/user/pendientes_eventos")
 def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     try:
-        eventos=db.query(Evento).options(joinedload(Evento.documentos)).filter(and_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P")).all()
+        eventos=(db.query(Evento).options(joinedload(Evento.documentos),joinedload(Evento.celebrados)).
+                 filter(and_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P",Evento.id_tipo_evento != 6))
+                 .order_by(desc(Evento.id_evento)).all())
 
         result = []
+        tipos=["Bautizo","Bautizo","Primera Comunion","Matrimonio","XV Años","Parroquial","Confirmacion"]
+        descripcion=""
         for evento in eventos:
+            nombres = [f"{c.nombres} {c.apellido_pat} {c.apellido_mat}" for c in evento.celebrados]
 
+            if evento.id_tipo_evento == 4:
+                descripcion = " & ".join(nombres)
+            else:
+                descripcion = " ".join(nombres)
+
+            print(descripcion)
             result.append({
                 "id_evento": evento.id_evento,
-                "id_tipo" :evento.id_tipo_evento,
-                "descripcion": evento.descripcion,
+                "tipo" :f"{tipos[evento.id_tipo_evento-1]}",
+                "descripcion": f"{descripcion}",
                 "documentos": [{"id_documento": doc.id_documento,"descripcion":f"{doc.tipo_documento.descripcion} {doc.participante.rol.descripcion if doc.participante else ''}" ,"id_tipo":doc.id_tipo_documento ,"ruta": doc.ruta,"motivo":doc.motivo_rechazo,"status":doc.status} for doc in evento.documentos]
             })
 
@@ -331,8 +343,9 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
 
-@router.get("/show/user/pendientes&prox")
-def show_pendients_and_prox(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
+
+@router.get("/show/user/past&prox")
+def show_past_and_prox(db: Session = Depends(get_db), user_data: dict = Depends(current_user)):
     try:
         tipos_evento = {
             1: "Bautizo",
@@ -343,44 +356,72 @@ def show_pendients_and_prox(db:Session = Depends(get_db),user_data:dict=Depends(
             7: "Confirmación",
         }
 
-        eventos_p=db.query(Evento).filter(and_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P",Evento.id_tipo_evento != 6)).all()
-        eventos_an = db.query(Evento).filter(Evento.id_usuario == user_data["id_usuario"], or_(Evento.status == "A", Evento.status == "N"), Evento.id_tipo_evento != 6)
+        # Agregar joinedload para traer los celebrados
+        eventos_p = (db.query(Evento)
+                     .options(joinedload(Evento.celebrados))
+                     .filter(and_(
+            Evento.id_usuario == user_data["id_usuario"],
+            Evento.status == "P",
+            Evento.id_tipo_evento != 6
+        )).order_by(desc(Evento.fecha_hora_inicio)).all())
 
+        eventos_an = (db.query(Evento)
+                      .options(joinedload(Evento.celebrados))
+                      .filter(
+            Evento.id_usuario == user_data["id_usuario"],
+            or_(Evento.status == "A", Evento.status == "N"),
+            Evento.id_tipo_evento != 6
+        ).order_by(desc(Evento.fecha_hora_inicio)).all())
 
-        pendients=[]
-        past=[]
+        pendients = []
+        past = []
+
+        # Función helper para generar descripción
+        def generar_descripcion(evento):
+            nombres = [f"{c.nombres} {c.apellido_pat} {c.apellido_mat}" for c in evento.celebrados]
+
+            if evento.id_tipo_evento == 4:  # Matrimonio
+                descripcion = " & ".join(nombres)
+            else:
+                descripcion = " ".join(nombres)
+
+            return descripcion
+
+        # Procesar eventos pendientes
         for evento in eventos_p:
-
-            fecha = evento.fecha_hora_inicio.date().isoformat()  # devuelve "2025-10-29"
+            fecha = evento.fecha_hora_inicio.date().isoformat()
             hora = evento.fecha_hora_inicio.time().strftime("%H:%M")
+
             pendients.append({
                 "id_evento": evento.id_evento,
-                "tipo" :tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
-                "descripcion": evento.descripcion.split(" - ")[1],
+                "tipo": tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
+                "descripcion": generar_descripcion(evento),  # ✅ Genera la descripción dinámicamente
                 "date": fecha,
                 "hour": hora,
-                "status" : "Pendiente"
+                "status": "Pendiente"
             })
 
+        # Procesar eventos pasados
         for evento in eventos_an:
-            fecha = evento.fecha_hora_inicio.date().isoformat()  # devuelve "2025-10-29"
+            fecha = evento.fecha_hora_inicio.date().isoformat()
             hora = evento.fecha_hora_inicio.time().strftime("%H:%M")
+
             past.append({
                 "id_evento": evento.id_evento,
                 "tipo": tipos_evento.get(evento.id_tipo_evento, "Desconocido"),
-                "descripcion": evento.descripcion.split(" - ")[1],
+                "descripcion": generar_descripcion(evento),  # ✅ Genera la descripción dinámicamente
                 "date": fecha,
                 "hour": hora,
-                "status" : "Asistido" if evento.status == "A" else "No Asistido",
+                "status": "Asistido" if evento.status == "A" else "No Asistido",
             })
+
         return {
             "prox": pendients,
-            "past":past
+            "past": past
         }
 
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
-
 
 @router.get("/parroquiales/ocupados")
 def eventos_ocupados(db: Session = Depends(get_db)):
@@ -437,5 +478,94 @@ def price(id_tipo_evento:int,db:Session=Depends(get_db)):
         price = db.query(TipoEvento).filter_by(id_tipo_evento=id_tipo_evento).first().costo_programar
 
         return { "price" : price}
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
+#POR MES
+@router.get("/show/month_events")
+def month_events(year:int,month:int,db:Session=Depends(get_db)):
+    try:
+        print(1)
+        tipos_evento = {1: "Bautizo",2: "Bautizo",3: "Primera Comunión",4: "Matrimonio",5: "XV Años",6:"Parroquial",7: "Confirmación"}
+        eventos_month=(db.query(Evento).filter(extract('month', Evento.fecha_hora_inicio) == month)
+        .filter(extract('year',Evento.fecha_hora_inicio) ==year).order_by(Evento.fecha_hora_inicio).all())
+        result=[]
+        nombre_c=""
+        for e in eventos_month:
+            nombres = [f"{c.nombres} {c.apellido_pat} {c.apellido_mat}" for c in e.celebrados]
+
+            if e.id_tipo_evento == 4:
+                nombre_c = " & ".join(nombres)
+            else:
+                nombre_c = " ".join(nombres)
+
+            fecha_i, hora_i = str(e.fecha_hora_inicio).split(" ")
+            fecha_f, hora_f = str(e.fecha_hora_fin).split(" ")
+            result.append(
+                {
+                    "nombre_c":nombre_c,
+                    "status": e.status,
+                    "descripcion": e.descripcion,
+                    "evidencia": e.evidencia,
+                    "id_evento": e.id_evento,
+                    "fecha_inicio": fecha_i,
+                    "hora_inicio": hora_i,
+                    "fecha_fin": fecha_f,
+                    "hora_fin": hora_f,
+                    "tipo": tipos_evento.get(e.id_tipo_evento,"Desconocido"),
+                    "fecha_hora_fin": e.fecha_hora_fin,
+
+                }
+            )
+
+
+        return result
+
+    except Exception as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
+
+#POR DIA
+
+@router.get("/show/day_events")
+def day_events(day:int,year:int,month:int,db:Session=Depends(get_db)):
+    try:
+
+        tipos_evento = {1: "Bautizo",2: "Bautizo",3: "Primera Comunión",4: "Matrimonio",5: "XV Años",6:"Parroquial",7: "Confirmación"}
+        eventos_month=(db.query(Evento).filter(extract('day',Evento.fecha_hora_inicio) == day)
+                                        .filter(extract('month', Evento.fecha_hora_inicio) == month)
+                                        .filter(extract('year',Evento.fecha_hora_inicio) ==year)
+                                        .order_by(Evento.fecha_hora_inicio).all())
+        result=[]
+        nombre_c=""
+        for e in eventos_month:
+            nombres = [f"{c.nombres} {c.apellido_pat} {c.apellido_mat}" for c in e.celebrados]
+
+            if e.id_tipo_evento == 4:
+                nombre_c = " & ".join(nombres)
+            else:
+                nombre_c = " ".join(nombres)
+            fecha_i, hora_i = e.fecha_hora_inicio.split("T")
+            fecha_f, hora_f = e.fecha_hora_fin.split("T")
+            result.append(
+                {
+                    "nombre_c":nombre_c,
+                    "status":e.status,
+                    "descripcion": e.descripcion,
+                    "evidencia": e.evidencia,
+                    "id_evento": e.id_evento,
+                    "fecha_inicio": fecha_i,
+                    "hora_inicio": hora_i,
+                    "fecha_fin": fecha_f,
+                    "hora_fin": hora_f,
+                    "tipo": tipos_evento.get(e.id_tipo_evento,"Desconocido"),
+                    "fecha_hora_fin": e.fecha_hora_fin,
+
+                }
+            )
+
+
+        return result
+
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))

@@ -23,7 +23,7 @@ class Pago(BaseModel):
     descripcion:str
 
 class RegisterModel(BaseModel):
-    descripcion:str
+    descripcion: Optional[str] = None
     fecha_inicio:str
     fecha_fin: str
     id_tipo_evento:int
@@ -57,3 +57,5 @@ class ChangeDate(BaseModel):
 class ResponseHrsDisponibles(BaseModel):
     fecha:str
     hrs_disponibles:List[str]
+
+

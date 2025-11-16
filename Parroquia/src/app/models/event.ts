@@ -27,6 +27,7 @@ export interface Celebrate{
 
 export interface PendientProcessClient{
     id_evento:number,
+    tipo:string,
     descripcion:string,
     documentos:get_user_docs[]
 }
@@ -60,3 +61,25 @@ export interface CreateEvent{
 }
 
 
+export interface GetMonthEvents{
+    nombre_c: string,
+    descripcion: string | null,
+    id_evento: number,
+    fecha_inicio: string,
+    hora_inicio: string,    
+    fecha_fin: string,    
+    hora_fin: string,      
+    tipo: string,       
+    status: string,
+    evidencia: string | null,
+}
+
+
+export interface CardsDayEvents{
+    id_evento:number;
+    nombre_c:string,
+    fecha_inicio:string,
+    tipo:string,
+    status:string,
+    evidencia:string | null
+}
