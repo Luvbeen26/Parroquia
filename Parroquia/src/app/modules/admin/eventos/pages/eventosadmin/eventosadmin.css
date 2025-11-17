@@ -1,4 +1,16 @@
-/* calendar.component.css */
+.Contenedor{
+  gap: 10px;
+  padding: 1rem;
+}
+
+.cont-btn{
+  justify-content: end;
+}
+
+.button{
+  max-width: fit-content;
+}
+
 .All-container{
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -18,6 +30,7 @@
   gap: 10px;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -43,16 +56,26 @@
   border: 2px solid #ddd;
   border-radius: 5px;
   max-height: 700px;
-  padding: 12px;
+  padding: 20px 12px;
   gap: 10px;
   background-color: #Ffff;
+}
+
+.RG{
+  gap: 2px;
+} 
+
+hr{
+  border: none;       
+  height: 2px;
+  background-color: var(--color-lines);
 }
 
 h2 {
   margin: 0;
   text-transform: capitalize;
+  font-size: 1.5rem;
 }
-
 
 .search {
   border: 2px solid var(--color-lines);
@@ -84,10 +107,9 @@ h2 {
   border-radius: 5px;
   background-color: var(--color-background-search);
   height: 2.5rem;
-  padding-left: 2.5rem; /* ← espacio para la lupa */
+  padding-left: 2.5rem;
   width: 100%;
 }
-
 
 .input-date {
   cursor: pointer;
@@ -124,14 +146,20 @@ h2 {
 }
 
 .EventList{
-  gap:15px;
+  gap: 15px;
   padding-top: 10px;
-  min-height: 500px;
-  max-height: 600px; 
+  min-height: 400px;
+  max-height: 500px; 
   overflow-y: auto;  
   overflow-x: hidden; 
   scrollbar-width: none; 
   padding-right: 5px;
+}
+
+.EventList.Reagendar{
+  min-height: 180px;
+  max-height: 200px; 
+  gap: 5px;
 }
 
 .upload-content {
@@ -160,4 +188,309 @@ h2 {
 .filename {
   font-size: 14px;
   color: var(--color-principal-button);
+  word-break: break-word;
+}
+
+.evidence-viewer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  min-height: 400px;
+}
+
+.evidence-image {
+  max-width: 100%;
+  max-height: 600px;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.no-evidence {
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+}
+
+/* ========================================
+   RESPONSIVE - TABLET (≤ 1024px)
+   ======================================== */
+@media (max-width: 1024px) {
+  .All-container {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-container {
+    padding: 15px;
+  }
+
+  .Events {
+    max-height: 500px;
+  }
+
+  .EventList {
+    max-height: 400px;
+    min-height: 300px;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .btn-group {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE (≤ 768px)
+   ======================================== */
+@media (max-width: 768px) {
+  .Contenedor {
+    padding: 0.5rem;
+    gap: 8px;
+  }
+
+  .cont-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .button {
+    width: 100%;
+    max-width: 100%;
+    padding: 12px 16px;
+  }
+
+  .All-container {
+    gap: 8px;
+  }
+
+  .calendar-container {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .btn-group {
+    gap: 5px;
+    padding: 5px 0;
+  }
+
+  .btn {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+
+  .btn mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  h2 {
+    font-size: 1rem;
+  }
+
+  .Events {
+    padding: 12px 8px;
+    max-height: 600px;
+  }
+
+  .EventList {
+    gap: 12px;
+    max-height: 450px;
+    min-height: 250px;
+  }
+
+  .EventList.Reagendar {
+    max-height: 180px;
+    min-height: 150px;
+  }
+
+  .upload-content {
+    gap: 12px;
+  }
+
+  .upload-description {
+    font-size: 13px;
+  }
+
+  .evidence-viewer {
+    padding: 15px;
+    min-height: 300px;
+  }
+
+  .evidence-image {
+    max-height: 400px;
+  }
+
+  /* Ajustar calendario en mobile */
+  ::ng-deep .cal-month-view {
+    font-size: 12px;
+  }
+
+  ::ng-deep .cal-day-cell {
+    min-height: 50px;
+  }
+
+  ::ng-deep .cal-header {
+    font-size: 13px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE - MOBILE SMALL (≤ 480px)
+   ======================================== */
+@media (max-width: 480px) {
+  .Contenedor {
+    padding: 0.25rem;
+  }
+
+  .calendar-container {
+    padding: 8px;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .btn-group > * {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    justify-content: center;
+  }
+
+  h2 {
+    font-size: 0.95rem;
+    padding: 8px 0;
+  }
+
+  .Events {
+    padding: 10px 6px;
+    max-height: 500px;
+  }
+
+  .EventList {
+    gap: 10px;
+    max-height: 400px;
+    min-height: 200px;
+    padding-top: 8px;
+  }
+
+  .EventList.Reagendar {
+    max-height: 160px;
+    min-height: 120px;
+  }
+
+  .upload-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .two-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filebutton {
+    width: 100%;
+  }
+
+  .filename {
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .evidence-viewer {
+    padding: 10px;
+    min-height: 250px;
+  }
+
+  .evidence-image {
+    max-height: 300px;
+  }
+
+  /* Ajustes adicionales del calendario */
+  ::ng-deep .cal-month-view {
+    font-size: 11px;
+  }
+
+  ::ng-deep .cal-day-cell {
+    min-height: 40px;
+    padding: 2px;
+  }
+
+  ::ng-deep .cal-header {
+    font-size: 12px;
+    padding: 4px;
+  }
+
+  ::ng-deep .cal-day-number {
+    font-size: 11px;
+  }
+}
+
+/* ========================================
+   LANDSCAPE MODE - Mobile
+   ======================================== */
+@media (max-width: 768px) and (orientation: landscape) {
+  .All-container {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .Events {
+    max-height: 400px;
+  }
+
+  .EventList {
+    max-height: 300px;
+  }
+
+  .calendar-container {
+    padding: 8px;
+  }
+
+  ::ng-deep .cal-day-cell {
+    min-height: 35px;
+  }
+}
+
+/* ========================================
+   SCROLLBAR PERSONALIZADO (Opcional)
+   ======================================== */
+.EventList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.EventList::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.EventList::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.EventList::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Para Firefox */
+.EventList {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }

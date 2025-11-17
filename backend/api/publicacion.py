@@ -19,7 +19,7 @@ router=APIRouter(prefix="/publication", tags=["publication"])
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
-link_api="http://localhost:8000/"
+#link_api="http://localhost:8000/"
 
 @router.post("/create/publication")
 def crear_publicacion(titulo:str,contenido:str,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):

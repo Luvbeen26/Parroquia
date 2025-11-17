@@ -161,6 +161,18 @@
   transform: scale(0.95);
 }
 
+.edit-btn {
+  background-color: #6a6a6a;
+
+}
+
+.edit-btn:hover {
+  background-color: #2e2e2e;
+}
+
+.edit-btn:active {
+  transform: scale(0.95);
+}
 
 .view-btn {
   background-color: #3b82f6;

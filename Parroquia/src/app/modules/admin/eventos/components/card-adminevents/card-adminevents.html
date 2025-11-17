@@ -7,52 +7,57 @@
       </span>
     </div>
     
-    <div class="time-info">
-      <mat-icon class="icon-time">schedule</mat-icon>
-      <span>{{eventObj.fecha_inicio}} Hrs </span>
-    </div>
-  </div>
-
-  <div class="card-actions">
+    @if (eventObj.status != "R") {
+        <div class="time-info">
+            <mat-icon class="icon-time">schedule</mat-icon>
+            <span>{{fechaDisplay}} - {{fechaFinDisplay}} Hrs</span>
+        </div>
+    }
     
-    @if (eventObj.tipo != "Parroquial") {
+  </div>
+  @if(eventObj.status != "R"){
+    <div class="card-actions">
+        
+        @if (eventObj.tipo != "Parroquial") {
         <button class="action-btn accept-btn" matTooltip="Marcar Asistencia" (click)="AbrirModal('check')">
             <mat-icon>check</mat-icon>
         </button>
-        <button class="action-btn reject-btn" matTooltip="Marcar No Asistencia" (click)="AbrirModal('noasist')">
+        
+        <button class="action-btn reject-btn" matTooltip="Marcar No Asistencia" (click)="ChangeStatusEvent('N')">
             <mat-icon>close</mat-icon>
         </button>
-    }
-    @if (eventObj.evidencia != null && eventObj.tipo != "Parroquial") {
-        <button class="action-btn view-btn" matTooltip="Ver evidencia" (click)="AbrirModal('ver_evidencia')">
+        
+        @if (tieneEvidencia) {
+            <button class="action-btn view-btn" 
+                    matTooltip="Ver evidencia" 
+                    (click)="AbrirModal('ver_evidencia')">
             <mat-icon>visibility</mat-icon>
-        </button>
-    }
+            </button>
+        }
+        
+        @if (eventObj.status == "P") {
+            <button class="action-btn reschedule-btn" 
+                    matTooltip="Pedir Reagendación" 
+                    (click)="ChangeStatusEvent('R')">
+            <mat-icon>event_repeat</mat-icon>
+            </button>
+        }
+        }
 
-    @if(eventObj.status == "P" && eventObj.tipo!="Parroquial"){
-        <button class="action-btn reschedule-btn" matTooltip="Pedir Reagendación" >
-            <mat-icon>event_repeat</mat-icon>
+        <!-- Acciones para eventos parroquiales -->
+        @if (eventObj.tipo == "Parroquial") {
+        <button class="action-btn accept-btn" matTooltip="Marcar como realizado" (click)="MarcarHecho()">
+            <mat-icon>check</mat-icon>
         </button>
-    }
-    @if(eventObj.tipo =="Parroquial"){
-        <button class="action-btn reschedule-btn" matTooltip="Marcar como realizado" >
-            <mat-icon>event_repeat</mat-icon>
+        
+        <button class="action-btn edit-btn" matTooltip="Editar" [routerLink]="['/admin/eventos/parroquial', eventObj.id_evento]">
+            <mat-icon>edit</mat-icon>
         </button>
-    }
-    
-
-    @if(eventObj.tipo =="Parroquial"){
-        <button class="action-btn reschedule-btn" matTooltip="Editar" >
-            <mat-icon>event_repeat</mat-icon>
+        
+        <button class="action-btn reject-btn" matTooltip="Eliminar" (click)="Delete()">
+            <mat-icon>delete</mat-icon>
         </button>
+        }
+    </div>
     }
-    
-    @if(eventObj.tipo =="Parroquial"){
-        <button class="action-btn reschedule-btn" matTooltip="Eliminar" >
-            <mat-icon>event_repeat</mat-icon>
-        </button>
-    }
-
-    
-  </div>
 </div>

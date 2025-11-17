@@ -1,91 +1,106 @@
-<div class="All-container">
-  <div class="calendar-container">
-    <div class="btn-group flex">
-      <button class="btn" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (click)="PrevNextMonth()">
-        <mat-icon>chevron_left</mat-icon>
-      </button>
-      <h2>{{ viewDate | date: 'MMMM yyyy' }}</h2>
-      <button class="btn" mwlCalendarToday [(viewDate)]="viewDate" (click)="PrevNextMonth()"> 
-        Hoy
-      </button>
-      <button class="btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (click)="PrevNextMonth()">
-        <mat-icon>chevron_right</mat-icon>
-      </button>
-    </div>
-    
-    <mwl-calendar-month-view [viewDate]="viewDate" [events]="(events$ | async) || []"  [locale]="'es'" 
-      (eventClicked)="handleEvent($event.event)" (dayClicked)="dayClicked($event.day)">
-    </mwl-calendar-month-view>
+<main class="Contenedor flex-column">
+  
+  <div class="cont-btn flex">
+    <button [routerLink]="['/admin/eventos/parroquial']" class="button">Crear Evento Parroquial</button>
   </div>
+  
+  
 
-  <div class="Events flex-column">
-    <div class="SearchFilters"> 
-        <div class="contenedor-search flex">
-          <mat-icon class="icon-search">search</mat-icon>
-          <input type="search" placeholder="Buscar..." class="input-search" />
-        </div>
+  <div class="All-container">
+    
+    <div class="calendar-container">
+      <div class="btn-group flex">
+        <button class="btn" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (click)="PrevNextMonth()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <h2>{{ viewDate | date: 'MMMM yyyy' }}</h2>
+        <button class="btn" mwlCalendarToday [(viewDate)]="viewDate" (click)="PrevNextMonth()"> 
+          Hoy
+        </button>
+        <button class="btn" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (click)="PrevNextMonth()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+      
+      <mwl-calendar-month-view [viewDate]="viewDate" [events]="(events$ | async) || []"  [locale]="'es'" 
+        (eventClicked)="handleEvent($event.event)" (dayClicked)="dayClicked($event.day)">
+      </mwl-calendar-month-view>
     </div>
 
-  <div class="contenedor-search flex">
-    <mat-icon class="icon-search">event</mat-icon>
-    <input type="date" placeholder="Filtrar por fecha..." class="input-search input-date" />
-    
-      <button class="clear-btn" >
-        <mat-icon>close</mat-icon>
-      </button>
-    
-  </div>
-
-    <div class="EventList flex-column">
-      @let events = (dayevents$ | async);
-       
-      @if (events && events.length > 0) {
-        @for (e of events; track $index) {
-       
-
-          <app-card-adminevents [eventObj]="e" (abrir)="openModal($event)">></app-card-adminevents>
-        }
-      } @else {
-        <p>No hay eventos para mostrar</p>
-      }
-    </div>
-  </div>
-
-  <app-modalcomponent
-      [isOpen]="isModalOpen()"
-      [title]="titleModal"
-      [showFooter]="true"
-      [showConfirmButton]="true"
-      [disableConfirm]="operation() === 'check' && !archivoSeleccionado"
-      (onClose)="closeModal()"
-      (onConfirmClick)="AccionModal()">
-
-      @if (operation() == 'check') {
-        <div class="upload-content">
-          <h3 class="upload-description">Selecciona una imagen de asistencia 
-            <br>Solo Formatos JPEG, JPG y PNG</h3>
-        
-          <div class="filebutton">
-            <label for="archivo-input" class="two-button flex">
-                <mat-icon>insert_drive_file</mat-icon>
-                Seleccionar Archivo
-              </label>
-              <input 
-                type="file" 
-                id="archivo-input" 
-                accept=".jpg, .jpeg, .png"
-                (change)="onArchivoSelect($event)"
-                hidden>
-
-              @if (filename) {
-                <span class="filename">{{ filename }}</span>
+    <div class="Events flex-column">
+      @let eventReag =(eventsReagend$ | async);
+      @if (eventReag && eventReag.length > 0) {
+        <div class="RG flex-column">
+          <h3>Eventos Por Reagendar</h3>
+          <div class="EventList Reagendar flex-column">
+              @for (e of eventReag; track $index) {
+                <app-card-adminevents [eventObj]="e" (abrir)="openModal($event)"></app-card-adminevents>
               }
-            </div>
+          
+          </div>
+          <hr>
         </div>
-      } @else if (operation() === 'noasist') {
-        <p>Se marcará como que no se asistio al evento.Presione Confirmar para continuar.</p>
-      } @else if (operation() === 'reagendar') {
-        <p>Se solicitará reagendar el evento. Presiona Confirmar para continuar.</p>
+          
       }
-  </app-modalcomponent>
-</div>
+
+      <div class="EventList flex-column">
+        @let events = (dayevents$ | async);
+        
+        @if (events && events.length > 0) {
+          @for (e of events; track $index) {
+        
+
+            <app-card-adminevents [eventObj]="e" (abrir)="openModal($event)">></app-card-adminevents>
+          }
+        } @else {
+          <p>No hay eventos para mostrar</p>
+        }
+      </div>
+    </div>
+
+    <app-modalcomponent
+        [isOpen]="isModalOpen()"
+        [title]="titleModal"
+        [showFooter]="true"
+        [showConfirmButton]="operation() === 'check' ? true : false"
+        [disableConfirm]="operation() === 'check' && !archivoSeleccionado"
+        (onClose)="closeModal()"
+        (onConfirmClick)="AccionModal()">
+
+        @if (operation() == 'check') {
+          <div class="upload-content">
+            <h3 class="upload-description">Selecciona una imagen de asistencia 
+              <br>Solo Formatos JPEG, JPG y PNG</h3>
+          
+            <div class="filebutton">
+              <label for="archivo-input" class="two-button flex">
+                  <mat-icon>insert_drive_file</mat-icon>
+                  Seleccionar Archivo
+                </label>
+                <input 
+                  type="file" 
+                  id="archivo-input" 
+                  accept=".jpg, .jpeg, .png"
+                  (change)="onArchivoSelect($event)"
+                  hidden>
+
+                @if (filename) {
+                  <span class="filename">{{ filename }}</span>
+                }
+              </div>
+          </div>
+        } 
+        @else if (operation() == 'ver_evidencia') {
+        <div class="evidence-viewer">
+          @if (evidenciaUrl) {
+            <img [src]="evidenciaUrl" 
+                alt="Evidencia de asistencia" 
+                class="evidence-image">
+          } @else {
+            <p class="no-evidence">No se pudo cargar la evidencia</p>
+          }
+        </div>
+      }
+    </app-modalcomponent>
+  </div>
+</main>

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
+import {Component,EventEmitter, inject, Input, Output } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

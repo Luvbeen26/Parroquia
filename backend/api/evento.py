@@ -18,9 +18,11 @@ from models import evento_participantes as event_part
 from api import finanzas
 from models.pagos import Pagos
 from utils.database import get_db
-from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form
+from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form,Request
 from utils.dependencies import current_user, admin_required
 from services import email
+
+#link_api="http://localhost:8000/"
 
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
@@ -193,7 +195,14 @@ def create_parroquial(parroquial: schema_event.ParroquialEvent,db:Session = Depe
 
     user_id=admin_data["id_usuario"]
     try:
-        id=create_event(parroquial.descripcion,parroquial.fecha_inicio,parroquial.fecha_fin,6,user_id,db)
+        register_data = schema_event.RegisterModel(
+            descripcion=parroquial.descripcion,
+            fecha_inicio=parroquial.fecha_inicio,
+            fecha_fin=parroquial.fecha_fin,
+            id_tipo_evento=6
+        )
+        id=register_event(register_data,user_id,db)
+
         return { "msg" : "Evento parroquial creado correctamente", "id_evento" : id }
     except Exception as error:
         raise HTTPException(status_code=444, detail=str(error))
@@ -229,7 +238,10 @@ def get_parroquial(id_evento:int,db:Session = Depends(get_db),admin_data:dict=De
         parroquial=db.query(models_event.Evento).filter(and_(models_event.Evento.id_evento == id_evento)).first()
 
 
-        return {"evento" : parroquial}
+        return {"descripcion" : parroquial.descripcion,
+                "fecha_inicio":parroquial.fecha_hora_inicio,
+                "fecha_fin":parroquial.fecha_hora_fin,
+                "id_evento":id_evento}
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
 
@@ -268,8 +280,11 @@ def mark_notorpendient(status:schema_event.StatusEvent,db:Session = Depends(get_
         raise HTTPException(status_code=404, detail=str(error))
 
 def change_status_event(status:schema_event.StatusEvent,db:Session):
-
-    db.query(models_event.Evento).filter(models_event.Evento.id_evento == status.id_evento).update({"status": status.status,"evidencia":status.image})
+    if status.status == "R":
+        db.query(models_event.Evento).filter(models_event.Evento.id_evento == status.id_evento).update(
+            {"status": status.status, "fecha_hora_fin": None,"fecha_hora_fin":None})
+    elif status.status in ["A","N","P"]:
+        db.query(models_event.Evento).filter(models_event.Evento.id_evento == status.id_evento).update({"status": status.status,"evidencia":status.image})
     db.commit()
     return {"msg":True}
 
@@ -291,6 +306,7 @@ def update_parroquial(id_evento:int,parroquial:schema_event.ParroquialEvent,db:S
         db.commit()
         return { "msg" : "Evento actualizado"}
     except Exception as error:
+        print(error)
         raise HTTPException(status_code=404, detail=str(error))
 
 
@@ -440,7 +456,7 @@ def eventos_ocupados(db: Session = Depends(get_db)):
     ]
 
 @router.patch("/update/reagendar")
-def reagendar(chng:schema_event.ChangeDate,db:Session=Depends(get_db)):
+def reagendar(chng:schema_event.ChangeDate,db:Session=Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
         db.query(Evento).filter(Evento.id_evento == chng.id_evento).update(
             {"fecha_hora_inicio": chng.fecha_inicio, "fecha_hora_fin": chng.fecha_fin})
@@ -484,14 +500,19 @@ def price(id_tipo_evento:int,db:Session=Depends(get_db)):
 
 #POR MES
 @router.get("/show/month_events")
-def month_events(year:int,month:int,db:Session=Depends(get_db)):
+def month_events(request: Request, year: int, month: int, db: Session = Depends(get_db)):
     try:
+        tipos_evento = {1: "Bautizo", 2: "Bautizo", 3: "Primera Comunión", 4: "Matrimonio", 5: "XV Años",
+                        6: "Parroquial", 7: "Confirmación"}
+        eventos_month = (db.query(Evento).filter(extract('month', Evento.fecha_hora_inicio) == month)
+                         .filter(extract('year', Evento.fecha_hora_inicio) == year).order_by(
+            Evento.fecha_hora_inicio).all())
 
-        tipos_evento = {1: "Bautizo",2: "Bautizo",3: "Primera Comunión",4: "Matrimonio",5: "XV Años",6:"Parroquial",7: "Confirmación"}
-        eventos_month=(db.query(Evento).filter(extract('month', Evento.fecha_hora_inicio) == month)
-        .filter(extract('year',Evento.fecha_hora_inicio) ==year).order_by(Evento.fecha_hora_inicio).all())
-        result=[]
-        nombre_c=""
+        # Obtener la URL base
+        base_url = str(request.base_url).rstrip("/")
+
+        result = []
+        nombre_c = ""
         for e in eventos_month:
             nombres = [f"{c.nombres} {c.apellido_pat} {c.apellido_mat}" for c in e.celebrados]
 
@@ -500,73 +521,70 @@ def month_events(year:int,month:int,db:Session=Depends(get_db)):
             else:
                 nombre_c = " ".join(nombres)
 
-            fecha_i, hora_i = str(e.fecha_hora_inicio).split(" ")
-            fecha_f, hora_f = str(e.fecha_hora_fin).split(" ")
+            if e.fecha_hora_inicio:
+                fecha_i, hora_i = (str(e.fecha_hora_inicio).split(" ") + [None])[:2]
+            else:
+                fecha_i, hora_i = None, None
+
+            if e.fecha_hora_fin:
+                fecha_f, hora_f = (str(e.fecha_hora_fin).split(" ") + [None])[:2]
+            else:
+                fecha_f, hora_f = None, None
+
+            # Construir URL completa para evidencia (igual que con publicaciones)
+            evidencia_url = None
+            if e.evidencia:
+                evidencia_url = f"{base_url}/{e.evidencia.replace(chr(92), '/')}"
+
             result.append(
                 {
-                    "nombre_c":nombre_c if nombre_c != "" else None,
+                    "nombre_c": nombre_c if nombre_c != "" else None,
                     "status": e.status,
                     "descripcion": e.descripcion,
-                    "evidencia": e.evidencia,
+                    "evidencia": evidencia_url,  # Ahora es URL completa
                     "id_evento": e.id_evento,
                     "fecha_inicio": fecha_i,
                     "hora_inicio": hora_i,
                     "fecha_fin": fecha_f,
                     "hora_fin": hora_f,
-                    "tipo": tipos_evento.get(e.id_tipo_evento,"Desconocido"),
+                    "tipo": tipos_evento.get(e.id_tipo_evento, "Desconocido"),
                     "fecha_hora_fin": e.fecha_hora_fin,
-
                 }
             )
-
 
         return result
 
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
 
-
 #POR DIA
-
-@router.get("/show/day_events")
-def day_events(day:int,year:int,month:int,db:Session=Depends(get_db)):
+@router.get("/without/Forreagendar")
+def forreagendar(db: Session = Depends(get_db)):
     try:
-
-        tipos_evento = {1: "Bautizo",2: "Bautizo",3: "Primera Comunión",4: "Matrimonio",5: "XV Años",6:"Parroquial",7: "Confirmación"}
-        eventos_month=(db.query(Evento).filter(extract('day',Evento.fecha_hora_inicio) == day)
-                                        .filter(extract('month', Evento.fecha_hora_inicio) == month)
-                                        .filter(extract('year',Evento.fecha_hora_inicio) ==year)
-                                        .order_by(Evento.fecha_hora_inicio).all())
-        result=[]
-        nombre_c=""
-        for e in eventos_month:
+        tipos_evento = {1: "Bautizo", 2: "Bautizo", 3: "Primera Comunión", 4: "Matrimonio", 5: "XV Años",
+                        6: "Parroquial", 7: "Confirmación"}
+        events=db.query(Evento).filter(Evento.status == "R").all()
+        result = []
+        
+        for e in events:
             nombres = [f"{c.nombres} {c.apellido_pat} {c.apellido_mat}" for c in e.celebrados]
 
             if e.id_tipo_evento == 4:
                 nombre_c = " & ".join(nombres)
             else:
                 nombre_c = " ".join(nombres)
-            fecha_i, hora_i = e.fecha_hora_inicio.split("T")
-            fecha_f, hora_f = e.fecha_hora_fin.split("T")
+
+            
+
             result.append(
                 {
-                    "nombre_c":nombre_c,
-                    "status":e.status,
+                    "nombre_c": nombre_c if nombre_c != "" else None,
+                    "status": e.status,
                     "descripcion": e.descripcion,
-                    "evidencia": e.evidencia,
                     "id_evento": e.id_evento,
-                    "fecha_inicio": fecha_i,
-                    "hora_inicio": hora_i,
-                    "fecha_fin": fecha_f,
-                    "hora_fin": hora_f,
-                    "tipo": tipos_evento.get(e.id_tipo_evento,"Desconocido"),
-                    "fecha_hora_fin": e.fecha_hora_fin,
-
+                    "tipo": tipos_evento.get(e.id_tipo_evento, "Desconocido"),
                 }
             )
-
-
         return result
-
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))

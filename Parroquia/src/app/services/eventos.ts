@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
-import { Celebrate, CreateEvent, DateTime, GetMonthEvents, MarkNorealized, MarkRealized, Parents} from '../models/event';
+import { Celebrate, CreateEvent, DateTime, GetAParroquialEvent, GetEventsReagendar, GetMonthEvents, MarkNorealized, MarkRealized, Parents, ParroquialEvent} from '../models/event';
 import { Observable, switchMap, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { document, infoDoc, UploadDoc } from '../models/document';
@@ -241,6 +241,10 @@ export class Eventos {
       }));
   }
 
+  GetEventsReagendar(): Observable<GetEventsReagendar[]>{
+    return this.http.get<GetEventsReagendar[]>(`${this.apiurl}/without/Forreagendar`)
+  }
+
   GetEventsMonth(year:number,month:number): Observable<GetMonthEvents[]>{
     return this.http.get<GetMonthEvents[]>(`${this.apiurl}/show/month_events`,{params:{year,month}})
   }
@@ -257,16 +261,44 @@ export class Eventos {
     return this.http.put<MarkRealized>(`${this.apiurl}/update/mark_realized_evento`,formdata,{headers})
   }
 
-  MarkNoRealized(id:number): Observable<MarkNorealized>{
+  MarkNoRealized(id:number,status:string): Observable<MarkNorealized>{
     const body={
       id_evento : id,
       image: null,
-      status : "N"
+      status : status
     }
     const token=this.cookies.get('access_token')
     const headers=new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
     return this.http.put<MarkNorealized>(`${this.apiurl}/update/mark_notorpendient_event`,body,{headers})
+  }
+
+
+  RegisterParroquial(desc:string,fecha_inicio:string,fecha_fin:string):Observable <ParroquialEvent>{
+    const body={
+      fecha_inicio:fecha_inicio,
+      fecha_fin: fecha_fin,
+      descripcion:desc
+    }
+    return this.http.post<ParroquialEvent>(`${this.apiurl}/create/Parroquial`,body)
+  }
+
+  GetParroquial(id_evento:number): Observable <GetAParroquialEvent>{
+    const params = new HttpParams().set('id_evento', id_evento.toString());
+    return this.http.get<GetAParroquialEvent>(`${this.apiurl}/get/parroquial`,{params})
+  }
+
+  EditParroquial(desc:string,fecha_inicio:string,fecha_fin:string,id_evento:number): Observable <ParroquialEvent>{
+    const body={
+      fecha_inicio:fecha_inicio,
+      fecha_fin: fecha_fin,
+      descripcion:desc
+    }
+    return this.http.put<ParroquialEvent>(`${this.apiurl}/update/parroquial?id_evento=${id_evento}`,body)
+  }
+
+  DeleteParroquial(id_evento:number): Observable<any>{
+    return this.http.delete<any>(`${this.apiurl}/delete/parroquial?id_evento=${id_evento}`)
   }
 }

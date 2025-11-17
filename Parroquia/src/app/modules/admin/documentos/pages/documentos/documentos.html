@@ -1,0 +1,90 @@
+<main class="Contenedor flex-column">
+  
+  <!-- Tabs de filtro -->
+  <div class="tabs-container">
+    <button class="tab-btn active">Pendientes</button>
+    <button class="tab-btn">Aceptados</button>
+    <button class="tab-btn">Rechazados</button>
+  </div>
+
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filters-row flex">
+    <div class="search-box flex">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input 
+        type="text" 
+        class="Input search-input" 
+        placeholder="Buscar por nombre"
+        >
+    </div>
+
+    <select class="Input filter-select">
+      <option value="">Tipo de Evento</option>
+      <option value="bautizo">Bautizo</option>
+      <option value="confirmacion">Confirmación</option>
+      <option value="comunion">Primera Comunión</option>
+      <option value="matrimonio">Matrimonio</option>
+      <option value="xv">XV Años</option>
+    </select>
+  </div>
+
+  <!-- Tabla de documentos -->
+  <div class="table-container">
+    <table class="documents-table">
+      <thead>
+        <tr>
+          <th>Celebrados/as</th>
+          <th>Evento</th>
+          <th>Folio</th>
+          <th>Documento</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (doc of documentos; track doc.id) {
+          <tr>
+            <td class="celebrante-cell">{{ doc.celebrante }}</td>
+            <td>{{ doc.evento }}</td>
+            <td class="folio-cell">{{ doc.folio }}</td>
+            <td>{{ doc.documento }}</td>
+            <td class="actions-cell">
+              <button class="action-btn revisar-btn" (click)="revisarDocumento(doc.id)">
+                <mat-icon>visibility</mat-icon>
+                Revisar
+              </button>
+              <button class="action-btn aceptar-btn" (click)="aceptarDocumento(doc.id)">
+                <mat-icon>check</mat-icon>
+                Aceptar
+              </button>
+              <button class="action-btn rechazar-btn" (click)="rechazarDocumento(doc.id)">
+                <mat-icon>close</mat-icon>
+                Rechazar
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="pagination flex">
+    <button class="page-btn" [disabled]="currentPage === 1">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    
+    @for (page of pages; track page) {
+      <button 
+        class="page-btn" 
+        [class.active]="currentPage === page"
+        (click)="goToPage(page)">
+        {{ page }}
+      </button>
+    }
+    
+    <button class="page-btn" [disabled]="currentPage === totalPages">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+</main>

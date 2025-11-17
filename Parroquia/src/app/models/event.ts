@@ -60,25 +60,29 @@ export interface CreateEvent{
     participantes:Parents[]
 }
 
-
-export interface GetMonthEvents{
+export interface GetEventsReagendar{
     nombre_c: string,
     descripcion: string | null,
     id_evento: number,
+    tipo: string,       
+    status: string,
+}
+
+export interface GetMonthEvents extends GetEventsReagendar{
     fecha_inicio: string,
     hora_inicio: string,    
     fecha_fin: string,    
     hora_fin: string,      
-    tipo: string,       
-    status: string,
     evidencia: string | null,
 }
+
 
 
 export interface CardsDayEvents{
     id_evento:number;
     nombre_c:string,
     fecha_inicio:string,
+    fecha_fin:string,
     tipo:string,
     status:string,
     evidencia:string | null
@@ -93,4 +97,14 @@ export interface MarkRealized{
 export interface MarkNorealized{
     id:number,
     status:string
+}
+
+export interface ParroquialEvent{
+    descripcion:string,
+    fecha_inicio:string,
+    fecha_fin:string
+}
+
+export interface GetAParroquialEvent extends ParroquialEvent{
+    id_evento:number
 }

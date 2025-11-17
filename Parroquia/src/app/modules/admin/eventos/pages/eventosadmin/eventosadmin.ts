@@ -8,16 +8,16 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { MatIconModule } from '@angular/material/icon';
 import { CardAdminevents } from '../../components/card-adminevents/card-adminevents';
 import { Eventos } from '../../../../../services/eventos';
-import { CardsDayEvents, GetMonthEvents } from '../../../../../models/event';
+import { CardsDayEvents, GetEventsReagendar, GetMonthEvents } from '../../../../../models/event';
 import { BehaviorSubject } from 'rxjs';
 import { Modalcomponent } from '../../../../../shared/modalcomponent/modalcomponent';
 import { ToastrService } from 'ngx-toastr';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-eventosadmin',
   imports: [CommonModule,CalendarMonthViewComponent,CalendarPreviousViewDirective,CalendarNextViewDirective,
-    CalendarTodayDirective,MatIconModule,CardAdminevents,Modalcomponent
+    CalendarTodayDirective,MatIconModule,CardAdminevents,Modalcomponent,RouterLink
   ],
   providers: [{provide: DateAdapter, useFactory:adapterFactory},CalendarUtils,CalendarA11y,CalendarDateFormatter,
     CalendarEventTitleFormatter],
@@ -31,7 +31,7 @@ export class Eventosadmin {
   viewDate:Date=new Date();
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
-  titleModal="ASD"
+  titleModal=""
   searchText=""
 
   isModalOpen=signal(false);
@@ -40,10 +40,15 @@ export class Eventosadmin {
   filename: string | null = null;
   id_eventSelected:number | null = null
   currentSelectedDate: Date | null = null;
+  evidenciaUrl: string | null = null;
 
   private eventsSubject = new BehaviorSubject<CalendarEvent[]>([]);
   events$ = this.eventsSubject.asObservable();
 
+  private eventsReagendSubject = new BehaviorSubject<GetEventsReagendar[]>([]);
+  eventsReagend$ = this.eventsReagendSubject.asObservable();
+
+  
   private dayeventsSubject = new BehaviorSubject<CardsDayEvents[]>([]);
   dayevents$=this.dayeventsSubject.asObservable();
 
@@ -59,8 +64,19 @@ export class Eventosadmin {
   
 
   ngOnInit(){
-    
     this.CargarEventosCalendar(this.viewDate.getFullYear(),this.viewDate.getMonth()+1)
+
+    this.eventService.GetEventsReagendar().subscribe(res=>{
+      const evento=res.map(e =>({
+        nombre_c: e.nombre_c,
+        descripcion: e.descripcion,
+        id_evento: e.id_evento,
+        tipo: e.tipo,       
+        status: e.status,
+      }));
+      this.eventsReagendSubject.next(evento);
+      console.log(this.eventsReagendSubject)
+    })
   }
 
 
@@ -102,6 +118,7 @@ export class Eventosadmin {
       id_evento:e.meta.id,
       nombre_c: e.meta.name ?? e.meta.descripcion,
       fecha_inicio:`${e.start.getHours().toString().padStart(2, '0')}:${e.start.getMinutes().toString().padStart(2, '0')}`,
+      fecha_fin:`${e.end?.getHours().toString().padStart(2, '0')}:${e.end?.getMinutes().toString().padStart(2, '0')}`,
       tipo:e.meta.tipo,
       status:e.meta.status,
       evidencia:e.meta.evidencia
@@ -118,6 +135,8 @@ export class Eventosadmin {
     this.filename = null;
     this.archivoSeleccionado = null;
     this.id_eventSelected=null;
+    this.evidenciaUrl = null; 
+
   }
 
   openModal(data: {operation: string, id: number}) {
@@ -125,10 +144,16 @@ export class Eventosadmin {
     this.id_eventSelected=data.id
     this.isModalOpen.set(true);
     
-    if(this.operation() == "check")
+    if(this.operation() == "check"){
       this.titleModal="Marcar Asistencia de Evento"
-    if(this.operation() == "noasist")
-      this.titleModal="Marcar Falta del Evento"
+    }
+    else if(this.operation() == "ver_evidencia") {
+      this.titleModal = "Evidencia de Asistencia";
+      const evento = this.dayeventsSubject.value.find(e => e.id_evento === data.id);
+      if(evento && evento.evidencia) {
+        this.evidenciaUrl= evento.evidencia;
+      }
+    }
   }
   
   onArchivoSelect(event: Event) {
@@ -146,22 +171,6 @@ export class Eventosadmin {
   AccionModal(){
     if(this.operation() == "check")
       this.UploadEvidence
-    else if(this.operation() == "noasist")
-      this.Marknoasist()
-
-  }
-
-  Marknoasist(){
-    this.eventService.MarkNoRealized(this.id_eventSelected!).subscribe({
-      next: res=> {
-        const currentUrl = this.router.url;
-        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-          this.router.navigate([currentUrl]);
-        });
-        this.toast.success("Evento marcado como no asistido")
-      },
-      error: err=> this.toast.error("Error al cambiar estado")
-    })
   }
 
   UploadEvidence() {
