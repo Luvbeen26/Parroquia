@@ -10,6 +10,7 @@ class Pagos(Base):
     monto=Column(Float,nullable=False)
     id_usuario = Column(Integer,ForeignKey("usuario.id_usuario"),nullable=False)
     descripcion=Column(String, nullable=False)
-
+    id_categoria = Column(Integer, ForeignKey("categoria_pg.id_categoria_pg"), nullable=False)
     # FK DE LA TABLA
+    pago = relationship("Categoria", back_populates="categoria_pago")
     usuario_pagos=relationship("User",back_populates="pagos")

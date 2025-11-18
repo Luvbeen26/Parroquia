@@ -7,6 +7,7 @@ class Gastos(Base):
     __tablename__ = 'gastos'
     id_gasto = Column(Integer, primary_key=True,index=True)
     id_usuario=Column(Integer,ForeignKey("usuario.id_usuario"), nullable=False)
+    id_categoria=Column(Integer,ForeignKey("categoria_pg.id_categoria_pg"), nullable=False)
     fecha_hora=Column(DATETIME,nullable=False)
     monto = Column(Float, nullable=False)
     descripcion=Column(String, nullable=False)
@@ -14,3 +15,4 @@ class Gastos(Base):
 
     # FK DE LA TABLA
     usuario_gastos=relationship("User",back_populates="gastos")
+    gasto = relationship("Categoria", back_populates="categoria_gasto")

@@ -68,6 +68,7 @@ export class Eventos {
   private files_form: UploadDoc[] = []
 
   
+
   constructor(private http: HttpClient,private cookies:CookieService){}
 
   reset_data(){
@@ -88,6 +89,7 @@ export class Eventos {
     return this.id_tipo_evento;
   }
 
+ 
   getPrice(id_event:number){
     return this.prices[id_event-1]
   }

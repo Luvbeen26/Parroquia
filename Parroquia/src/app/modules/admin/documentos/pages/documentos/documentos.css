@@ -1,7 +1,6 @@
 .Contenedor {
   gap: 20px;
   padding: 1.5rem;
-  background-color: #e8f4f8;
   min-height: 100vh;
 }
 
@@ -39,15 +38,19 @@
 
 /* ==================== FILTROS ==================== */
 .filters-row {
+  display: flex;
+  background-color: #fff;
   gap: 15px;
-  flex-wrap: wrap;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  align-items: center;
 }
 
 .search-box {
   position: relative;
   flex: 1;
-  min-width: 300px;
-  max-width: 600px;
+  min-width: 250px;
 }
 
 .search-icon {
@@ -68,6 +71,7 @@
 
 .filter-select {
   min-width: 200px;
+  max-width: 250px;
   cursor: pointer;
 }
 
@@ -224,6 +228,69 @@
   height: 20px;
 }
 
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px 0;
+}
+
+.upload-description {
+  color: #374151;
+  font-size: 14px;
+  margin: 0;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.form-group-rechazo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.label-motivo {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.textarea-motivo {
+  width: 100%;
+  height: 100px; 
+  min-height: 120px;
+  resize: none;
+  padding: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+  box-sizing: border-box; 
+}
+
+.textarea-motivo:focus {
+  outline: none;
+  border-color: var(--color-principal-button);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.textarea-motivo::placeholder {
+  color: #9ca3af;
+}
+
+.char-counter {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: right;
+}
+
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1024px) {
   .table-container {
@@ -259,11 +326,12 @@
 
   .search-box {
     min-width: 100%;
-    max-width: 100%;
+    width: 100%;
   }
 
   .filter-select {
     width: 100%;
+    max-width: 100%;
   }
 
   .documents-table th,
@@ -280,6 +348,28 @@
   .action-btn {
     width: 100%;
     justify-content: center;
+  }
+  .upload-content {
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .upload-description {
+    font-size: 13px;
+  }
+
+  .label-motivo {
+    font-size: 13px;
+  }
+
+  .textarea-motivo {
+    min-height: 100px;
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .char-counter {
+    font-size: 11px;
   }
 }
 
@@ -330,5 +420,28 @@
 
   .actions-cell {
     padding-top: 12px !important;
+  }
+
+  .upload-content {
+    gap: 10px;
+  }
+
+  .upload-description {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  .label-motivo {
+    font-size: 12px;
+  }
+
+  .textarea-motivo {
+    min-height: 90px;
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .char-counter {
+    font-size: 10px;
   }
 }

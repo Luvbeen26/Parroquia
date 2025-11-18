@@ -17,14 +17,11 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
   padding-bottom: 10px;
-
 }
 
 .info-section {
   display: flex;
-  
   justify-content: space-between;
   gap: 8px;
   flex-wrap: wrap;
@@ -35,7 +32,6 @@
   font-size: 16px;
   font-weight: 600;
   color: var(--color-principal);
-  
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -111,92 +107,96 @@
   display: flex;
   justify-content: center;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .action-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  position: relative;
+  gap: 4px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
 .action-btn mat-icon {
-  font-size: 20px;
-  width: 20px;
-  height: 20px;
-  color: white;
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
 }
 
-/* Botón de aceptar (verde) */
+/* Botón de aceptar (azul claro) */
 .accept-btn {
-  background-color: #10b981;
-  
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .accept-btn:hover {
-  background-color: #059669;
+  background: #bfdbfe;
 }
 
-.accept-btn:active {
-  transform: scale(0.95);
+.accept-btn mat-icon {
+  color: #1e40af;
 }
 
-
+/* Botón de rechazar (rojo claro) */
 .reject-btn {
-  background-color: #ef4444;
-
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .reject-btn:hover {
-  background-color: #dc2626;
+  background: #fecaca;
 }
 
-.reject-btn:active {
-  transform: scale(0.95);
+.reject-btn mat-icon {
+  color: #991b1b;
 }
 
+/* Botón de editar (gris) */
 .edit-btn {
-  background-color: #6a6a6a;
-
+  background: #f3f4f6;
+  color: #374151;
 }
 
 .edit-btn:hover {
-  background-color: #2e2e2e;
+  background: #e5e7eb;
 }
 
-.edit-btn:active {
-  transform: scale(0.95);
+.edit-btn mat-icon {
+  color: #374151;
 }
 
+/* Botón de ver (azul) */
 .view-btn {
-  background-color: #3b82f6;
+  background: #dbeafe;
+  color: #1e40af;
 }
 
 .view-btn:hover {
-  background-color: #2563eb;
+  background: #bfdbfe;
 }
 
-.view-btn:active {
-  transform: scale(0.95);
+.view-btn mat-icon {
+  color: #1e40af;
 }
 
-
+/* Botón de reagendar (amarillo) */
 .reschedule-btn {
-  background-color: #f59e0b;
+  background: #fef3c7;
+  color: #92400e;
 }
 
 .reschedule-btn:hover {
-  background-color: #d97706;
+  background: #fde68a;
 }
 
-.reschedule-btn:active {
-  transform: scale(0.95);
+.reschedule-btn mat-icon {
+  color: #92400e;
 }
 
 @media (max-width: 480px) {
@@ -215,16 +215,12 @@
 
   .card-actions {
     gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .action-btn {
-    width: 36px;
-    height: 36px;
-  }
-
-  .action-btn mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
+    width: 100%;
+    justify-content: center;
   }
 }

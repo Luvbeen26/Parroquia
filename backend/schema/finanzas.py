@@ -14,9 +14,16 @@ class Comprobante(BaseModel):
 class Pago(BaseModel):
     monto:float
     descripcion:str
+    categoria:int
 
 
-class Gasto(BaseModel):
-    monto:float
-    descripcion:str
+class Gasto(Pago):
+    pass
+
+
+class Transaccion_class(BaseModel):
+    monto: float
+    id_categoria: int
+    descripcion: str
+    categoria: int
 

@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 from utils.database import get_db
 from models.pagos import Pagos
 from models.gastos import Gastos
+from models.transaccion import Transaccion
+from models.categoria_pg import Categoria
 from fastapi import APIRouter, Depends, HTTPException
 from utils.dependencies import admin_required
 from dateutil.relativedelta import relativedelta
@@ -32,15 +34,21 @@ def show_manyevents(db:Session = Depends(get_db)):
         print(error)
 
 
-
-def ver_ganancias(db:Session):
+def ver_ganancias(db: Session):
     try:
         hoy = datetime.datetime.now(MAZATLAN_TZ).date()
-        total_monto=db.query(func.sum(Pagos.monto)).filter(cast(Pagos.fecha_hora, Date) == hoy).scalar()
-        total_monto=total_monto or 0
-        return total_monto
+
+        total_ingresos = (db.query(func.sum(Transaccion.monto)).join(
+            Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg)
+            .filter(cast(Transaccion.fecha, Date) == hoy,Categoria.tipo == 'Ingreso').scalar())
+
+        total_ingresos = total_ingresos or 0
+
+        return total_ingresos
+
     except Exception as error:
         print(error)
+        raise
 
 
 
@@ -66,49 +74,63 @@ def get_info_cards(db:Session = Depends(get_db),admin_data:dict=Depends(admin_re
 
 
 @router.get("/show/lastest_months")
-def show_lastesmonths(db:Session = Depends(get_db)):
+def show_lastesmonths(db: Session = Depends(get_db)):
     try:
         hoy = datetime.datetime.now(MAZATLAN_TZ).date()
         meses = []
         for i in range(6, 0, -1):
             mes_fecha = hoy - relativedelta(months=i)
             meses.append({"anio": mes_fecha.year, "mes": mes_fecha.month})
-        sixmonths=hoy-relativedelta(months=6)
 
-        res_ingresos=db.query(
-            #estructura de tabla y de donde saca los valores
-            extract('year',Pagos.fecha_hora).label('anio'),
-            extract('month', Pagos.fecha_hora).label('mes'),
-            func.sum(Pagos.monto).label('total_ingresos')
-        ).filter(Pagos.fecha_hora >= sixmonths).group_by(
-            'anio','mes'
-        ).all()
+        sixmonths = hoy - relativedelta(months=6)
 
-        res_gastos = db.query(
-            # estructura de tabla y de donde saca los valores
-            extract('year', Gastos.fecha_hora).label('anio'),
-            extract('month', Gastos.fecha_hora).label('mes'),
-            func.sum(Gastos.monto).label('total_egresos')
-        ).filter(Gastos.fecha_hora >= sixmonths).group_by(
+        # Query para ingresos (filtrando por tipo 'Ingreso' en categoria)
+        res_ingresos = db.query(
+            extract('year', Transaccion.fecha).label('anio'),
+            extract('month', Transaccion.fecha).label('mes'),
+            func.sum(Transaccion.monto).label('total_ingresos')
+        ).join(
+            Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+        ).filter(
+            Transaccion.fecha >= sixmonths,
+            Categoria.tipo == 'Ingreso'
+        ).group_by(
             'anio', 'mes'
         ).all()
 
+        # Query para gastos (filtrando por tipo 'Gasto' en categoria)
+        res_gastos = db.query(
+            extract('year', Transaccion.fecha).label('anio'),
+            extract('month', Transaccion.fecha).label('mes'),
+            func.sum(Transaccion.monto).label('total_egresos')
+        ).join(
+            Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+        ).filter(
+            Transaccion.fecha >= sixmonths,
+            Categoria.tipo == 'Gasto'
+        ).group_by(
+            'anio', 'mes'
+        ).all()
+
+        # Convertir resultados a diccionarios
         ingresos = {(int(i.anio), int(i.mes)): float(i.total_ingresos) for i in res_ingresos}
         egresos = {(int(g.anio), int(g.mes)): float(g.total_egresos) for g in res_gastos}
 
-        data=[]
+        # Construir data final
+        data = []
         for m in meses:
             key = (m["anio"], m["mes"])
             data.append({
                 "anio": m["anio"],
                 "mes": m["mes"],
                 "ingresos": ingresos.get(key, 0),
-                "egresos":  egresos.get(key, 0),
+                "egresos": egresos.get(key, 0),
             })
 
         return data
+
     except Exception as error:
-        print(error)
+        raise HTTPException(status_code=404,detail=str(error))
 
 
 @router.get("/response/geminifinances")
@@ -140,51 +162,78 @@ Eventos_cantidad_por_mes
 que diga porcentajes
 """
 
-def GetDataForGemini(db:Session):
-    hoy= datetime.datetime.now(MAZATLAN_TZ).date()
-    last30d= hoy - datetime.timedelta(days=30)
+
+def GetDataForGemini(db: Session):
+    hoy = datetime.datetime.now(MAZATLAN_TZ).date()
+    last30d = hoy - datetime.timedelta(days=30)
     sixmonths = hoy - relativedelta(months=6)
 
-    #Ultimo mes
-    ipm=db.query(func.sum(Pagos.monto)).filter(Pagos.fecha_hora >= last30d).scalar() or 0
+    # Ingresos último mes
+    ipm = db.query(func.sum(Transaccion.monto)).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= last30d,
+        Categoria.tipo == 'Ingreso'
+    ).scalar() or 0
 
-    #Ultimos 6 meses
+    # Ingresos últimos 6 meses
     res_ingresos = db.query(
-        extract('month', Pagos.fecha_hora).label('mes'),
-        func.sum(Pagos.monto).label('total_ingresos')
-    ).filter(Pagos.fecha_hora >= sixmonths).group_by('mes').all()
+        extract('month', Transaccion.fecha).label('mes'),
+        func.sum(Transaccion.monto).label('total_ingresos')
+    ).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= sixmonths,
+        Categoria.tipo == 'Ingreso'
+    ).group_by('mes').all()
 
     res_ingresos_list = [
         {"mes": int(r.mes), "total_ingresos": float(r.total_ingresos)}
         for r in res_ingresos
     ]
 
-    #Gastos mes
-    gpm=db.query(func.sum(Gastos.monto)).filter(Gastos.fecha_hora >= last30d).scalar() or 0
+    # Gastos último mes
+    gpm = db.query(func.sum(Transaccion.monto)).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= last30d,
+        Categoria.tipo == 'Gasto'
+    ).scalar() or 0
 
-    #gastos 6 meses
+    # Gastos últimos 6 meses
     res_gastos = db.query(
-        extract('month', Gastos.fecha_hora).label('mes'),
-        func.sum(Gastos.monto).label('total_egresos')
-    ).filter(Gastos.fecha_hora >= sixmonths).group_by(
-        'mes'
-    ).all()
+        extract('month', Transaccion.fecha).label('mes'),
+        func.sum(Transaccion.monto).label('total_egresos')
+    ).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= sixmonths,
+        Categoria.tipo == 'Gasto'
+    ).group_by('mes').all()
 
     res_gastos_list = [
         {"mes": int(r.mes), "total_egresos": float(r.total_egresos)}
         for r in res_gastos
     ]
 
-    #Ganancias del mes
-    Ganancias_mes=float(ipm) - float(gpm)
+    # Ganancias del mes
+    Ganancias_mes = float(ipm) - float(gpm)
 
+    # Ganancias 6 meses
+    # Crear diccionarios para hacer el match por mes
+    ingresos_dict = {int(r.mes): float(r.total_ingresos) for r in res_ingresos}
+    gastos_dict = {int(r.mes): float(r.total_egresos) for r in res_gastos}
 
-    #Ganancias 6 meses
-    Ganancias_sixmonths=[]
-    for i,g in zip(res_ingresos,res_gastos):
-        Ganancias_sixmonths.append(float(i.total_ingresos)-float(g.total_egresos))
+    # Obtener todos los meses únicos
+    todos_meses = set(ingresos_dict.keys()) | set(gastos_dict.keys())
 
-    #Eventos por mes
+    Ganancias_sixmonths = []
+    for mes in sorted(todos_meses):
+        ingreso = ingresos_dict.get(mes, 0)
+        gasto = gastos_dict.get(mes, 0)
+        Ganancias_sixmonths.append(ingreso - gasto)
+
+    # Eventos por mes (esta parte no cambia)
     events_last6 = (
         db.query(
             TipoEvento.descripcion.label("tipo_evento"),
@@ -198,6 +247,7 @@ def GetDataForGemini(db:Session):
         .order_by("anio", "mes", "tipo_evento")
         .all()
     )
+
     events_last6_list = [
         {
             "tipo_evento": r.tipo_evento,
@@ -208,16 +258,15 @@ def GetDataForGemini(db:Session):
         for r in events_last6
     ]
 
-
     return {
-        "Dia actual":hoy,
-        "Ingresos_last_month":float(ipm),
-        "Ingresos_6months":res_ingresos_list,
-        "Gastos_last_month":float(gpm),
-        "Gastos_6months":res_gastos_list,
-        "Ganancias_last_month":float(Ganancias_mes),
-        "Ganancias_6months":Ganancias_sixmonths,
-        "Eventos_6months":events_last6_list
+        "Dia actual": hoy,
+        "Ingresos_last_month": float(ipm),
+        "Ingresos_6months": res_ingresos_list,
+        "Gastos_last_month": float(gpm),
+        "Gastos_6months": res_gastos_list,
+        "Ganancias_last_month": float(Ganancias_mes),
+        "Ganancias_6months": Ganancias_sixmonths,
+        "Eventos_6months": events_last6_list
     }
 
 
@@ -290,50 +339,76 @@ def show_events_lastesmonths(db:Session = Depends(get_db)):
 
 @router.get("/showing")
 def GetDataForGemini2(db:Session = Depends(get_db)):
-    hoy= datetime.datetime.now(MAZATLAN_TZ).date()
-    last30d= hoy - datetime.timedelta(days=30)
+    hoy = datetime.datetime.now(MAZATLAN_TZ).date()
+    last30d = hoy - datetime.timedelta(days=30)
     sixmonths = hoy - relativedelta(months=6)
 
-    #Ultimo mes
-    ipm=db.query(func.sum(Pagos.monto)).filter(Pagos.fecha_hora >= last30d).scalar() or 0
+    # Ingresos último mes
+    ipm = db.query(func.sum(Transaccion.monto)).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= last30d,
+        Categoria.tipo == 'Ingreso'
+    ).scalar() or 0
 
-    #Ultimos 6 meses
+    # Ingresos últimos 6 meses
     res_ingresos = db.query(
-        extract('month', Pagos.fecha_hora).label('mes'),
-        func.sum(Pagos.monto).label('total_ingresos')
-    ).filter(Pagos.fecha_hora >= sixmonths).group_by('mes').all()
+        extract('month', Transaccion.fecha).label('mes'),
+        func.sum(Transaccion.monto).label('total_ingresos')
+    ).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= sixmonths,
+        Categoria.tipo == 'Ingreso'
+    ).group_by('mes').all()
 
     res_ingresos_list = [
         {"mes": int(r.mes), "total_ingresos": float(r.total_ingresos)}
         for r in res_ingresos
     ]
 
-    #Gastos mes
-    gpm=db.query(func.sum(Gastos.monto)).filter(Gastos.fecha_hora >= last30d).scalar() or 0
+    # Gastos último mes
+    gpm = db.query(func.sum(Transaccion.monto)).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= last30d,
+        Categoria.tipo == 'Gasto'
+    ).scalar() or 0
 
-    #gastos 6 meses
+    # Gastos últimos 6 meses
     res_gastos = db.query(
-        extract('month', Gastos.fecha_hora).label('mes'),
-        func.sum(Gastos.monto).label('total_egresos')
-    ).filter(Gastos.fecha_hora >= sixmonths).group_by(
-        'mes'
-    ).all()
+        extract('month', Transaccion.fecha).label('mes'),
+        func.sum(Transaccion.monto).label('total_egresos')
+    ).join(
+        Categoria, Transaccion.id_categoria == Categoria.id_categoria_pg
+    ).filter(
+        Transaccion.fecha >= sixmonths,
+        Categoria.tipo == 'Gasto'
+    ).group_by('mes').all()
 
     res_gastos_list = [
         {"mes": int(r.mes), "total_egresos": float(r.total_egresos)}
         for r in res_gastos
     ]
 
-    #Ganancias del mes
-    Ganancias_mes=float(ipm) - float(gpm)
+    # Ganancias del mes
+    Ganancias_mes = float(ipm) - float(gpm)
 
+    # Ganancias 6 meses
+    # Crear diccionarios para hacer el match por mes
+    ingresos_dict = {int(r.mes): float(r.total_ingresos) for r in res_ingresos}
+    gastos_dict = {int(r.mes): float(r.total_egresos) for r in res_gastos}
 
-    #Ganancias 6 meses
-    Ganancias_sixmonths=[]
-    for i,g in zip(res_ingresos,res_gastos):
-        Ganancias_sixmonths.append(float(i.total_ingresos)-float(g.total_egresos))
+    # Obtener todos los meses únicos
+    todos_meses = set(ingresos_dict.keys()) | set(gastos_dict.keys())
 
-    #Eventos por mes
+    Ganancias_sixmonths = []
+    for mes in sorted(todos_meses):
+        ingreso = ingresos_dict.get(mes, 0)
+        gasto = gastos_dict.get(mes, 0)
+        Ganancias_sixmonths.append(ingreso - gasto)
+
+    # Eventos por mes (esta parte no cambia)
     events_last6 = (
         db.query(
             TipoEvento.descripcion.label("tipo_evento"),
@@ -347,6 +422,7 @@ def GetDataForGemini2(db:Session = Depends(get_db)):
         .order_by("anio", "mes", "tipo_evento")
         .all()
     )
+
     events_last6_list = [
         {
             "tipo_evento": r.tipo_evento,
@@ -357,14 +433,13 @@ def GetDataForGemini2(db:Session = Depends(get_db)):
         for r in events_last6
     ]
 
-
     return {
         "Dia actual": hoy,
-        "Ingresos_last_month":float(ipm),
-        "Ingresos_6months":res_ingresos_list,
-        "Gastos_last_month":float(gpm),
-        "Gastos_6months":res_gastos_list,
-        "Ganancias_last_month":float(Ganancias_mes),
-        "Ganancias_6months":Ganancias_sixmonths,
-        "Eventos_6months":events_last6_list
+        "Ingresos_last_month": float(ipm),
+        "Ingresos_6months": res_ingresos_list,
+        "Gastos_last_month": float(gpm),
+        "Gastos_6months": res_gastos_list,
+        "Ganancias_last_month": float(Ganancias_mes),
+        "Ganancias_6months": Ganancias_sixmonths,
+        "Eventos_6months": events_last6_list
     }

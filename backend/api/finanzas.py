@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 from dns.reversename import to_address
 from sqlalchemy import cast, Date, func, extract
 
+from models import Transaccion
 from services.email import send_email_comprobante
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT
@@ -30,52 +31,38 @@ router=APIRouter(prefix="/finanzas", tags=["finanzas"])
 
 MAZATLAN_TZ = ZoneInfo("America/Mazatlan")
 
-
-
-
-
-@router.post("/register/pago")
-def crear_pago(datos_pago:finanzas.Pago,db: Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
+@router.post("/register/transaccion")
+def crear_Transaccion(monto: float = Form(...),id_categoria: int = Form(...),descripcion: str = Form(...),image: UploadFile | None = File(None),
+        db: Session = Depends(get_db),admin_data: dict = Depends(admin_required)):
     try:
-        user_id=admin_data["id_usuario"]
-        fecha=datetime.datetime.now(MAZATLAN_TZ)
-        pago=Pagos(fecha_hora=fecha.strftime("%Y-%m-%d %H-%M-%S"),monto=datos_pago.monto,id_usuario=user_id,descripcion=datos_pago.descripcion)
-        db.add(pago)
+        user_id = admin_data["id_usuario"]
+        fecha = datetime.datetime.now(MAZATLAN_TZ)
+
+
+        transaccion = Transaccion(monto=monto,fecha=fecha.strftime("%Y-%m-%d %H-%M-%S"),id_categoria=id_categoria,
+            descripcion=descripcion,id_usuario=user_id,evidencia=None)
+
+        db.add(transaccion)
         db.commit()
-        return {"msg" : "Pago registrado"}
+        db.refresh(transaccion)
+
+        if id_categoria > 4 and image is not None:
+            return HTTPException(status_code=404, detail="Esta categoria no necesita de evidencia")
+        if id_categoria <= 4 and image is not None:
+            carpeta = f"Images/Gastos/Evidencia/{transaccion.id_transaccion}/"
+            os.makedirs(carpeta, exist_ok=True)
+
+            ruta = os.path.join(carpeta, image.filename)
+            with open(ruta, "wb") as f:
+                f.write(image.file.read())
+            transaccion.evidencia = ruta
+            db.commit()
+        return {
+            "msg": "Transacción registrada correctamente",
+            "id_transaccion": transaccion.id_transaccion
+        }
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))
-
-
-@router.post("/register/gastos")
-
-def crear_gastos(descripcion:str=Form(...),monto:float = Form(...),image:UploadFile=File(...),db: Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
-    try:
-        user_id=admin_data["id_usuario"]
-        fecha=datetime.datetime.now(MAZATLAN_TZ)
-
-        gasto=Gastos(fecha_hora=fecha.strftime("%Y-%m-%d %H-%M-%S"),monto=monto,id_usuario=user_id,descripcion=descripcion,evidencia="")
-        db.add(gasto)
-        db.commit()
-        db.refresh(gasto)
-        carpeta = f"Images/Gastos/Evidencia/{gasto.id_gasto}/"
-        os.makedirs(carpeta, exist_ok=True)
-        ruta = os.path.join(carpeta, image.filename)
-        with open(ruta, "wb") as f:
-            f.write(image.file.read())
-        gasto.evidencia=ruta
-        db.commit()
-        db.refresh(gasto)
-        return {"msg": "Gasto registrado correctamente", "id_gasto": gasto.id_gasto}
-
-    except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
-
-
-
-
-#@router.get()
-#def get_comprobante()
 
 
 async def generar_comprobante_pago(comprobante:finanzas.Comprobante,db: Session):

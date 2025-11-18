@@ -24,7 +24,8 @@ export class FormPay {
 
 
   ngOnInit(){
-    this.precio = this.eventService.getPrice(this.id_event);
+    const tipo=this.eventService.getTipoEvento()
+    this.precio = this.eventService.getPrice(tipo);
     console.log(this.precio);
 
     this.formPago = this.fb.group({

@@ -5,6 +5,8 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import and_, func, cast, Date, or_, extract, desc
 from sqlalchemy.orm import Session, joinedload
 import datetime
+
+from schema.finanzas import Transaccion_class
 from utils.scheduler import scheduler
 from watchfiles import Change
 
@@ -16,6 +18,7 @@ from schema import finanzas as schema_finanzas
 from models import evento as models_event, Evento, TipoEvento
 from models import evento_participantes as event_part
 from api import finanzas
+from models.transaccion import Transaccion
 from models.pagos import Pagos
 from utils.database import get_db
 from fastapi import APIRouter,Depends, HTTPException, UploadFile, File, Form,Request
@@ -95,7 +98,7 @@ async def create_event(
         price = db.query(TipoEvento).filter_by(id_tipo_evento=id_tipo_evento).first().costo_programar
 
 
-        metodo_pago(user_id,price,descripcion,db)
+        metodo_pago(user_id,price,6,descripcion,db)
 
         name=user_data["nombre"]
         email=user_data["correo"]
@@ -169,9 +172,10 @@ def register_participant(id_evento:int,participant:schema_event.ParticipantModel
         raise HTTPException(status_code=404, detail=str(error))
 
 
-def metodo_pago(user_id:int, monto: float, descripcion: str,db:Session):
+def metodo_pago(user_id:int, monto: float,id_categoria:int,descripcion: str,db:Session):
     try:
-        pay=Pagos(fecha_hora=datetime.datetime.now(MAZATLAN_TZ),monto=monto,id_usuario=user_id,descripcion=descripcion)
+        pay=Transaccion(monto=monto,fecha=datetime.datetime.now(MAZATLAN_TZ),id_categoria=id_categoria,descripcion=descripcion,id_usuario=user_id)
+        #pay=Pagos(fecha_hora=datetime.datetime.now(MAZATLAN_TZ),monto=monto,id_usuario=user_id,descripcion=descripcion)
         db.add(pay)
         db.commit()
         db.refresh(pay)

@@ -1,0 +1,179 @@
+<main class="Contenedor flex-column">
+  
+  <!-- Header con título y botón principal -->
+  <div class="header-section flex">
+    <h1 class="page-title">
+      Historial de Finanzas
+    </h1>
+    <button class="button btn-primary flex" (click)="abrirModalNuevoGasto()">
+      <mat-icon>add_circle</mat-icon>
+      Agregar Gasto/Ingreso
+    </button>
+  </div>
+
+  
+  <div class="filters-summary-row">
+    <div class="filters-container flex">
+      <div class="filter-group">
+        <label class="filter-label">Fecha Inicio</label>
+        <input type="date" class="Input filter-input" (change)="aplicarFiltros()">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Fecha Fin</label>
+        <input type="date" class="Input filter-input" (change)="aplicarFiltros()">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Categoría</label>
+        <select class="Input filter-input" (change)="aplicarFiltros()">
+            <option value="">Todas</option>
+            <option value="1">Operativo</option>
+            <option value="2">Personal</option>
+            <option value="3">Mantenimiento</option>
+            <option value="4">Administrativo</option>
+            <option value="5">Donaciones</option>
+            <option value="6">Planificación de eventos</option>
+            <option value="7">Venta</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Tipo</label>
+        <select class="Input filter-input"  (change)="aplicarFiltros()">
+          <option value="">Todos</option>
+          <option value="gasto">Gastos</option>
+          <option value="ingreso">Ingresos</option>
+        </select>
+      </div>
+
+      <button class="btn-filter" (click)="limpiarFiltros()">
+        <mat-icon>filter_alt_off</mat-icon>
+        Limpiar
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="finanzas-table">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Fecha y Hora</th>
+          <th>Categoría</th>
+          <th>Tipo</th>
+          <th>Monto</th>
+          
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of finanzas; track item.id) {
+          <tr [class.ingreso-row]="item.tipo === 'ingreso'" [class.gasto-row]="item.tipo === 'gasto'">
+            <td class="descripcion-cell">
+              <div class="descripcion-content">
+                <span class="descripcion-text">{{ item.descripcion }}</span>
+                @if (item.notas) {
+                  <span class="notas-text">{{ item.notas }}</span>
+                }
+              </div>
+            </td>
+            
+            <td class="fecha-cell">
+              <div class="fecha-content">
+                <mat-icon class="fecha-icon">calendar_today</mat-icon>
+                <span>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+            </td>
+            
+            <td>
+              <span class="categoria-badge" [ngClass]="'categoria-' + item.categoria">
+                {{ item.categoria }}
+              </span>
+            </td>
+            
+            <td>
+              <span class="tipo-badge" [ngClass]="item.tipo">
+                <mat-icon>{{ item.tipo === 'ingreso' ? 'add_circle' : 'remove_circle' }}</mat-icon>
+                {{ item.tipo === 'ingreso' ? 'Ingreso' : 'Gasto' }}
+              </span>
+            </td>
+            
+            <td class="monto-cell">
+              <span class="monto" [class.ingreso]="item.tipo === 'ingreso'" [class.gasto]="item.tipo === 'gasto'">
+                {{ item.monto | currency:'MXN' }}
+              </span>
+            </td>
+            
+            
+            
+            <td class="actions-cell">
+              <button class="action-btn edit-btn" matTooltip="Editar" (click)="editarItem(item.id)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="action-btn delete-btn" matTooltip="Eliminar" (click)="eliminarItem(item.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            
+              @if (item.evidencia) {
+                <button class="btn-evidencia" (click)="verEvidencia(item.id)">
+                  <mat-icon>visibility</mat-icon>
+                  
+                </button>
+              }
+            
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="7" class="empty-state">
+              <mat-icon>receipt_long</mat-icon>
+              <p>No hay registros financieros</p>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Paginación -->
+  <div class="pagination flex">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="cambiarPagina(currentPage - 1)">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+    
+    @for (page of pages; track page) {
+      <button 
+        class="page-btn" 
+        [class.active]="currentPage === page"
+        (click)="cambiarPagina(page)">
+        {{ page }}
+      </button>
+    }
+    
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="cambiarPagina(currentPage + 1)">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+</main>
+
+<!-- Modal para ver evidencia -->
+<app-modalcomponent
+  [isOpen]="isModalEvidenciaOpen"
+  [title]="'Evidencia de ' + (itemSeleccionado?.tipo === 'ingreso' ? 'Ingreso' : 'Gasto')"
+  [showFooter]="false"
+  (onClose)="cerrarModalEvidencia()">
+  
+  <div class="evidencia-modal-content">
+    @if (evidenciaUrl) {
+      <img [src]="evidenciaUrl" alt="Evidencia" class="evidencia-image">
+    }
+    <div class="evidencia-info">
+      <h3>{{ itemSeleccionado?.descripcion }}</h3>
+      <p><strong>Monto:</strong> {{ itemSeleccionado?.monto | currency:'MXN' }}</p>
+      <p><strong>Fecha:</strong> {{ itemSeleccionado?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+      <p><strong>Categoría:</strong> {{ itemSeleccionado?.categoria }}</p>
+    </div>
+  </div>
+</app-modalcomponent>

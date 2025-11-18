@@ -19,6 +19,8 @@ app.add_middleware(
 
 app.include_router(api_router)
 app.mount("/Images",StaticFiles(directory="Images"), name="Images")
+app.mount("/Documents", StaticFiles(directory="Documents"), name="Documents")
+
 
 @app.get("/")
 def read_root():

@@ -1,0 +1,529 @@
+.Contenedor {
+  gap: 20px;
+  padding: 1.5rem;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
+
+/* ==================== HEADER ==================== */
+.header-section {
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e3a5f;
+}
+
+.btn-primary {
+  gap: 8px;
+  border: none;
+  padding: 12px 24px;
+  
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-primary mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* ==================== FILTROS Y RESUMEN ==================== */
+.filters-summary-row {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filters-container {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 15px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.filter-input {
+  padding: 10px 12px;
+}
+
+.btn-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  transition: all 0.2s;
+  height: fit-content;
+}
+
+.btn-filter:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-filter mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+/* ==================== TARJETAS DE RESUMEN ==================== */
+
+/* ==================== TABLA ==================== */
+.table-container {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.finanzas-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.finanzas-table thead {
+  background: #f9fafb;
+}
+
+.finanzas-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.finanzas-table tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s;
+}
+
+.finanzas-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.finanzas-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.finanzas-table tbody tr.ingreso-row {
+  border-left: 4px solid #10b981;
+}
+
+.finanzas-table tbody tr.gasto-row {
+  border-left: 4px solid #ef4444;
+}
+
+.finanzas-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+/* ==================== CELDAS ESPECÍFICAS ==================== */
+.descripcion-cell {
+  max-width: 250px;
+}
+
+.descripcion-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.descripcion-text {
+  font-weight: 500;
+}
+
+.notas-text {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.fecha-cell {
+  min-width: 180px;
+}
+
+.fecha-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fecha-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+}
+
+.categoria-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.categoria-servicios {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.categoria-mantenimiento {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.categoria-salarios {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.categoria-otros {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.tipo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tipo-badge.ingreso {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.tipo-badge.gasto {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.tipo-badge mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.monto-cell {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.monto.ingreso {
+  color: #059669;
+}
+
+.monto.gasto {
+  color: #dc2626;
+}
+
+.evidencia-cell {
+  text-align: center;
+}
+
+.btn-evidencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-evidencia:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}
+
+.btn-evidencia mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.sin-evidencia {
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-btn {
+  padding: 6px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.edit-btn {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.edit-btn:hover {
+  background: #bfdbfe;
+}
+
+.delete-btn {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: #9ca3af;
+}
+
+.empty-state mat-icon {
+  font-size: 4rem;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* ==================== MODAL EVIDENCIA ==================== */
+.evidencia-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+.evidencia-image {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.evidencia-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.evidencia-info h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #111827;
+}
+
+.evidencia-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+/* ==================== PAGINACIÓN ==================== */
+.pagination {
+  justify-content: center;
+  gap: 8px;
+  padding: 20px 0;
+}
+
+.page-btn {
+  min-width: 40px;
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-btn:hover:not(:disabled):not(.active) {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.page-btn.active {
+  background: #1e3a5f;
+  color: white;
+  border-color: #1e3a5f;
+}
+
+.page-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1200px) {
+  .summary-cards {
+    flex-direction: column;
+  }
+
+  .summary-card {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .finanzas-table {
+    min-width: 1000px;
+  }
+}
+
+@media (max-width: 768px) {
+  .Contenedor {
+    padding: 1rem;
+  }
+
+  .header-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .btn-filter {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  /* Convertir tabla a cards en móvil */
+  .finanzas-table thead {
+    display: none;
+  }
+
+  .finanzas-table tbody tr {
+    display: block;
+    margin-bottom: 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+  }
+
+  .finanzas-table td {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .finanzas-table td:last-child {
+    border-bottom: none;
+  }
+
+  .finanzas-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #6b7280;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
+  .actions-cell {
+    justify-content: flex-start;
+    padding-top: 12px !important;
+  }
+}

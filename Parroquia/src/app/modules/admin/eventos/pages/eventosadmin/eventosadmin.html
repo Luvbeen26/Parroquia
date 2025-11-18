@@ -58,13 +58,8 @@
       </div>
     </div>
 
-    <app-modalcomponent
-        [isOpen]="isModalOpen()"
-        [title]="titleModal"
-        [showFooter]="true"
-        [showConfirmButton]="operation() === 'check' ? true : false"
-        [disableConfirm]="operation() === 'check' && !archivoSeleccionado"
-        (onClose)="closeModal()"
+    <app-modalcomponent [isOpen]="isModalOpen()" [title]="titleModal" [showFooter]="true" [showConfirmButton]="operation() === 'check' ? true : false"
+        [disableConfirm]="operation() === 'check' && !archivoSeleccionado" (onClose)="closeModal()"
         (onConfirmClick)="AccionModal()">
 
         @if (operation() == 'check') {
@@ -77,12 +72,7 @@
                   <mat-icon>insert_drive_file</mat-icon>
                   Seleccionar Archivo
                 </label>
-                <input 
-                  type="file" 
-                  id="archivo-input" 
-                  accept=".jpg, .jpeg, .png"
-                  (change)="onArchivoSelect($event)"
-                  hidden>
+                <input type="file" id="archivo-input" accept=".jpg, .jpeg, .png" (change)="onArchivoSelect($event)" hidden>
 
                 @if (filename) {
                   <span class="filename">{{ filename }}</span>

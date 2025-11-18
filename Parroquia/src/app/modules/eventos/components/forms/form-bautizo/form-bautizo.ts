@@ -53,6 +53,8 @@ export class FormBautizo {
   next(){
     this.steps.emit(true);
     this.eventService.saveTipoEvento(this.form.value["tipo"])
+    console.log(this.form)
+    
     const celebradoData = {
       ...this.form.value
     };

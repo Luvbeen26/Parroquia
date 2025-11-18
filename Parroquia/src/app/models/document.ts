@@ -1,3 +1,13 @@
+export interface getDocs{
+    id_documento:number,
+    evento:string,
+    tipo:string,
+    participante:string,
+    motivo:string | null,
+    documento:string | null
+}
+
+
 export interface infoDoc{
     nombre:string,
     id_doc:number
@@ -29,3 +39,4 @@ export interface ModalContent {
   alt?: string;
   title?: string;
 }
+

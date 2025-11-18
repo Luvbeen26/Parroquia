@@ -1,21 +1,14 @@
 <main class="Contenedor flex-column">
-  
-  <!-- Tabs de filtro -->
   <div class="tabs-container">
-    <button class="tab-btn active">Pendientes</button>
-    <button class="tab-btn">Aceptados</button>
-    <button class="tab-btn">Rechazados</button>
+    <button class="tab-btn" [class.active]="estado === 'Pendiente'" (click)="GetDocs('Pendiente')">Pendientes</button>
+    <button class="tab-btn" [class.active]="estado === 'Aceptado'" (click)="GetDocs('Aceptado')">Aceptados</button>
+    <button class="tab-btn" [class.active]="estado === 'Rechazado'" (click)="GetDocs('Rechazado')">Rechazados</button>
   </div>
 
-  <!-- Barra de búsqueda y filtros -->
   <div class="filters-row flex">
     <div class="search-box flex">
       <mat-icon class="search-icon">search</mat-icon>
-      <input 
-        type="text" 
-        class="Input search-input" 
-        placeholder="Buscar por nombre"
-        >
+      <input type="text" class="Input search-input" placeholder="Buscar por nombre">
     </div>
 
     <select class="Input filter-select">
@@ -28,38 +21,42 @@
     </select>
   </div>
 
-  <!-- Tabla de documentos -->
   <div class="table-container">
     <table class="documents-table">
       <thead>
         <tr>
-          <th>Celebrados/as</th>
-          <th>Evento</th>
-          <th>Folio</th>
+          <th>Participante</th>
+          <th>Tipo Evento</th>
           <th>Documento</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @for (doc of documentos; track doc.id) {
+        @let documentos = (documentos$ | async);
+        @for (doc of documentos; track $index) {
           <tr>
-            <td class="celebrante-cell">{{ doc.celebrante }}</td>
+            <td class="celebrante-cell">{{ doc.participante }}</td>
             <td>{{ doc.evento }}</td>
-            <td class="folio-cell">{{ doc.folio }}</td>
-            <td>{{ doc.documento }}</td>
+            
+            <td>{{ doc.tipo }}</td>
             <td class="actions-cell">
-              <button class="action-btn revisar-btn" (click)="revisarDocumento(doc.id)">
-                <mat-icon>visibility</mat-icon>
-                Revisar
+              
+              <button class="action-btn revisar-btn" (click)="revisarDocumento(doc.documento!)">
+                <mat-icon matTooltip="Ver documento">visibility</mat-icon>
+                
               </button>
-              <button class="action-btn aceptar-btn" (click)="aceptarDocumento(doc.id)">
-                <mat-icon>check</mat-icon>
-                Aceptar
-              </button>
-              <button class="action-btn rechazar-btn" (click)="rechazarDocumento(doc.id)">
-                <mat-icon>close</mat-icon>
-                Rechazar
-              </button>
+              @if(estado != "Aceptado"){
+                <button class="action-btn aceptar-btn" (click)="aceptarDocumento(doc.id_documento)">
+                  <mat-icon matTooltip="Aceptar">check</mat-icon>
+                  
+                </button>
+              }
+              @if(estado != "Rechazado"){
+                <button class="action-btn rechazar-btn" (click)="AbrirRechazar(doc.id_documento)">
+                  <mat-icon matTooltip="Rechazar">close</mat-icon>
+                  
+                </button>
+              }
             </td>
           </tr>
         }
@@ -67,24 +64,49 @@
     </table>
   </div>
 
-  <!-- Paginación -->
   <div class="pagination flex">
-    <button class="page-btn" [disabled]="currentPage === 1">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()">
       <mat-icon>chevron_left</mat-icon>
     </button>
     
     @for (page of pages; track page) {
-      <button 
-        class="page-btn" 
-        [class.active]="currentPage === page"
-        (click)="goToPage(page)">
+      <button class="page-btn" [class.active]="currentPage === page" (click)="goToPage(page)">
         {{ page }}
       </button>
     }
     
-    <button class="page-btn" [disabled]="currentPage === totalPages">
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
-
+  <app-modal-file 
+    [content]="modalContent" 
+    [isOpen]="isModalOpen"
+    (closeModal)="closeModal()">
+  </app-modal-file>
+  
+  <app-modalcomponent [isOpen]="isModal2Open"
+        [title]="'Rechazar documentos'"
+        [showFooter]="true"
+        [showConfirmButton]='true'
+        [disableConfirm]="!motivoRechazoControl.value?.trim()"
+        (onClose)="closeModal()"
+        (onConfirmClick)="rechazarDocumento()"> 
+        <div class="upload-content">
+          <h3 class="upload-description">
+            ¿Estás seguro de que deseas rechazar este documento?
+            <br>Proporciona el motivo del rechazo
+          </h3>
+        
+          <div class="form-group-rechazo">
+            <label for="motivo-rechazo" class="label-motivo">
+              Motivo de rechazo 
+            </label>
+            <textarea id="motivo-rechazo" class="Input textarea-motivo" rows="5" 
+              placeholder="Escribe aquí el motivo del rechazo..." maxlength="200" [formControl]="motivoRechazoControl"
+              required>
+            </textarea>
+          </div>
+        </div>
+      </app-modalcomponent>
 </main>
