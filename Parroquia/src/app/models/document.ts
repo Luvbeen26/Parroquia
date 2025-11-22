@@ -34,7 +34,7 @@ export interface docs_event extends get_user_docs{
 }
 
 export interface ModalContent {
-  type: 'image' | 'pdf' | 'document';
+  type: 'image' | 'pdf';
   src: string;
   alt?: string;
   title?: string;

@@ -5,8 +5,6 @@ from sqlalchemy import cast, Date, func, extract, case
 from models import Evento, Documento, TipoEvento
 from sqlalchemy.orm import Session
 from utils.database import get_db
-from models.pagos import Pagos
-from models.gastos import Gastos
 from models.transaccion import Transaccion
 from models.categoria_pg import Categoria
 from fastapi import APIRouter, Depends, HTTPException

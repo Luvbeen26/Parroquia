@@ -42,7 +42,6 @@ export class Documentos {
 
   ngOnInit(){
     this.GetDocs("Pendiente")
-    console.log(this.docsSubject)
   }
 
 
@@ -100,8 +99,6 @@ export class Documentos {
   }
 
   revisarDocumento(doc:string) {
-    console.log(doc)
-
     const safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(doc);
     this.modalContent = {
       type:'pdf',

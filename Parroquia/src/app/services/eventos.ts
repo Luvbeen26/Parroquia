@@ -255,6 +255,7 @@ export class Eventos {
     const formdata=new FormData();
     formdata.append("id_evento",id.toString());
     formdata.append("image",evidence);
+    
     const token=this.cookies.get('access_token')
     const headers=new HttpHeaders({
       Authorization: `Bearer ${token}`

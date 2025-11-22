@@ -1,10 +1,11 @@
 import { Component, input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 
 @Component({
   selector: 'app-event-info-card',
-  imports: [RouterLink],
+  imports: [RouterLink,MatIconModule],
   templateUrl: './event-info-card.html',
   styleUrl: './event-info-card.css'
 })

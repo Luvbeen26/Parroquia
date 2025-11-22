@@ -100,9 +100,11 @@
   height: 18px;
 }
 
-/* ==================== TARJETAS DE RESUMEN ==================== */
 
-/* ==================== TABLA ==================== */
+th{
+  text-align: center;
+}
+
 .table-container {
   background: white;
   border-radius: 12px;
@@ -120,7 +122,7 @@
 }
 
 .finanzas-table th {
-  padding: 16px;
+  padding: 12px;
   text-align: left;
   font-weight: 600;
   font-size: 14px;
@@ -150,7 +152,8 @@
 }
 
 .finanzas-table td {
-  padding: 16px;
+  padding-inline: 10px;
+  padding-block: 13px;
   font-size: 14px;
   color: #1f2937;
 }
@@ -158,6 +161,11 @@
 /* ==================== CELDAS ESPECÍFICAS ==================== */
 .descripcion-cell {
   max-width: 250px;
+  
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .descripcion-content {
@@ -168,6 +176,11 @@
 
 .descripcion-text {
   font-weight: 500;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  line-height: 1.4; 
 }
 
 .notas-text {
@@ -194,57 +207,11 @@
 
 .categoria-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 4px;
   border-radius: 12px;
   font-size: 12px;
   font-weight: 600;
   text-transform: capitalize;
-}
-
-.categoria-servicios {
-  background: #dbeafe;
-  color: #1e40af;
-}
-
-.categoria-mantenimiento {
-  background: #fef3c7;
-  color: #92400e;
-}
-
-.categoria-salarios {
-  background: #e0e7ff;
-  color: #3730a3;
-}
-
-.categoria-otros {
-  background: #f3e8ff;
-  color: #6b21a8;
-}
-
-.tipo-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.tipo-badge.ingreso {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.tipo-badge.gasto {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.tipo-badge mat-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
 }
 
 .monto-cell {
@@ -252,11 +219,11 @@
   font-size: 15px;
 }
 
-.monto.ingreso {
+.monto.Ingreso {
   color: #059669;
 }
 
-.monto.gasto {
+.monto.Gasto {
   color: #dc2626;
 }
 
@@ -435,6 +402,58 @@
   height: 20px;
 }
 
+
+
+
+.form-finanzas {
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.campo {
+  gap: 8px;
+}
+
+.campo h4 {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-principal);
+  font-size: 15px;
+}
+
+.Input.textarea {
+  resize: vertical;
+  min-height: 80px;
+  padding: 10px;
+  font-family: inherit;
+  resize: none;
+}
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filename {
+  font-size: 14px;
+  color: var(--color-principal-button);
+  word-break: break-all;
+}
+
+.file-info {
+  margin: 5px 0 0 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.error {
+  color: red;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 0;
+}
+
 /* ==================== RESPONSIVE ==================== */
 @media (max-width: 1200px) {
   .summary-cards {
@@ -525,5 +544,16 @@
   .actions-cell {
     justify-content: flex-start;
     padding-top: 12px !important;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .form-finanzas {
+    gap: 15px;
+  }
+  
+  .campo h4 {
+    font-size: 14px;
   }
 }

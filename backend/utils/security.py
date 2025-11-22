@@ -66,7 +66,7 @@ def expire_minutes(minutes : int):
     return new_date
 
 def write_access_token(data:dict):
-    token=encode(payload={**data,"exp" : expire_minutes(15) }, key=access_key,algorithm="HS256")
+    token=encode(payload={**data,"exp" : expire_minutes(1440) }, key=access_key,algorithm="HS256")
     return token
 
 def write_refresh_token(data:dict):

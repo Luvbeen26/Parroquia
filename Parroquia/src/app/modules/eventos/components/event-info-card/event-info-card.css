@@ -2,12 +2,11 @@
     background-color: #FFFF;
     border: 2px solid var(--color-lines);
     width: 100%;
-    border-radius: 5px ;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
+    height: 100%; /* Para que todas tengan la misma altura en el grid */
 }
-
-
 
 h3{
     color: var(--color-principal);
@@ -15,6 +14,8 @@ h3{
 
 .image{
     width: 100%;
+    height: 200px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Mantiene el aspecto sin distorsión */
     border-radius: 5px 5px 0px 0px;
 }
 
@@ -22,8 +23,8 @@ h3{
     display: flex;
     flex-direction: column;
     padding: 10px;
-    
     gap: 10px;
+    flex: 1; /* Ocupa el espacio restante */
 }
 
 .requisitos{
@@ -32,88 +33,117 @@ h3{
     color: #5B4E4E;
     gap: 8px;
     font-size: 16px;
-    height:  fit-content;
-    height: 180px;
+    min-height: 180px; /* Altura mínima en lugar de fija */
+    flex: 1; /* Permite crecer */
+    overflow-y: auto; /* Scroll si hay muchos requisitos */
 }
-
-
 
 .requisito p{
     font-size: 13px;
     font-weight: 600;
-    
+    line-height: 1.4; /* Mejor espaciado de líneas */
 }
 
 .check{
-    height: 20px;
+    height: 25px;
+    width: 25px;
+    font-size: 25px;
+    color: var(--color-principal-button);
+    flex-shrink: 0; /* Evita que el ícono se comprima */
 }
-
 
 .requisito{
     display: flex;
-    gap:8px;
+    gap: 8px;
     font-weight: normal;
     padding-inline: 20px;
-    align-items: center;
+    align-items: flex-start; /* Alinea arriba para textos largos */
 }
 
-.requisitos h3{
-    font-weight:bold;
+.requisitos h4{
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
 .impresion,.programar{
-    
     padding-block: .5rem;
+    padding-inline: .5rem;
     border-radius: 5px;
     background-color: #D9EEFF;
-    color:var(--color-principal-button);
+    color: var(--color-principal-button);
     font-weight: 550;
 }
 
-
 .Buttons{
-    margin-top: auto;
+    margin-top: auto; /* Empuja los botones al final */
     gap: 2rem;
     display: flex;
     justify-content: center;
     margin-bottom: 10px;
+    padding-top: 10px;
 }
 
 .costs{
-    margin-top: 2rem;
-    
+    margin-top: 0;
     display: flex;
     justify-content: center;
     text-align: center;
+    white-space: nowrap; /* Evita que el texto se rompa */
 }
 
 .impr,.progr{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    align-items: center;
 }
 
 .content-button{
     min-width: 120px;
-    
     max-width: 500px;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: .4rem;
 }
 
-
-.print-icon{
-    width: 29px;
-    height: 29px;
+.content-button mat-icon{
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
 }
+
+/* Desktop: altura uniforme para tarjetas "Matrimonio" */
+@media(min-width: 451px){
+    .Contenedor.big{
+        min-height: 550px; /* Altura mínima para matrimonio */
+    }
     
-@media(max-width:450px){
+    .Contenedor:not(.big){
+        min-height: 480px; /* Altura mínima para otros eventos */
+    }
+    
+    .requisitos.big{
+        min-height: 240px;
+    }
+}
+
+/* Móvil: altura flexible */
+@media(max-width: 450px){
+    .Contenedor{
+        height: auto; /* Altura automática en móvil */
+        min-height: auto;
+    }
+    
+    .image{
+        height: 180px; /* Imagen más pequeña en móvil */
+    }
+    
     .Buttons{
-        margin-top: 2rem;
+        margin-top: 1.5rem;
         align-items: center;
         flex-direction: column;
-        gap: 0;
+        gap: 10px;
     }
 
     .impr,.progr{
@@ -125,24 +155,14 @@ h3{
     }
 
     .costs{
-        
-        display: none;
+        display: none; /* Oculta precios en móvil */
     }
 
     .requisitos{
-        height: 140px;
+        min-height: 140px;
     }
 
     .requisitos.big{
-        height:  240px;
-    }
-
-    .Contenedor.big{
-        height: 41.5rem;
-    }
-
-    .Buttons{
-        gap:10px;
-        
+        min-height: 240px;
     }
 }

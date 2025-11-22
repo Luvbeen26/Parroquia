@@ -27,3 +27,4 @@ class Transaccion_class(BaseModel):
     descripcion: str
     categoria: int
 
+

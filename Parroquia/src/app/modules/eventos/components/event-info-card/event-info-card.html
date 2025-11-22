@@ -2,25 +2,29 @@
     <picture><img class="image" [src]="image()" alt=""></picture>
 
     <div class="info">
-
-    
         <h3>{{ nombre() }}</h3>
         
         <section class="requisitos" [class.big]="nombre() == 'Matrimonio'">
             <h4>Requisitos</h4>
          
             @for (requisito of requisitos(); track $index) {
-                <span class="requisito"><img src="../icons/check_blue.svg" class="check" alt=""><p>{{ requisito }}</p></span>
+                <span class="requisito">
+                    <mat-icon class="check">check</mat-icon>
+                    <p>{{ requisito }}</p>
+                </span>
             }
         </section>
         
-
         <section class="Buttons">
             <div class="progr">
                 <span class="costs programar">Programar <br>${{ programar() }}</span>  
-                <button class="button" [routerLink]="['/eventos/create_event', id()]"><span class="content-button"><img src="../icons/calendary_white.svg" alt="">Programar</span></button>
+                <button class="button" [routerLink]="['/eventos/create_event', id()]">
+                    <span class="content-button">
+                        <mat-icon>event</mat-icon>
+                        Programar
+                    </span>
+                </button>
             </div>
-            
         </section>
     </div>
 </main>

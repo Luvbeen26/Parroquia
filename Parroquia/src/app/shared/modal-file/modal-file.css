@@ -51,8 +51,8 @@
     background-color: rgba(255, 255, 255, 0.9);
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -86,7 +86,7 @@
     max-width: 90vw;
     max-height: 85vh;
     object-fit: contain;       /* mantiene proporción sin recorte */
-    border-radius: 10px;
+    border-radius: 5px;
     cursor: default;
     background-color: #000;    /* fondo para imágenes con transparencia */
 }
@@ -94,10 +94,11 @@
 
 .modal-pdf,
 .modal-document {
-    width: 90vw;
+    width: 650px;
     height: 85vh;
+    object-fit: contain;
     border: none;
-    background-color: #fff;
+    background-color: #000000;
 }
 
 /* Responsivo para pantallas pequeñas */
@@ -124,11 +125,6 @@
         right: 10px;
         width: 35px;
         height: 35px;
-    }
-
-    .close-button img {
-        width: 18px;
-        height: 18px;
     }
 }
 

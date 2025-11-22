@@ -58,9 +58,14 @@
       </div>
     </div>
 
-    <app-modalcomponent [isOpen]="isModalOpen()" [title]="titleModal" [showFooter]="true" [showConfirmButton]="operation() === 'check' ? true : false"
-        [disableConfirm]="operation() === 'check' && !archivoSeleccionado" (onClose)="closeModal()"
-        (onConfirmClick)="AccionModal()">
+    <app-modalcomponent 
+    [isOpen]="isModalOpen()" 
+    [title]="titleModal" 
+    [showFooter]="true"
+    [showConfirmButton]="operation() === 'check' ? true : false"
+    [disableConfirm]="operation() === 'check' && !archivoSeleccionado" 
+    (onClose)="closeModal()"
+    (onConfirmClick)="AccionModal()">
 
         @if (operation() == 'check') {
           <div class="upload-content">

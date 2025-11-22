@@ -1,13 +1,11 @@
 <main class="Contenedor flex-column">
-  
-  <!-- Header con título y botón principal -->
   <div class="header-section flex">
     <h1 class="page-title">
       Historial de Finanzas
     </h1>
     <button class="button btn-primary flex" (click)="abrirModalNuevoGasto()">
       <mat-icon>add_circle</mat-icon>
-      Agregar Gasto/Ingreso
+      Agregar un Registro
     </button>
   </div>
 
@@ -16,17 +14,17 @@
     <div class="filters-container flex">
       <div class="filter-group">
         <label class="filter-label">Fecha Inicio</label>
-        <input type="date" class="Input filter-input" (change)="aplicarFiltros()">
+        <input type="date" class="Input filter-input" (change)="aplicarFiltros($event,1)">
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Fecha Fin</label>
-        <input type="date" class="Input filter-input" (change)="aplicarFiltros()">
+        <input type="date" class="Input filter-input" (change)="aplicarFiltros($event,2)">
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Categoría</label>
-        <select class="Input filter-input" (change)="aplicarFiltros()">
+        <select class="Input filter-input" (change)="aplicarFiltros($event,3)">
             <option value="">Todas</option>
             <option value="1">Operativo</option>
             <option value="2">Personal</option>
@@ -35,15 +33,6 @@
             <option value="5">Donaciones</option>
             <option value="6">Planificación de eventos</option>
             <option value="7">Venta</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label class="filter-label">Tipo</label>
-        <select class="Input filter-input"  (change)="aplicarFiltros()">
-          <option value="">Todos</option>
-          <option value="gasto">Gastos</option>
-          <option value="ingreso">Ingresos</option>
         </select>
       </div>
 
@@ -61,64 +50,52 @@
           <th>Descripción</th>
           <th>Fecha y Hora</th>
           <th>Categoría</th>
-          <th>Tipo</th>
           <th>Monto</th>
           
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        @for (item of finanzas; track item.id) {
-          <tr [class.ingreso-row]="item.tipo === 'ingreso'" [class.gasto-row]="item.tipo === 'gasto'">
+        @let lista = (finanzas$ | async);
+        @for (f of lista; track $index) {
+          <tr>
             <td class="descripcion-cell">
               <div class="descripcion-content">
-                <span class="descripcion-text">{{ item.descripcion }}</span>
-                @if (item.notas) {
-                  <span class="notas-text">{{ item.notas }}</span>
-                }
+                <span class="descripcion-text">{{ f.descripcion }}</span>
               </div>
             </td>
             
             <td class="fecha-cell">
               <div class="fecha-content">
                 <mat-icon class="fecha-icon">calendar_today</mat-icon>
-                <span>{{ item.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+                <span>{{ f.fecha | date:'dd-MM-yyyy HH:mm' }}</span>
               </div>
             </td>
             
             <td>
-              <span class="categoria-badge" [ngClass]="'categoria-' + item.categoria">
-                {{ item.categoria }}
+              <span class="categoria-badge" [ngClass]="'categoria-' + f.categoria">
+                {{ f.categoria }}
               </span>
             </td>
             
-            <td>
-              <span class="tipo-badge" [ngClass]="item.tipo">
-                <mat-icon>{{ item.tipo === 'ingreso' ? 'add_circle' : 'remove_circle' }}</mat-icon>
-                {{ item.tipo === 'ingreso' ? 'Ingreso' : 'Gasto' }}
-              </span>
-            </td>
-            
+          
             <td class="monto-cell">
-              <span class="monto" [class.ingreso]="item.tipo === 'ingreso'" [class.gasto]="item.tipo === 'gasto'">
-                {{ item.monto | currency:'MXN' }}
+              <span class="monto" [class.Ingreso]="f.tipo_categoria === 'Ingreso'" [class.Gasto]="f.tipo_categoria === 'Gasto'">
+                {{ f.monto | currency:'MXN' }}
               </span>
             </td>
-            
-            
             
             <td class="actions-cell">
-              <button class="action-btn edit-btn" matTooltip="Editar" (click)="editarItem(item.id)">
+              <button class="action-btn edit-btn" matTooltip="Editar" (click)="editarModal(f.id_transaccion,f.monto,f.descripcion,f.id_categoria,f.evidencia)">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button class="action-btn delete-btn" matTooltip="Eliminar" (click)="eliminarItem(item.id)">
+              <button class="action-btn delete-btn" matTooltip="Eliminar" (click)="delRegistro(f.id_transaccion)">
                 <mat-icon>delete</mat-icon>
               </button>
             
-              @if (item.evidencia) {
-                <button class="btn-evidencia" (click)="verEvidencia(item.id)">
+              @if (f.evidencia != null) {
+                <button class="btn-evidencia" (click)="verEvidencia(f.evidencia)">
                   <mat-icon>visibility</mat-icon>
-                  
                 </button>
               }
             
@@ -136,44 +113,94 @@
     </table>
   </div>
 
-  <!-- Paginación -->
   <div class="pagination flex">
-    <button class="page-btn" [disabled]="currentPage === 1" (click)="cambiarPagina(currentPage - 1)">
+    <button class="page-btn" [disabled]="currentPage === 1" (click)="previousPage()">
       <mat-icon>chevron_left</mat-icon>
     </button>
     
     @for (page of pages; track page) {
-      <button 
-        class="page-btn" 
-        [class.active]="currentPage === page"
-        (click)="cambiarPagina(page)">
+      <button class="page-btn" [class.active]="currentPage === page" (click)="goToPage(page)">
         {{ page }}
       </button>
     }
     
-    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="cambiarPagina(currentPage + 1)">
+    <button class="page-btn" [disabled]="currentPage === totalPages" (click)="nextPage()">
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
-
 </main>
 
-<!-- Modal para ver evidencia -->
+
 <app-modalcomponent
-  [isOpen]="isModalEvidenciaOpen"
-  [title]="'Evidencia de ' + (itemSeleccionado?.tipo === 'ingreso' ? 'Ingreso' : 'Gasto')"
-  [showFooter]="false"
-  (onClose)="cerrarModalEvidencia()">
-  
-  <div class="evidencia-modal-content">
-    @if (evidenciaUrl) {
-      <img [src]="evidenciaUrl" alt="Evidencia" class="evidencia-image">
+  [isOpen]="isModalOpen"
+  [title]="title"
+  [showFooter]="true"
+  [showConfirmButton]='true'
+  [disableConfirm]="this.formFinanzas.invalid"
+  (onClose)="closeModal()"
+  (onConfirmClick)="modalOperation === 'Add' ? AddRegistro() : editarRegistro()">
+    @if(modalOperation == "Add" || modalOperation == "Edit"){
+      <form [formGroup]="formFinanzas" class="form-finanzas flex-column">
+        
+        <div class="campo flex-column">
+          <h4>Monto</h4>
+          <input type="number" formControlName="monto" class="Input" placeholder="0.00" step="0.01" min="0">
+          @if (this.formFinanzas.get('monto')?.hasError('required') && this.formFinanzas.get('monto')?.touched) {
+            <p class="error">Ingrese un monto</p>
+          }
+        </div>
+
+        <div class="campo flex-column">
+          <h4>Categoría</h4>
+          <select formControlName="id_categoria" class="Input">
+            <option value="">Seleccione una categoría</option>
+            <option value="1">Operativo</option>
+            <option value="2">Personal</option>
+            <option value="3">Mantenimiento</option>
+            <option value="4">Administrativo</option>
+            <option value="5">Donaciones</option>
+            <option value="6">Planificacion de Eventos</option>
+            <option value="7">Venta</option>
+          </select>
+          @if (this.formFinanzas.get('id_categoria')?.hasError('required') && this.formFinanzas.get('id_categoria')?.touched) {
+            <p class="error">Seleccione una categoría</p>
+          }
+        </div>
+
+        <div class="campo flex-column">
+          <h4>Descripción</h4>
+          <textarea formControlName="descripcion" class="Input textarea" 
+            placeholder="Descripción del ingreso/egreso" rows="3" maxlength="60"></textarea>
+          @if (this.formFinanzas.get('descripcion')?.hasError('required') && this.formFinanzas.get('descripcion')?.touched) {
+            <p class="error">Ingrese una descripción</p>
+          }
+        </div>
+
+        @if(this.formFinanzas.get('id_categoria')?.value>=1 && this.formFinanzas.get('id_categoria')?.value<5){
+          <div class="campo flex-column">
+            <h4>Comprobante</h4>
+            <div class="file-upload-container">
+              <label [for]="'comprobante'" class="two-button flex">
+                <mat-icon>insert_drive_file</mat-icon>
+                Subir Archivo
+              </label>
+              <input type="file" [id]="'comprobante'" accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)" 
+                hidden>
+              
+              @if(selectedFileName) {
+                <span class="filename">{{ selectedFileName }}</span>
+              }
+            </div>
+            <p class="file-info">Formatos permitidos: PDF, JPG, PNG (Máx. 5MB)</p>
+          </div>
+        }
+
+      </form>
     }
-    <div class="evidencia-info">
-      <h3>{{ itemSeleccionado?.descripcion }}</h3>
-      <p><strong>Monto:</strong> {{ itemSeleccionado?.monto | currency:'MXN' }}</p>
-      <p><strong>Fecha:</strong> {{ itemSeleccionado?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-      <p><strong>Categoría:</strong> {{ itemSeleccionado?.categoria }}</p>
-    </div>
-  </div>
+
 </app-modalcomponent>
+
+
+<app-modal-file [content]="modalContent" [isOpen]="isModalOpen2" (closeModal)="closeModal()">
+
+</app-modal-file>
