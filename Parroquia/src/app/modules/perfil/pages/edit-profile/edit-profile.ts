@@ -11,5 +11,8 @@ import { Profile } from '../../../../services/profile';
 export class EditProfile {
   profileService=inject(Profile)
 
+  ngOnInit(){
+    
+  }
   
 }

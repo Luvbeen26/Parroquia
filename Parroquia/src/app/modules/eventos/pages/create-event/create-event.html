@@ -1,23 +1,41 @@
 <main class="background flex">
     <section class="Contenedor">
+        <!-- Contenido del formulario según el step -->
         @if (step==0) {
             @if(eventoId == 1){
-                <app-form-bautizo (steps)="next_prev_step($event)"></app-form-bautizo>
-            }@else if (eventoId == 3 || 7) {
-                <app-form-con-prim  [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-con-prim>
+                <app-form-bautizo></app-form-bautizo>
+            }@else if (eventoId == 3 || eventoId == 7) {
+                <app-form-con-prim [id_event]="eventoId"></app-form-con-prim>
             }@else if (eventoId == 4) {
                 <p>matrimonio</p>
             }@else if (eventoId == 5) {
                 <p>XV</p>
             }            
         }@else if (step==1){
-            <app-form-padres (steps)="next_prev_step($event)"></app-form-padres>
+            <app-form-padres></app-form-padres>
         }@else if (step==2) {
-            <app-form-documents [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-documents>
+            <app-form-documents [id_event]="eventoId"></app-form-documents>
         }@else if (step==3) {
-            <app-form-date [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-date>    
+            <app-form-date [id_event]="eventoId"></app-form-date>    
         }@else if (step==4) {
-            <app-form-pay [id_event]="eventoId" (steps)="next_prev_step($event)"></app-form-pay>
+            <app-form-pay [id_event]="eventoId"></app-form-pay>
         }
+
+        <!-- Botones de navegación -->
+        <div class="navigation-buttons">
+            @if (step > 0) {
+                <button class="two-button btn-prev" (click)="prevStep()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Volver
+                </button>
+            }
+            
+            <button class="button btn-next" (click)="nextStep()" [disabled]="!canGoNext()">
+                {{ step === 4 ? 'Finalizar' : 'Continuar' }}
+                @if (step < 4) {
+                    <mat-icon>arrow_forward</mat-icon>
+                }
+            </button>
+        </div>
     </section>
 </main>

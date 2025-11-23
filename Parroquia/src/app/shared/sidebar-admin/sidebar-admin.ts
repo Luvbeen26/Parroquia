@@ -31,7 +31,7 @@ export class SidebarAdmin {
 
   menuItems = [
     { icon: 'dashboard', label: 'Panel de Administración', route: '/admin', active: true },
-    { icon: 'publication', label: 'Publicaciones', route: '/admin/publications', active: false },
+    { icon: 'publication', label: 'Publicaciones', route: '/admin/publicaciones', active: false },
     { icon: 'event', label: 'Eventos', route: '/admin/eventos', active: false },
     { icon: 'document', label: 'Documentos', route: '/admin/documentos', active: false },
     { icon: 'finanzas', label: 'Finanzas', route: '/admin/finanzas', active: false }

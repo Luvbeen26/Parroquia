@@ -3,10 +3,6 @@
   padding: 1rem;
 }
 
-.cont-btn{
-  justify-content: end;
-}
-
 .button{
   max-width: fit-content;
 }
@@ -76,6 +72,18 @@ h2 {
   text-transform: capitalize;
   font-size: 1.5rem;
 }
+
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e3a5f;
+}
+
 
 .search {
   border: 2px solid var(--color-lines);
@@ -185,6 +193,14 @@ h2 {
   width: fit-content;
 }
 
+.header-section {
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
 .filename {
   font-size: 14px;
   color: var(--color-principal-button);
@@ -257,9 +273,13 @@ h2 {
     gap: 8px;
   }
 
-  .cont-btn {
-    justify-content: center;
-    width: 100%;
+  .header-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
   }
 
   .button {

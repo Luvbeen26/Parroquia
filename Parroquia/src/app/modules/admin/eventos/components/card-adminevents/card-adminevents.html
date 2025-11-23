@@ -2,9 +2,13 @@
   <div class="card-header">
     <div class="info-section flex-column">
       <h3 class="celebrante-name">{{eventObj.nombre_c}}</h3>
+      <span class="folio-badge">
+       Folio: {{eventObj.folio}}
+      </span>
       <span class="tipo-badge" [ngClass]="'badge-' + eventObj.tipo.toLowerCase().replaceAll(' ', '-')">
         {{eventObj.tipo}}
       </span>
+      
     </div>
     
     @if (eventObj.status != "R") {

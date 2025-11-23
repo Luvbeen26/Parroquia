@@ -5,6 +5,7 @@ export interface getDocs{
     participante:string,
     motivo:string | null,
     documento:string | null
+    folio:string
 }
 
 

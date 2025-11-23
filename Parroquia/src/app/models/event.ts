@@ -64,11 +64,13 @@ export interface GetEventsReagendar{
     nombre_c: string,
     descripcion: string | null,
     id_evento: number,
-    tipo: string,       
+    tipo: string,    
+    folio:string,   
     status: string,
 }
 
 export interface GetMonthEvents extends GetEventsReagendar{
+    
     fecha_inicio: string,
     hora_inicio: string,    
     fecha_fin: string,    
@@ -79,6 +81,7 @@ export interface GetMonthEvents extends GetEventsReagendar{
 
 
 export interface CardsDayEvents{
+    folio:string,   
     id_evento:number;
     nombre_c:string,
     fecha_inicio:string,

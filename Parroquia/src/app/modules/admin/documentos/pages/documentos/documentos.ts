@@ -3,7 +3,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { DocumentoS } from '../../../../../services/documentos';
 import { getDocs, ModalContent } from '../../../../../models/document';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ModalFile } from '../../../../../shared/modal-file/modal-file';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'; 
@@ -23,7 +23,7 @@ export class Documentos {
   toast=inject(ToastrService)
   docService=inject(DocumentoS)
   private sanitizer = inject(DomSanitizer);
-  estado="Pendiente"
+    private searchSubject = new Subject<string>();
   searchText = '';
   currentPage = 1;
   itemspage=10;
@@ -34,32 +34,71 @@ export class Documentos {
   isModal2Open:boolean=false
   RechazarId: number | null =null;
   motivoRechazoControl = new FormControl('');
-  
+  status:string="";
+  name:string="";
+  tipo:number | null=null;
 
   private allDocsSubject = new BehaviorSubject<getDocs[]>([]);
   private docsSubject = new BehaviorSubject<getDocs[]>([]); 
   documentos$ = this.docsSubject.asObservable();
 
   ngOnInit(){
-    this.GetDocs("Pendiente")
+    this.status="Pendiente"
+    this.GetDocs()
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(searchTerm => {
+      this.name = searchTerm;
+      this.GetDocs();
+    });
   }
 
 
-  GetDocs(status:string){
-    this.docService.getDocsByStatus(status).subscribe(res =>{
-      const doc=res.map(d =>({
-        id_documento:d.id_documento,
-        evento:d.evento,
-        tipo:d.tipo,
-        participante:d.participante,
-        motivo:d.motivo,
-        documento:d.documento
-      }))
+  GetDocs() {
+    const nombre = this.name.trim() !== '' ? this.name.trim() : null;
+    const tipo = this.tipo;
+    console.log('📊 Filtros aplicados:', { status: this.status, nombre, tipo }); // Debug
+    
+    this.docService.getDocsByStatus(this.status, nombre, tipo).subscribe(res => {
+      
+      const doc = res.map(d => ({
+        id_documento: d.id_documento,
+        evento: d.evento,
+        tipo: d.tipo,
+        participante: d.participante,
+        motivo: d.motivo,
+        documento: d.documento,
+        folio:d.folio
+      }));
+      
       this.allDocsSubject.next(doc);
       this.calcuPaginacion(doc);
       this.updatePageData();
-    })
-    this.estado=status
+    });
+  }
+
+  ChangeStatus(stat:string){
+    this.status=stat
+    this.currentPage = 1;
+    this.GetDocs()
+  }
+
+  SearchText(event:Event){
+    this.name=(event.target as HTMLInputElement).value
+    this.searchSubject.next(this.name);
+  }
+
+  ChangeTipo(event:Event){
+    const tipoEvento = (event.target as HTMLSelectElement).value;
+    
+    if (tipoEvento) {
+      this.tipo=Number(tipoEvento);
+    } else {
+      this.tipo=null;
+    }
+    this.currentPage=1
+    this.GetDocs()
   }
 
   calcuPaginacion(docs: getDocs[]) {
@@ -129,7 +168,7 @@ export class Documentos {
     this.docService.accepttDoc(id).subscribe({
       next: res=> {
         this.toast.success("Documento Aceptado")
-        this.GetDocs(this.estado)
+        this.GetDocs()
         
       },
       error: err=> this.toast.error("Error al aceptar el documento")
@@ -143,12 +182,15 @@ export class Documentos {
       next: res=> {
         this.toast.success("Documento Rechazado")
         this.closeModal();
-        this.GetDocs(this.estado)
+        this.GetDocs()
         
       },
       error: err=> this.toast.error("Error al rechazar el documento")
     })
   }
 
-
+  ngOnDestroy() {
+    this.searchSubject.complete();
+  }
 }
+

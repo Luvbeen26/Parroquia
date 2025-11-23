@@ -4,6 +4,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable } from 'rxjs';
 import { getDocs } from '../models/document';
+import { MatTooltipModule } from '@angular/material/tooltip';
+
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +17,16 @@ export class DocumentoS {
   constructor(private http: HttpClient, public cookies: CookieService) {}
   
 
-  getDocsByStatus(status:string): Observable<getDocs[]>{
-    const token=this.cookies.get('access_token')
-    const headers=new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    return this.http.get<getDocs[]>(`${this.apiurl}/show/pendient_docs`,{headers, params: { tipo: status } })
+  getDocsByStatus(status:string,name:string | null, tipo:number | null): Observable<getDocs[]>{
+    let params: any = { status: status };
+    if (name !== null && name !== '') {
+      params.nombre = name;
+    }
+    if (tipo !== null) {
+      params.tipo = tipo.toString(); 
+    }
+    
+    return this.http.get<getDocs[]>(`${this.apiurl}/show/docs`, { params: params });
   }
 
   rejectDoc(id:number,motivo:string): Observable<any>{

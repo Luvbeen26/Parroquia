@@ -4,6 +4,7 @@ from typing import Optional
 from zoneinfo import ZoneInfo
 
 from dns.reversename import to_address
+from reportlab.lib.pagesizes import A5
 from sqlalchemy import cast, Date, func, extract, desc, and_
 
 from models import Transaccion

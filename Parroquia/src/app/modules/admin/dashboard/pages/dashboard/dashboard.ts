@@ -13,7 +13,7 @@ import { DashboardS } from '../../../../../services/dashboardS';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [StatCard,BaseChartDirective,CommonModule,Modalcomponent,MatIcon],
+  imports: [StatCard,BaseChartDirective,CommonModule,Modalcomponent],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })

@@ -207,10 +207,7 @@ export class Eventos {
     const nuevaFecha = fechaobj.toISOString().split("T")[0];
 
     const participantes=[...this.parents_form,...this.padrinos_form]
-    const token=this.cookies.get('access_token')
-    const headers=new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+    
     const body={
       "id_tipo_evento" : this.id_tipo_evento,
       "fecha_inicio" : fecha_inicio,
@@ -218,7 +215,9 @@ export class Eventos {
       "celebrado" : this.celebrado_form,
       "participantes" : participantes
     }
-    return this.http.post<CreateEvent>(`${this.apiurl}/create/Event`,body,{headers}).pipe(
+
+    console.log(body)
+    return this.http.post<CreateEvent>(`${this.apiurl}/create/Event`,body).pipe(
       switchMap((response: any) =>{
         const formdata=new FormData();
         
@@ -239,7 +238,7 @@ export class Eventos {
         });
         
 
-        return this.http.post(`${this.apiurldocs}/upload_file`,formdata,{headers});
+        return this.http.post(`${this.apiurldocs}/upload_file`,formdata);
       }));
   }
 
@@ -256,12 +255,7 @@ export class Eventos {
     formdata.append("id_evento",id.toString());
     formdata.append("image",evidence);
     
-    const token=this.cookies.get('access_token')
-    const headers=new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    
-    return this.http.put<MarkRealized>(`${this.apiurl}/update/mark_realized_evento`,formdata,{headers})
+    return this.http.put<MarkRealized>(`${this.apiurl}/update/mark_realized_evento`,formdata)
   }
 
   MarkNoRealized(id:number,status:string): Observable<MarkNorealized>{
@@ -270,11 +264,8 @@ export class Eventos {
       image: null,
       status : status
     }
-    const token=this.cookies.get('access_token')
-    const headers=new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-    return this.http.put<MarkNorealized>(`${this.apiurl}/update/mark_notorpendient_event`,body,{headers})
+    
+    return this.http.put<MarkNorealized>(`${this.apiurl}/update/mark_notorpendient_event`,body)
   }
 
 

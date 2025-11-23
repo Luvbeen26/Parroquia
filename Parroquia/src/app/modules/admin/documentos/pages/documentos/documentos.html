@@ -1,62 +1,76 @@
 <main class="Contenedor flex-column">
-  <div class="tabs-container">
-    <button class="tab-btn" [class.active]="estado === 'Pendiente'" (click)="GetDocs('Pendiente')">Pendientes</button>
-    <button class="tab-btn" [class.active]="estado === 'Aceptado'" (click)="GetDocs('Aceptado')">Aceptados</button>
-    <button class="tab-btn" [class.active]="estado === 'Rechazado'" (click)="GetDocs('Rechazado')">Rechazados</button>
+  <div class="header-section flex">
+    <h1 class="page-title">Documentos</h1>
+    
+    <div class="tabs-container">
+      <button class="tab-btn" [class.active]="status === 'Pendiente'" (click)="ChangeStatus('Pendiente')">Pendientes</button>
+      <button class="tab-btn" [class.active]="status === 'Aceptado'" (click)="ChangeStatus('Aceptado')">Aceptados</button>
+      <button class="tab-btn" [class.active]="status === 'Rechazado'" (click)="ChangeStatus('Rechazado')">Rechazados</button>
+    </div>
   </div>
 
   <div class="filters-row flex">
     <div class="search-box flex">
       <mat-icon class="search-icon">search</mat-icon>
-      <input type="text" class="Input search-input" placeholder="Buscar por nombre">
+      <input type="text" class="Input search-input" (input)="SearchText($event)" placeholder="Buscar por nombre del participante o folio">
     </div>
 
-    <select class="Input filter-select">
+    <select class="Input filter-select" (change)="ChangeTipo($event)">
       <option value="">Tipo de Evento</option>
-      <option value="bautizo">Bautizo</option>
-      <option value="confirmacion">Confirmación</option>
-      <option value="comunion">Primera Comunión</option>
-      <option value="matrimonio">Matrimonio</option>
-      <option value="xv">XV Años</option>
+      <option value="1">Bautizo</option>
+      <option value="7">Confirmación</option>
+      <option value="3">Primera Comunión</option>
+      <option value="4">Matrimonio</option>
+      <option value="5">XV Años</option>
     </select>
   </div>
 
+  <!-- ✅ Tabla con etiquetas HTML nativas -->
   <div class="table-container">
-    <table class="documents-table">
+    <table class="documentos-table">
       <thead>
         <tr>
           <th>Participante</th>
           <th>Tipo Evento</th>
+          <th>Folio</th>
           <th>Documento</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         @let documentos = (documentos$ | async);
-        @for (doc of documentos; track $index) {
+        
+        @if (documentos && documentos.length > 0) {
+          @for (doc of documentos; track $index) {
+            <tr [matTooltip]="doc.motivo ? 'Motivo: ' + doc.motivo : null" matTooltipPosition="above">
+              <td data-label="Participante">{{ doc.participante }}</td>
+              <td data-label="Tipo Evento">{{ doc.evento }}</td>
+              <td data-label="Folio">{{ doc.folio }}</td>
+              <td data-label="Documento">{{ doc.tipo }}</td>
+              <td data-label="Acciones" class="actions-cell">
+                <div class="actions-wrapper">
+                  <button class="action-btn revisar-btn" (click)="revisarDocumento(doc.documento!)">
+                    <mat-icon matTooltip="Ver documento">visibility</mat-icon>
+                  </button>
+                  @if(status != "Aceptado"){
+                    <button class="action-btn aceptar-btn" (click)="aceptarDocumento(doc.id_documento)">
+                      <mat-icon matTooltip="Aceptar">check</mat-icon>
+                    </button>
+                  }
+                  @if(status != "Rechazado"){
+                    <button class="action-btn rechazar-btn" (click)="AbrirRechazar(doc.id_documento)">
+                      <mat-icon matTooltip="Rechazar">close</mat-icon>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        } @else {
           <tr>
-            <td class="celebrante-cell">{{ doc.participante }}</td>
-            <td>{{ doc.evento }}</td>
-            
-            <td>{{ doc.tipo }}</td>
-            <td class="actions-cell">
-              
-              <button class="action-btn revisar-btn" (click)="revisarDocumento(doc.documento!)">
-                <mat-icon matTooltip="Ver documento">visibility</mat-icon>
-                
-              </button>
-              @if(estado != "Aceptado"){
-                <button class="action-btn aceptar-btn" (click)="aceptarDocumento(doc.id_documento)">
-                  <mat-icon matTooltip="Aceptar">check</mat-icon>
-                  
-                </button>
-              }
-              @if(estado != "Rechazado"){
-                <button class="action-btn rechazar-btn" (click)="AbrirRechazar(doc.id_documento)">
-                  <mat-icon matTooltip="Rechazar">close</mat-icon>
-                  
-                </button>
-              }
+            <td colspan="5" class="empty-state">
+              <mat-icon>description</mat-icon>
+              <p>No hay documentos {{ status.toLowerCase() }}s</p>
             </td>
           </tr>
         }
@@ -79,6 +93,7 @@
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>
+
   <app-modal-file 
     [content]="modalContent" 
     [isOpen]="isModalOpen"
@@ -86,27 +101,27 @@
   </app-modal-file>
   
   <app-modalcomponent [isOpen]="isModal2Open"
-        [title]="'Rechazar documentos'"
-        [showFooter]="true"
-        [showConfirmButton]='true'
-        [disableConfirm]="!motivoRechazoControl.value?.trim()"
-        (onClose)="closeModal()"
-        (onConfirmClick)="rechazarDocumento()"> 
-        <div class="upload-content">
-          <h3 class="upload-description">
-            ¿Estás seguro de que deseas rechazar este documento?
-            <br>Proporciona el motivo del rechazo
-          </h3>
-        
-          <div class="form-group-rechazo">
-            <label for="motivo-rechazo" class="label-motivo">
-              Motivo de rechazo 
-            </label>
-            <textarea id="motivo-rechazo" class="Input textarea-motivo" rows="5" 
-              placeholder="Escribe aquí el motivo del rechazo..." maxlength="200" [formControl]="motivoRechazoControl"
-              required>
-            </textarea>
-          </div>
-        </div>
-      </app-modalcomponent>
+    [title]="'Rechazar documentos'"
+    [showFooter]="true"
+    [showConfirmButton]='true'
+    [disableConfirm]="!motivoRechazoControl.value?.trim()"
+    (onClose)="closeModal()"
+    (onConfirmClick)="rechazarDocumento()"> 
+    <div class="upload-content">
+      <h3 class="upload-description">
+        ¿Estás seguro de que deseas rechazar este documento?
+        <br>Proporciona el motivo del rechazo
+      </h3>
+    
+      <div class="form-group-rechazo">
+        <label for="motivo-rechazo" class="label-motivo">
+          Motivo de rechazo 
+        </label>
+        <textarea id="motivo-rechazo" class="Input textarea-motivo" rows="5" 
+          placeholder="Escribe aquí el motivo del rechazo..." maxlength="200" [formControl]="motivoRechazoControl"
+          required>
+        </textarea>
+      </div>
+    </div>
+  </app-modalcomponent>
 </main>

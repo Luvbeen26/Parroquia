@@ -25,33 +25,30 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
 
   const token=authService.getAccessToken();
 
-  if(token){
-    req=req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-  }
+  const clonedReq = token ? req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`
+    }
+  }) : req;
 
-  return next(req).pipe(
-    catchError((error) =>{
+  return next(clonedReq).pipe(
+    catchError((error : HttpErrorResponse) =>{
       if(error.status === 401){
         return authService.refresh().pipe(
-          switchMap((newToken) =>{
-            const cloneReq=req.clone({
+          switchMap((newToken:string) =>{
+            const retryReq = req.clone({
               setHeaders: {
                 Authorization: `Bearer ${newToken}`
               }
             });
-            return next(cloneReq);
+            return next(retryReq);
           }),
-          catchError((error) =>{
-            authService.logout()
-            return throwError(() => error)
+          catchError((refreshError) => {
+            authService.logout();
+            return throwError(() => refreshError);
           })
         );
       }
-
       return throwError(() => error)
     })
   )

@@ -1,8 +1,16 @@
 <main class="Contenedor flex-column">
   
-  <div class="cont-btn flex">
-    <button [routerLink]="['/admin/eventos/parroquial']" class="button">Crear Evento Parroquial</button>
+  <div class="header-section flex">
+    <h1 class="page-title">
+      Eventos
+    </h1>
+    <button class="button btn-primary flex" [routerLink]="['/admin/eventos/parroquial']">
+      <mat-icon>add_circle</mat-icon>
+      Agregar un Evento Parroquial
+    </button>
   </div>
+
+  
   
   
 

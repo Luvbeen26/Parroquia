@@ -17,6 +17,7 @@ from schema import evento as schema_event
 from schema import finanzas as schema_finanzas
 from models import evento as models_event, Evento, TipoEvento
 from models import evento_participantes as event_part
+from models import User
 from api import finanzas
 from models.transaccion import Transaccion
 from models.pagos import Pagos
@@ -41,12 +42,19 @@ async def create_event(
         db:Session = Depends(get_db), user_data:dict=Depends(current_user)):
     try:
         user_id=user_data["id_usuario"]
-
-
+        user_exists = db.query(User).filter_by(id_usuario=user_id).first()
+        print(1)
+        if not user_exists:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Usuario con id {user_id} no existe en la base de datos"
+            )
+        print(2)
         descripcion = ""
         #ID DE EVENTO
         id_tipo_evento = evento.id_tipo_evento
         if id_tipo_evento not in [1,2,3,4,5,7]:
+            db.rollback()
             raise HTTPException(status_code=404, detail="Tipo de evento inexistente")
 
         #DESCRIPCION DE EVENTO
@@ -62,7 +70,7 @@ async def create_event(
         elif id_tipo_evento == 5:
             descripcion = "XV Años - "
 
-
+        print(3)
         for celebrado in evento.celebrado:
             if len(celebrado.apellido_mat) > 50 or len(celebrado.apellido_pat) > 50 or len(celebrado.nombres) > 50:
                 raise HTTPException(status_code=404,detail="Nombres demasiados largos")
@@ -78,7 +86,7 @@ async def create_event(
             fecha_fin=evento.fecha_fin,
             id_tipo_evento=id_tipo_evento
         )
-
+        print(4)
         #CREAR EVENTO
         id_evento=register_event(register,user_id,db)
         celebrado_list=[]
@@ -96,13 +104,13 @@ async def create_event(
 
 
         price = db.query(TipoEvento).filter_by(id_tipo_evento=id_tipo_evento).first().costo_programar
-
+        print(6)
 
         metodo_pago(user_id,price,6,descripcion,db)
 
         name=user_data["nombre"]
         email=user_data["correo"]
-
+        print(7)
         #SACAR EL MONTO DE LA BD PARA EVITAR QUE LO EDITEN EN FRONT
         comproba = schema_finanzas.Comprobante(
             id_evento=id_evento,
@@ -112,9 +120,9 @@ async def create_event(
             monto=float(price),
             fecha=datetime.datetime.now(MAZATLAN_TZ).strftime("%Y-%m-%d %H:%M:%S")
         )
-
+        print("7.5")
         await finanzas.generar_comprobante_pago(comproba,db)
-
+        print(8)
         fecha_inicio_dt = datetime.datetime.strptime(evento.fecha_inicio, "%Y-%m-%d %H:%M:%S")
         tiempo_notificacion = fecha_inicio_dt  - datetime.timedelta(days=1)
         scheduler.add_job(
@@ -123,7 +131,7 @@ async def create_event(
             run_date=tiempo_notificacion,
             args=[user_id, f"El {descripcion} se llevará a cabo en 1 día", datetime.datetime.now(MAZATLAN_TZ), "E",db]
         )
-
+        print(9)
         return {"msg" : "Registrado correctamente", "res" : {
             "evento" : id_evento,
             "user" : user_id,
@@ -131,6 +139,7 @@ async def create_event(
             "ids_participantes" : participant_list
         }}
     except Exception as error:
+        db.rollback()
         raise HTTPException(status_code=400, detail=str(error))
 
 
@@ -547,6 +556,7 @@ def month_events(request: Request, year: int, month: int, db: Session = Depends(
                     "descripcion": e.descripcion,
                     "evidencia": evidencia_url,  # Ahora es URL completa
                     "id_evento": e.id_evento,
+                    "folio" : e.folio,
                     "fecha_inicio": fecha_i,
                     "hora_inicio": hora_i,
                     "fecha_fin": fecha_f,
@@ -586,6 +596,7 @@ def forreagendar(db: Session = Depends(get_db)):
                     "status": e.status,
                     "descripcion": e.descripcion,
                     "id_evento": e.id_evento,
+                    "folio":e.folio,
                     "tipo": tipos_evento.get(e.id_tipo_evento, "Desconocido"),
                 }
             )

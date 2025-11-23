@@ -67,12 +67,15 @@ export class Eventosadmin {
     this.CargarEventosCalendar(this.viewDate.getFullYear(),this.viewDate.getMonth()+1)
 
     this.eventService.GetEventsReagendar().subscribe(res=>{
+      console.log(res)
+      console.log(1)
       const evento=res.map(e =>({
         nombre_c: e.nombre_c,
         descripcion: e.descripcion,
         id_evento: e.id_evento,
         tipo: e.tipo,       
         status: e.status,
+        folio:e.folio
       }));
       this.eventsReagendSubject.next(evento);
       console.log(this.eventsReagendSubject)
@@ -93,6 +96,7 @@ export class Eventosadmin {
           id:e.id_evento,
           status:e.status,
           tipo:e.tipo,
+          folio:e.folio,
           evidencia:e.status === 'A' ? e.evidencia : null
         }
       }));
@@ -121,12 +125,12 @@ export class Eventosadmin {
       fecha_fin:`${e.end?.getHours().toString().padStart(2, '0')}:${e.end?.getMinutes().toString().padStart(2, '0')}`,
       tipo:e.meta.tipo,
       status:e.meta.status,
+      folio:e.meta.folio,
       evidencia:e.meta.evidencia
     }))
     
-    console.log(events)
     this.dayeventsSubject.next(eventos);
-    console.log(this.dayeventsSubject)
+    
   }
 
   closeModal() {
@@ -170,7 +174,7 @@ export class Eventosadmin {
 
   AccionModal(){
     if(this.operation() == "check")
-      this.UploadEvidence
+      this.UploadEvidence()
   }
 
   UploadEvidence() {

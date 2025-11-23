@@ -5,9 +5,12 @@ from zoneinfo import ZoneInfo
 import re
 import unicodedata
 from pathlib import Path
-from sqlalchemy import func, cast, and_, String
+from sqlalchemy import func, cast, and_, String, or_
 from sqlalchemy.orm import Session
 from fastapi.responses import FileResponse
+
+from models import EventoParticipante
+from models.celebrado import Celebrado
 from models.documento import Documento
 from models.evento import Evento
 from utils.database import get_db
@@ -219,33 +222,74 @@ def update_file(id_docs: str = Form(...),
         raise HTTPException(status_code=500, detail=str(error))
 
 
-@router.get("/show/pendient_docs")
-def show_pendientDocs(tipo:str,request:Request,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
+@router.get("/show/docs")
+def show_Docs(
+    status: str,request: Request,db: Session = Depends(get_db),admin_data: dict = Depends(admin_required),
+    nombre: Optional[str] = None,tipo: Optional[str] = None):
     try:
-        docs = db.query(Documento).filter(Documento.status == tipo).all()
+        if tipo == "1":
+            tipos_validos = ["1", "2"]
+        else:
+            tipos_validos = [tipo] if tipo is not None else None
+
+        if nombre is not None and tipo is not None:
+            docs = (db.query(Documento).outerjoin(Documento.celebrado).outerjoin(Documento.participante).outerjoin(Documento.evento_documento)
+                .filter(and_(Documento.status == status,Documento.id_tipo_documento.in_(tipos_validos),or_(
+                            Celebrado.nombres.ilike(f"%{nombre}%"),Celebrado.apellido_pat.ilike(f"%{nombre}%"),Celebrado.apellido_mat.ilike(f"%{nombre}%"),
+                            EventoParticipante.nombres.ilike(f"%{nombre}%"),EventoParticipante.apellido_pat.ilike(f"%{nombre}%"),EventoParticipante.apellido_mat.ilike(f"%{nombre}%"),
+                            (Evento.folio.ilike(f"%{nombre}%"))),)).all())
+
+
+        elif nombre is not None:
+            docs = (db.query(Documento).outerjoin(Documento.celebrado).outerjoin(Documento.participante).outerjoin(Documento.evento_documento)
+                .filter(and_(Documento.status == status,or_(Celebrado.nombres.ilike(f"%{nombre}%"),
+                            Celebrado.apellido_pat.ilike(f"%{nombre}%"),Celebrado.apellido_mat.ilike(f"%{nombre}%"),
+                            EventoParticipante.nombres.ilike(f"%{nombre}%"),EventoParticipante.apellido_pat.ilike(f"%{nombre}%"),
+                            EventoParticipante.apellido_mat.ilike(f"%{nombre}%"),Evento.folio.ilike(f"%{nombre}%")),))
+                .all())
+
+        elif tipo is not None:
+            docs = (db.query(Documento).outerjoin(Documento.celebrado).outerjoin(Documento.participante)
+                .filter(and_(Documento.status == status,Documento.id_tipo_documento.in_(tipos_validos),)).all())
+
+        else:
+            docs = db.query(Documento).filter(Documento.status == status).all()
+
+        # Construcción del resultado
         base_url = str(request.base_url).rstrip("/")
-        result=[]
+        result = []
+
         for d in docs:
+            if d.evento_documento.tipo_evento.descripcion in ["Privado","Comunitario"]:
+                tipo_evento="Bautizo"
+            else:
+                tipo_evento=d.evento_documento.tipo_evento.descripcion
+
             if d.participante:
                 rol = d.participante.rol.descripcion
                 nombre_completo = f"{d.participante.nombres} {d.participante.apellido_pat} {d.participante.apellido_mat}"
             elif d.celebrado:
                 rol = d.celebrado.rol.descripcion
                 nombre_completo = f"{d.celebrado.nombres} {d.celebrado.apellido_pat} {d.celebrado.apellido_mat}"
-            tipo = f"{d.tipo_documento.descripcion} {rol}"
-            ruta=f"{base_url}/{d.ruta}"
-            documento_url = ruta.replace("\\", "/")
+            else:
+                rol = ""
+                nombre_completo = ""
+
+            tipo_desc = f"{d.tipo_documento.descripcion} {rol}"
+            ruta = f"{base_url}/{d.ruta}".replace("\\", "/")
 
             result.append({
                 "id_documento": d.id_documento,
-                "evento": d.evento_documento.tipo_evento.descripcion,
-                "tipo":tipo,
-                "participante":nombre_completo,
-                "motivo":d.motivo_rechazo,
-                "documento":documento_url
+                "evento": tipo_evento,
+                "tipo": tipo_desc,
+                "participante": nombre_completo,
+                "motivo": d.motivo_rechazo,
+                "folio" : d.evento_documento.folio,
+                "documento": ruta
             })
 
         return result
+
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
 

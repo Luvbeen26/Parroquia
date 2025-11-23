@@ -2,24 +2,23 @@
 <hr>
 <form [formGroup]="form" class="form">    
     
-    
     <section class="info-bautizado">
         
-            <span class="Campo">
-                <h4>Nombres</h4>
-                <input type="text" formControlName="nombres" class="Input" placeholder="Nombres" maxlength="50">
-            </span>
+        <span class="Campo">
+            <h4>Nombres</h4>
+            <input type="text" formControlName="nombres" class="Input" placeholder="Nombres" maxlength="50">
+        </span>
 
-            <span class="Campo">
-                <h4>Apellido Paterno</h4>
-                <input type="text" formControlName="apellido_pat" class="Input" placeholder="Apellido paterno" maxlength="50">
-            </span>
+        <span class="Campo">
+            <h4>Apellido Paterno</h4>
+            <input type="text" formControlName="apellido_pat" class="Input" placeholder="Apellido paterno" maxlength="50">
+        </span>
 
-            <span class="Campo">
-                <h4>Apellido Materno</h4>
-                <input type="text" formControlName="apellido_mat" class="Input" placeholder="Apellido materno" maxlength="50">
-            </span>
-        
+        <span class="Campo">
+            <h4>Apellido Materno</h4>
+            <input type="text" formControlName="apellido_mat" class="Input" placeholder="Apellido materno" maxlength="50">
+        </span>
+    
         <span class="genero down">
             <h4>Genero</h4>
             <div class="radios">
@@ -36,12 +35,10 @@
             </div>
         </span>
 
-
         <span class="Campo down">
             <h4>Fecha de Nacimiento</h4>
             <input type="date" class="Input" formControlName="fecha_nac">
         </span>
-
 
         <span class="Campo down">
             <h4>Edad</h4>
@@ -69,9 +66,5 @@
                 </div>
             </label>
         </span>
-        
     </section>
-    <div class="buttons">
-        <button class="button" [disabled]="form.invalid" (click)="next()">Continuar</button> 
-    </div>
 </form>
