@@ -1,25 +1,125 @@
-.contenedor-publication{
-  box-sizing: border-box; 
-  background-color: #FFFF;
-  border: 2px solid var(--color-lines);
-  margin-left: auto;
-  margin-right: auto;
-  border-radius: 10px;
-  display:flex;
-  flex-direction: column;
-  padding-inline: 2rem;
-  padding-block: 1.5rem;
-  max-width: 770px;
-  width: 100%;
+/* ========== MENU CONTAINER ========== */
+.menu-container {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
 }
 
-.contenido{
+.menu-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    color: var(--color-text, #333);
+}
+
+.menu-button:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+.menu-button mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+/* ========== MENU DROPDOWN ========== */
+.menu-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: white;
+    border: 1px solid var(--color-lines, #e0e0e0);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 150px;
+    overflow: hidden;
+    animation: menuFadeIn 0.2s ease;
+}
+
+@keyframes menuFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-item {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    color: #333;
+    text-align: left;
+}
+
+.menu-item mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+.menu-item:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.menu-item.edit {
+    color: #1976d2;
+}
+
+.menu-item.edit:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+}
+
+.menu-item.delete {
+    color: #d32f2f;
+}
+
+.menu-item.delete:hover {
+    background-color: rgba(211, 47, 47, 0.08);
+}
+
+/* ========== AJUSTES AL CONTENEDOR PRINCIPAL ========== */
+.contenedor-publication {
+    position: relative; /* Para posicionar el menú absolutamente */
+    box-sizing: border-box; 
+    background-color: #FFFF;
+    border: 2px solid var(--color-lines);
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    padding-inline: 2rem;
+    padding-block: 1.5rem;
+    max-width: 770px;
+    width: 100%;
+}
+
+.contenido {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap:8px;
-    box-sizing:border-box;
-    
+    gap: 8px;
+    box-sizing: border-box;
 }
 
 .contenido h2 {
@@ -35,13 +135,21 @@
     white-space: pre-wrap;
 }
 
+/* ========== FECHA ========== */
+.fecha {
+    color: #666;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+/* ========== GALERÍA (código existente) ========== */
 .galeria-imagenes {
     display: grid;
     gap: 8px;
     margin: 15px 0;
     border-radius: 12px;
     overflow: hidden;
-    max-width:max-content;
+    max-width: max-content;
 }
 
 .img-item {
@@ -89,7 +197,7 @@
 }
 
 .galeria-imagenes[data-count="3"] .img-item:first-child {
-    grid-row: 1 / 3; /* Ocupa 2 filas */
+    grid-row: 1 / 3;
 }
 
 .galeria-imagenes[data-count="3"] .img_public {
@@ -107,9 +215,10 @@
     height: 250px;
 }
 
-@media (max-width:1227px){
-    .contenido{
-      width: 90%;
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1227px) {
+    .contenido {
+        width: 90%;
     }
 }
 
@@ -133,9 +242,26 @@
 }
 
 @media (max-width: 600px) {
-    /* En móvil, todo en columna */
-    
-.galeria-imagenes[data-count="1"] .img_public {
+    .contenedor-publication {
+        padding-inline: 1rem;
+        padding-block: 1rem;
+    }
+
+    .menu-container {
+        top: 8px;
+        right: 8px;
+    }
+
+    .menu-dropdown {
+        min-width: 140px;
+    }
+
+    .menu-item {
+        padding: 10px 14px;
+        font-size: 13px;
+    }
+
+    .galeria-imagenes[data-count="1"] .img_public {
         height: 180px;
         margin: auto;
     }

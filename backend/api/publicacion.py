@@ -1,4 +1,5 @@
 import shutil
+import time
 from time import strftime
 from typing import List, Optional
 from zoneinfo import ZoneInfo
@@ -74,17 +75,39 @@ def crear_publicacion_imagenes(titulo:str = Form(...),contenido:str = Form(...),
 @router.delete("/delete/publication")
 def delete_publicacion(id_publicacion:int,db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
-        carpeta_delete=os.path.join("Images","Publicaciones",str(id_publicacion))
-        if os.path.exists(carpeta_delete):
-            shutil.rmtree(carpeta_delete)
-            db.query(ImagenPublicacion).filter(ImagenPublicacion.id_publicacion == id_publicacion).delete()
+        publicacion = db.query(Publicacion).filter(Publicacion.id_publicacion == id_publicacion).first()
 
+        if not publicacion:
+            raise HTTPException(status_code=404, detail="Publicación no encontrada")
+
+        db.query(ImagenPublicacion).filter(ImagenPublicacion.id_publicacion == id_publicacion).delete()
         db.query(Publicacion).filter(Publicacion.id_publicacion == id_publicacion).delete()
         db.commit()
-        return {"msg" : "Publicaciones eliminados"}
+
+
+        carpeta_delete = os.path.join("Images", "Publicaciones", str(id_publicacion))
+        if os.path.exists(carpeta_delete):
+            try:
+                max_intentos = 3
+                for intento in range(max_intentos):
+                    try:
+                        shutil.rmtree(carpeta_delete)
+                        break
+                    except PermissionError:
+                        if intento < max_intentos - 1:
+                            time.sleep(0.5)  # Espera 500ms antes de reintentar
+                            continue
+                        else:
+                            print(f"No se pudo eliminar la carpeta {carpeta_delete}")
+            except Exception as e:
+                print(f"Error al eliminar carpeta física: {e}")
+        return {"msg": "Publicación eliminada con éxito"}
+    except HTTPException:
+        raise
     except Exception as e:
+        print(f"Error en delete_publicacion: {e}")
         db.rollback()
-        raise HTTPException(status_code=404, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"Error al eliminar publicación: {str(e)}")
 
 
 @router.put("/edit/publication")

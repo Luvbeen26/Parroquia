@@ -1,5 +1,25 @@
 <main class="contenedor-publication"> 
     <article class="contenido">
+        @if (adminOption()) {
+            <div class="menu-container">
+                <button class="menu-button" (click)="toggleMenu($event)">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                
+                @if (isMenuOpen) {
+                    <div class="menu-dropdown" (click)="$event.stopPropagation()">
+                        <button class="menu-item edit" >
+                            <mat-icon>edit</mat-icon>
+                            <span>Editar</span>
+                        </button>
+                        <button class="menu-item delete" (click)="delete()">
+                            <mat-icon>delete</mat-icon>
+                            <span>Eliminar</span>
+                        </button>
+                    </div>
+                }
+            </div>
+        }
         <p class="fecha">{{ date() }}</p>
         <h2>{{ titulo() }}</h2>
         <p>{{ contenido() }}</p>

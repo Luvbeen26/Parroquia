@@ -16,8 +16,6 @@ import { Home_Service } from '../../../../services/home';
   styleUrl: './home.css'
 })
 export class Home {
-  
-
   errors_Exists=false
   isloading=false
 
@@ -25,26 +23,17 @@ export class Home {
   isSearching: boolean = false;
   
   searchSubject = new Subject<string>();
-   
-  
   eventList:{evento:string,date:string,hour:string}[] = [];
   publicList$!: Observable<{titulo:string, date:string, img:Imagen[], contenido:string}[]>;
-  //allpublicList:{titulo:string,date:string,img:Imagen[],contenido:string}[] = [];
 
   private home=inject(Home_Service)
-  
-  
+
   ngOnInit(){
-    
     this.get_events();
     this.setupSearch();
-
-    
   }
 
   setupSearch() {
-  
-
     this.publicList$ = this.searchSubject.pipe(
       startWith(''), //primero ejecuta como si se hubiese ingresado un valor vacio
       debounceTime(500), //espera .5s despues del ultimo valor ingresado
@@ -76,7 +65,6 @@ export class Home {
 
     this.home.get_parroquial().subscribe({
       next: (eventos) => {
-
         if(!eventos || eventos.length ===0){
           this.errors_Exists = true
           this.isloading = false
@@ -87,16 +75,11 @@ export class Home {
         eventos.forEach(e =>{
           this.eventList.push({evento:e.descripcion,date:e.fecha,hour:`${e.hora_inicio} - ${e.hora_fin}`})
         })
-
         this.isloading = false
-
       },
       error: (err) => {
         this.errors_Exists=true
         this.isloading = false
-        
-      
-
       },
       complete: () =>{
         console.log("Completo")

@@ -1,1 +1,50 @@
-<p>publicaciones works!</p>
+<div class="Contenedor">
+    <div class="header-section">
+        <h1 class="page-title">Publicaciones</h1>
+        <button class="button flex">
+        <mat-icon>add_circle</mat-icon>
+        Nueva Publicación
+        </button>
+    </div>
+
+    <div class="filters-container">
+        <div class="search-box">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" class="search-input" placeholder="Buscar publicaciones..."
+            (input)="onSearchChange($event)">
+        @if (isSearching) {
+            <div class="search-loading">
+            <mat-icon class="spin">sync</mat-icon>
+            </div>
+        }
+        </div>
+    </div>
+
+    <div class="publications-grid">
+        @if (isLoading) {
+            <div class="loading-container">
+                <div class="spinner"></div>
+            </div>
+        } @else if ((publicaciones$ | async)?.length === 0) {
+            <div class="empty-state">
+                <mat-icon>article</mat-icon>
+                <p>No se encontraron publicaciones</p>
+            </div>
+        } @else {
+            @for (p of (publicaciones$ | async); track p.id_publicacion   ) {
+                
+                
+                <app-publications
+                    [id_publicacion]="p.id_publicacion"
+                    [titulo]="p.titulo"
+                    [date]="p.fecha_hora"
+                    [image]="p.imagenes ?? []"
+                    [contenido]="p.contenido"
+                    [adminOption]="true"
+                    (eliminar)="deletePublication($event)">
+                </app-publications>
+            
+            }
+        }
+    </div>
+</div>
