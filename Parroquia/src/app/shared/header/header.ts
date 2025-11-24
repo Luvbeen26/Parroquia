@@ -1,14 +1,14 @@
 import { httpResource } from '@angular/common/http';
 import { Component, ElementRef, PLATFORM_ID, ViewChild,inject,input} from '@angular/core';
 import { RouterLink } from '@angular/router';
-
+import { MatIconModule } from '@angular/material/icon';
 import { isPlatformBrowser } from '@angular/common';
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-header',
   standalone:true,
-  imports: [RouterLink],
+  imports: [RouterLink,MatIconModule],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })

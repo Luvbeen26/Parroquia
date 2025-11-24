@@ -38,12 +38,12 @@ def crear_publicacion(titulo:str,contenido:str,db:Session = Depends(get_db),admi
 
 
 @router.post("/create/publication_imagenes")
-def crear_publicacion_imagenes(titulo:str = Form(...),contenido:str = Form(...),imagenes: List[UploadFile] = File(None),db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
+def crear_publicacion_imagenes(titulo:str = Form(...),contenido:str = Form(None),imagenes: List[UploadFile] = File(None),db:Session = Depends(get_db),admin_data:dict=Depends(admin_required)):
     try:
         user_id=admin_data["id_usuario"]
         fecha=datetime.datetime.now(MAZATLAN_TZ)
 
-        public=Publicacion(id_usuario=user_id,contenido=contenido,titulo=titulo,fecha_hora=fecha)
+        public=Publicacion(id_usuario=user_id,contenido=contenido if contenido else "",titulo=titulo,fecha_hora=fecha)
         db.add(public)
         db.commit()
         db.refresh(public)
@@ -51,23 +51,21 @@ def crear_publicacion_imagenes(titulo:str = Form(...),contenido:str = Form(...),
         carpeta = f"Images/Publicaciones/{public.id_publicacion}/"
         os.makedirs(carpeta, exist_ok=True)
 
+        if imagenes and len(imagenes) > 0:
+            for imagen in imagenes:
+                nombre_archivo = imagen.filename
+                ruta = os.path.join(carpeta, nombre_archivo)
 
-        for imagen in imagenes:
-            nombre_archivo = imagen.filename
-            ruta = os.path.join(carpeta, nombre_archivo)
-
-            # Guardar físicamente
-            with open(ruta, "wb") as f:
-                f.write(imagen.file.read())
-
-
-            img = ImagenPublicacion(id_publicacion=public.id_publicacion,ruta=ruta)
-            db.add(img)
-
-        db.commit()
-        return {"message": "Publicación creada correctamente", "id_publicacion": public.id_publicacion}
+                # Guardar físicamente
+                with open(ruta, "wb") as f:
+                    f.write(imagen.file.read())
 
 
+                img = ImagenPublicacion(id_publicacion=public.id_publicacion,ruta=ruta)
+                db.add(img)
+
+            db.commit()
+            return {"message": "Publicación creada correctamente", "id_publicacion": public.id_publicacion}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -111,48 +109,98 @@ def delete_publicacion(id_publicacion:int,db:Session = Depends(get_db),admin_dat
 
 
 @router.put("/edit/publication")
-def editar_publicacion(id_publicacion: int,titulo: Optional[str] = Form(None),contenido: Optional[str] = Form(None),
-        imagenes: Optional[List[UploadFile]] = File(None),db: Session = Depends(get_db),admin_data: dict = Depends(admin_required)):
+def editar_publicacion(id_publicacion: int = Form(...),titulo: Optional[str] = Form(None),contenido: Optional[str] = Form(None),
+        imagenes: List[UploadFile] = File(default=[]),imagenes_eliminar: Optional[str] = Form(None),
+        db: Session = Depends(get_db),admin_data: dict = Depends(admin_required)):
     try:
-
         public = db.query(Publicacion).filter(Publicacion.id_publicacion == id_publicacion).first()
         if not public:
             raise HTTPException(status_code=404, detail="Publicación no encontrada")
 
         if titulo:
             public.titulo = titulo
-        if contenido:
-            public.contenido = contenido
 
-        carpeta = f"Images/Publicaciones/{id_publicacion}/"
-        os.makedirs(carpeta, exist_ok=True)
+        public.contenido = contenido
 
-        if imagenes:
-            if len(imagenes) > 4:
-                raise HTTPException(status_code=400, detail="Máximo 4 imágenes permitidas")
+        if imagenes_eliminar:
+            import json
+            ids_eliminar = json.loads(imagenes_eliminar)
 
-            imagenes_actuales = db.query(ImagenPublicacion).filter(ImagenPublicacion.id_publicacion == id_publicacion).all()
+            for img_id in ids_eliminar:
+                img = db.query(ImagenPublicacion).filter(ImagenPublicacion.id_imagen == img_id,
+                    ImagenPublicacion.id_publicacion == id_publicacion).first()
+                if img:
+                    if os.path.exists(img.ruta):
+                        try:
+                            os.remove(img.ruta)
+                        except Exception as e:
+                            raise HTTPException(status_code=400, detail=str(e))
+                    db.delete(img)
 
-            for img in imagenes_actuales:
-                if os.path.exists(img.ruta):
-                    os.remove(img.ruta)
-                db.delete(img)
+        if imagenes and len(imagenes) > 0:
+            imagenes_actuales = db.query(ImagenPublicacion).filter(ImagenPublicacion.id_publicacion == id_publicacion).count()
+
+            total_imagenes = imagenes_actuales + len(imagenes)
+
+            if total_imagenes > 4:
+                raise HTTPException(status_code=400,detail=f"Solo puedes tener máximo 4 imágenes. Actualmente tienes {imagenes_actuales}")
+
+            carpeta = f"Images/Publicaciones/{id_publicacion}/"
+            os.makedirs(carpeta, exist_ok=True)
 
             for imagen in imagenes:
-                nombre_archivo = imagen.filename
-                ruta = os.path.join(carpeta, nombre_archivo)
-
-                with open(ruta, "wb") as f:
-                    f.write(imagen.file.read())
-
-                nueva_img = ImagenPublicacion(id_publicacion=id_publicacion, ruta=ruta)
-                db.add(nueva_img)
+                if imagen.filename:
+                    nombre_archivo = imagen.filename
+                    ruta = os.path.join(carpeta, nombre_archivo)
+                    with open(ruta, "wb") as f:
+                        f.write(imagen.file.read())
+                    nueva_img = ImagenPublicacion(id_publicacion=id_publicacion,ruta=ruta)
+                    db.add(nueva_img)
         db.commit()
+
         return {"message": "Publicación editada correctamente"}
 
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/get/publication")
+def get_publicacion(
+        id_publicacion: int,
+        request: Request,
+        db: Session = Depends(get_db)
+    ):
+    try:
+        public = (db.query(Publicacion)
+                    .options(joinedload(Publicacion.imagenes))
+                    .filter(Publicacion.id_publicacion == id_publicacion)
+                    .first())
+
+        if not public:
+            raise HTTPException(status_code=404, detail="Publicación no encontrada")
+
+        # Base URL para armar rutas completas de imágenes
+        base_url = str(request.base_url).rstrip("/")
+
+        # Formato igual al de show/publication
+        return {
+            "id_publicacion": public.id_publicacion,
+            "titulo": public.titulo,
+            "contenido": public.contenido,
+            "fecha_hora": public.fecha_hora.strftime("%d/%m/%Y"),
+            "imagenes": [
+                {
+                    "id": img.id_imagen,
+                    "ruta": f"{base_url}/{img.ruta}"
+                }
+                for img in public.imagenes
+            ]
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 @router.get("/show/publication")
 def get_publications(request:Request,db:Session = Depends(get_db)):

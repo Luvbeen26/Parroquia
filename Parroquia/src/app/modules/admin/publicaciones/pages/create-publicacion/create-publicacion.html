@@ -1,0 +1,102 @@
+<div class="Contenedor">
+  <div class="header-section">
+    <h1 class="page-title">{{Titulo}}</h1>
+    
+  </div>
+
+  <form [formGroup]="publicacionForm" (ngSubmit)="onSubmit()" class="form-container">
+    
+    
+    <div class="form-group">
+      <label for="titulo" class="form-label">
+        Título
+      </label>
+      <input type="text" id="titulo" formControlName="titulo" class="form-input"
+        placeholder="Escribe el título de la publicación..." maxlength="60" minlength="3" >
+      
+      @if (this.publicacionForm.get('titulo')?.invalid && this.publicacionForm.get('titulo')?.touched) {
+        <div class="error-message">
+          @if (this.publicacionForm.get('titulo')?.errors?.['required']) {
+            <span>El título es requerido</span>
+          }
+          @if (this.publicacionForm.get('titulo')?.errors?.['minlength']) {
+            <span>El título debe tener al menos 3 caracteres</span>
+          }
+          @if (this.publicacionForm.get('titulo')?.errors?.['maxlength']) {
+            <span>El título no puede exceder 60 caracteres</span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="form-group">
+      <label for="contenido" class="form-label">
+        Contenido 
+      </label>
+      <textarea id="contenido" formControlName="contenido" class="form-textarea"
+        placeholder="Escribe el contenido de la publicación..."rows="8" maxlength="200">
+      </textarea>
+      
+      @if (this.publicacionForm.get('contenido')?.invalid && this.publicacionForm.get('contenido')?.touched) {
+        <div class="error-message">
+          @if (this.publicacionForm.get('contenido')?.errors?.['required']) {
+            <span>El contenido es requerido</span>
+          }
+          @if (this.publicacionForm.get('contenido')?.errors?.['maxlength']) {
+            <span>El contenido no puede exceder 200 caracteres</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">
+        Imágenes (Opcional - Máximo 4)
+      </label>
+      
+      <input type="file" id="imageInput" accept=".jpg,.png,.jpeg" multiple (change)="onImageSelect($event)"
+        style="display: none;">
+
+
+      @if (canAddMoreImages) {
+        <button type="button" class="btn-upload" (click)="triggerFileInput()">
+          <mat-icon>add_photo_alternate</mat-icon>
+          <span>Agregar Imágenes</span>
+        </button>
+      }
+
+  
+      @if (imagePreviews().length > 0) {
+        <div class="images-preview" [attr.data-count]="imagePreviews().length">
+          @for (image of imagePreviews(); track image.id) {
+            <div class="image-preview-item">
+              <img [src]="image.url" [alt]="'Preview ' + image.id">
+              
+              <button type="button" class="btn-remove-image" (click)="removeImage(image.id, image.serverId)" title="Eliminar imagen">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="upload-info">
+        <mat-icon class="info-icon">info</mat-icon>
+        <span>Formatos: JPG, PNG, JPEG. Tamaño máximo: 5MB por imagen.</span>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="button flex"   [disabled]="publicacionForm.invalid || publicando()">
+        @if (publicando()) {
+          <mat-icon class="spin">sync</mat-icon>
+          <span>Publicando...</span>
+        } @else {
+          <mat-icon>check</mat-icon>
+          <span>Publicar</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

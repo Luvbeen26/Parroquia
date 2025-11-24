@@ -8,7 +8,7 @@ class Publicacion(Base):
     id_publicacion = Column(Integer, primary_key=True,index=True)
     id_usuario = Column(String, ForeignKey("usuario.id_usuario"),nullable=False)
     titulo = Column(String, nullable=False)
-    contenido=Column(String, nullable=False)
+    contenido=Column(String, nullable=True)
     fecha_hora=Column(DATETIME, nullable=False)
 
 

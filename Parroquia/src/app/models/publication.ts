@@ -3,11 +3,15 @@ export interface Imagen{
     ruta:string
 }
 
-export interface Publication{
-    id_publicacion:number,
+export interface createPublication{
     titulo:string,
     contenido:string,
-    fecha_hora:string,
     imagenes?:Imagen[];
+}
+
+
+export interface Publication extends createPublication{
+    id_publicacion:number,
+    fecha_hora:string,
 }
 

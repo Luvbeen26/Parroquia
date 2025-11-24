@@ -7,11 +7,12 @@ import { BehaviorSubject, debounceTime, distinctUntilChanged, finalize, Observab
 import { Publication } from '../../../../../models/publication';
 import { ToastrService } from 'ngx-toastr';
 import { Publications as PublicS } from '../../../../../services/publications';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-publicaciones',
-  imports: [CommonModule,FormsModule,MatIconModule,Publications],
+  imports: [CommonModule,FormsModule,MatIconModule,Publications,RouterLink],
   templateUrl: './publicaciones.html',
   styleUrl: './publicaciones.css'
 })

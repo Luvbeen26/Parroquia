@@ -3,11 +3,12 @@ import { Imagen } from '../../models/publication';
 import { ModalFile } from '../modal-file/modal-file';
 import { ModalContent } from '../../models/document';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-publications',
-  imports: [ModalFile,MatIconModule],
+  imports: [ModalFile,MatIconModule,RouterLink],
   templateUrl: './publications.html',
   styleUrl: './publications.css'
 })

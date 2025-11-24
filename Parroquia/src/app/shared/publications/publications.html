@@ -8,7 +8,7 @@
                 
                 @if (isMenuOpen) {
                     <div class="menu-dropdown" (click)="$event.stopPropagation()">
-                        <button class="menu-item edit" >
+                        <button class="menu-item edit"  [routerLink]="['/admin/publicaciones/edit-publicacion', id_publicacion()]">
                             <mat-icon>edit</mat-icon>
                             <span>Editar</span>
                         </button>

@@ -5,6 +5,7 @@ import { Eventosadmin } from "./eventos/pages/eventosadmin/eventosadmin";
 import { FormParroquial } from "./eventos/pages/form-parroquial/form-parroquial";
 import { Documentos } from "./documentos/pages/documentos/documentos";
 import { Publicaciones } from "./publicaciones/pages/publicaciones/publicaciones";
+import { CreatePublicacion } from "./publicaciones/pages/create-publicacion/create-publicacion";
 
 
 export const ADMIN_ROUTES:Routes=[
@@ -15,4 +16,6 @@ export const ADMIN_ROUTES:Routes=[
     {path: 'eventos/parroquial',component:FormParroquial},
     {path: 'eventos/parroquial/:id', component: FormParroquial},
     {path: 'publicaciones',component:Publicaciones},
+    {path: 'publicaciones/create-publicacion',component:CreatePublicacion},
+    {path: 'publicaciones/edit-publicacion/:id',component:CreatePublicacion}
 ]
