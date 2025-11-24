@@ -11,10 +11,13 @@ import { FormGroup } from '@angular/forms';
 import { Eventos } from '../../../../services/eventos';
 import { ToastrService } from 'ngx-toastr';
 import { MatIconModule } from '@angular/material/icon';
+import { FormMatrimonio } from '../../components/forms/form-matrimonio/form-matrimonio';
+import { FormPadresMatrimonio } from '../../components/forms/form-padres-matrimonio/form-padres-matrimonio';
+import { FormPadrinosMatrimonio } from '../../components/forms/form-padrinos-matrimonio/form-padrinos-matrimonio';
 
 @Component({
   selector: 'app-create-event',
-  imports: [FormBautizo, FormPadres, FormDocuments, FormDate, FormPay, FormConPrim, MatIconModule],
+  imports: [FormBautizo, FormPadres, FormDocuments, FormDate, FormPay, FormConPrim, MatIconModule, FormMatrimonio, FormPadresMatrimonio, FormPadrinosMatrimonio],
   templateUrl: './create-event.html',
   styleUrl: './create-event.css'
 })
@@ -28,13 +31,21 @@ export class CreateEvent implements AfterViewInit {
   @ViewChild(FormBautizo) formBautizoRef!: FormBautizo;
   @ViewChild(FormConPrim) formConPrimRef!: FormConPrim;
   @ViewChild(FormPadres) formPadresRef!: FormPadres;
+  @ViewChild(FormPadresMatrimonio) formPadresMatrimonioRef!: FormPadresMatrimonio;
+  @ViewChild(FormPadrinosMatrimonio) formPadrinosMatrimonioRef!: FormPadrinosMatrimonio;
   @ViewChild(FormDocuments) formDocumentsRef!: FormDocuments;
   @ViewChild(FormDate) formDateRef!: FormDate;
   @ViewChild(FormPay) formPayRef!: FormPay;
+  @ViewChild(FormMatrimonio, { static: false }) formMatrimonioRef!: FormMatrimonio;
 
   celebrado_form!: FormGroup
   eventoId!: number
   step = 0;
+  
+  // Método para obtener el número total de steps según el evento
+  get totalSteps(): number {
+    return this.eventoId === 4 ? 6 : 5; // Matrimonio tiene 6 steps, otros tienen 5
+  }
   
   constructor() {
     this.eventoId = Number(this.route.snapshot.paramMap.get('id'));
@@ -44,34 +55,54 @@ export class CreateEvent implements AfterViewInit {
     
   }
 
-  // ✅ Usar AfterViewInit en lugar de AfterViewChecked
   ngAfterViewInit() {
-    // ✅ Forzar detección inicial
+    this.cdr.detectChanges();
+  }
+
+  ngAfterViewChecked() {
     this.cdr.detectChanges();
   }
 
   canGoNext(): boolean {
-    // ✅ Agregar un pequeño delay para asegurar que el ViewChild esté listo
-    setTimeout(() => this.cdr.detectChanges(), 0);
-    
-    switch (this.step) {
-      case 0:
-        if (this.eventoId === 1) {
-          return this.formBautizoRef?.form?.valid || false;
-        } else if (this.eventoId === 3 || this.eventoId === 7) {
-          return this.formConPrimRef?.form?.valid || false;
-        }
-        return false;
-      case 1:
-        return this.formPadresRef?.form?.valid || false;
-      case 2:
-        return this.formDocumentsRef?.isAllFilesUploaded || false;
-      case 3:
-        return (this.formDateRef?.form?.valid && this.formDateRef?.selecteday !== '') || false;
-      case 4:
-        return this.formPayRef?.formPago?.valid || false;
-      default:
-        return false;
+    if (this.eventoId === 4) {
+      // Lógica especial para matrimonio (6 steps)
+      switch (this.step) {
+        case 0: // Datos de novios
+          return this.formMatrimonioRef?.form?.valid || false;
+        case 1: // Datos de padres
+          return this.formPadresMatrimonioRef?.form?.valid || false;
+        case 2: // Datos de padrinos
+          return this.formPadrinosMatrimonioRef?.form?.valid || false;
+        case 3: // Documentos
+          return this.formDocumentsRef?.isAllFilesUploaded || false;
+        case 4: // Fecha y hora
+          return (this.formDateRef?.form?.valid && this.formDateRef?.selecteday !== '') || false;
+        case 5: // Pago
+          return this.formPayRef?.formPago?.valid || false;
+        default:
+          return false;
+      }
+    } else {
+      // Lógica normal para otros eventos (5 steps)
+      switch (this.step) {
+        case 0: // Datos del celebrado
+          if (this.eventoId === 1) {
+            return this.formBautizoRef?.form?.valid || false;
+          } else if (this.eventoId === 3 || this.eventoId === 7) {
+            return this.formConPrimRef?.form?.valid || false;
+          }
+          return false;
+        case 1: // Padres y padrinos
+          return this.formPadresRef?.form?.valid || false;
+        case 2: // Documentos
+          return this.formDocumentsRef?.isAllFilesUploaded || false;
+        case 3: // Fecha y hora
+          return (this.formDateRef?.form?.valid && this.formDateRef?.selecteday !== '') || false;
+        case 4: // Pago
+          return this.formPayRef?.formPago?.valid || false;
+        default:
+          return false;
+      }
     }
   }
 
@@ -80,14 +111,12 @@ export class CreateEvent implements AfterViewInit {
       this.markCurrentFormAsTouched();
       return;
     }
-
     this.saveCurrentStep();
-
-    if (this.step === 4) {
+    
+    if ((this.eventoId === 4 && this.step === 5) || (this.eventoId !== 4 && this.step === 4)) {
       this.createEvent();
     } else {
       this.step++;
-      // ✅ Forzar detección después de cambiar de paso
       setTimeout(() => this.cdr.detectChanges(), 100);
     }
   }
@@ -96,50 +125,93 @@ export class CreateEvent implements AfterViewInit {
     if (this.step > 0) {
       this.saveCurrentStep();
       this.step--;
-      // ✅ Forzar detección después de cambiar de paso
       setTimeout(() => this.cdr.detectChanges(), 100);
     }
   }
 
   saveCurrentStep() {
-    switch (this.step) {
-      case 0:
-        if (this.eventoId === 1) {
-          this.formBautizoRef?.saveData();
-        } else if (this.eventoId === 3 || this.eventoId === 7) {
-          this.formConPrimRef?.saveData();
-        }
-        break;
-      case 1:
-        this.formPadresRef?.saveParents();
-        break;
-      case 2:
-        this.formDocumentsRef?.SaveFileService(this.formDocumentsRef.uploadDocs);
-        break;
-      case 3:
-        this.formDateRef?.saveData();
-        break;
+    if (this.eventoId === 4) {
+      // Lógica para matrimonio
+      switch (this.step) {
+        case 0:
+          this.formMatrimonioRef?.saveData();
+          break;
+        case 1:
+          this.formPadresMatrimonioRef?.saveParents();
+          break;
+        case 2:
+          this.formPadrinosMatrimonioRef?.saveParents();
+          break;
+        case 3:
+          this.formDocumentsRef?.SaveFileService(this.formDocumentsRef.uploadDocs);
+          break;
+        case 4:
+          this.formDateRef?.saveData();
+          break;
+      }
+    } else {
+      // Lógica para otros eventos
+      switch (this.step) {
+        case 0:
+          if (this.eventoId === 1) {
+            this.formBautizoRef?.saveData();
+          } else if (this.eventoId === 3 || this.eventoId === 7) {
+            this.formConPrimRef?.saveData();
+          }
+          break;
+        case 1:
+          this.formPadresRef?.saveParents();
+          break;
+        case 2:
+          this.formDocumentsRef?.SaveFileService(this.formDocumentsRef.uploadDocs);
+          break;
+        case 3:
+          this.formDateRef?.saveData();
+          break;
+      }
     }
   }
 
   markCurrentFormAsTouched() {
-    switch (this.step) {
-      case 0:
-        if (this.eventoId === 1) {
-          this.formBautizoRef?.form?.markAllAsTouched();
-        } else if (this.eventoId === 3 || this.eventoId === 7) {
-          this.formConPrimRef?.form?.markAllAsTouched();
-        }
-        break;
-      case 1:
-        this.formPadresRef?.form?.markAllAsTouched();
-        break;
-      case 3:
-        this.formDateRef?.form?.markAllAsTouched();
-        break;
-      case 4:
-        this.formPayRef?.formPago?.markAllAsTouched();
-        break;
+    if (this.eventoId === 4) {
+      // Lógica para matrimonio
+      switch (this.step) {
+        case 0:
+          this.formMatrimonioRef?.form?.markAllAsTouched();
+          break;
+        case 1:
+          this.formPadresMatrimonioRef?.form?.markAllAsTouched();
+          break;
+        case 2:
+          this.formPadrinosMatrimonioRef?.form?.markAllAsTouched();
+          break;
+        case 4:
+          this.formDateRef?.form?.markAllAsTouched();
+          break;
+        case 5:
+          this.formPayRef?.formPago?.markAllAsTouched();
+          break;
+      }
+    } else {
+      // Lógica para otros eventos
+      switch (this.step) {
+        case 0:
+          if (this.eventoId === 1) {
+            this.formBautizoRef?.form?.markAllAsTouched();
+          } else if (this.eventoId === 3 || this.eventoId === 7) {
+            this.formConPrimRef?.form?.markAllAsTouched();
+          }
+          break;
+        case 1:
+          this.formPadresRef?.form?.markAllAsTouched();
+          break;
+        case 3:
+          this.formDateRef?.form?.markAllAsTouched();
+          break;
+        case 4:
+          this.formPayRef?.formPago?.markAllAsTouched();
+          break;
+      }
     }
   }
 

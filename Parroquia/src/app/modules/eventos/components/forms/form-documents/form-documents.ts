@@ -27,9 +27,15 @@ export class FormDocuments {
   isAllFilesUploaded: boolean = false; 
 
   ngOnInit() {
+    
+
     this.fileList = this.eventService.sendDocumentArray(this.id_event);
     
-    // Primero crea el array base
+    if (this.id_event === 4) {
+      this.adjustMatrimonioDocuments();
+    }
+
+    
     this.uploadDocs = this.fileList.map(doc => ({
       id_doc: doc.id_doc,
       files: []
@@ -47,10 +53,29 @@ export class FormDocuments {
     
     this.isAllFilesUploaded = this.ValidateAllInputs();
   }
+  
+  adjustMatrimonioDocuments() {
+    const padrinos = this.eventService.getParents_form('Padrinos');
+    const numPadrinos = padrinos.length; 
+    
+    const hasAdditionalDocs = this.fileList.some(doc => 
+      doc.nombre.includes('adicional')
+    );
+
+    if(numPadrinos===2 && hasAdditionalDocs){
+      this.fileList.splice(12,2)
+    }
+        
+    if (numPadrinos === 4 && !hasAdditionalDocs) {
+      this.fileList.push(
+        { nombre: "Copia de la credencial de padrino adicional", id_doc: 5 },
+        { nombre: "Copia de la credencial de madrina adicional", id_doc: 5 }
+      );
+    }
+  }
 
   ValidateAllInputs(): boolean {
-    return this.uploadDocs.length > 0 && 
-           this.uploadDocs.every(doc => doc.files.length > 0);
+    return this.uploadDocs.length > 0 && this.uploadDocs.every(doc => doc.files.length > 0);
   }
 
   next() {
@@ -64,7 +89,6 @@ export class FormDocuments {
   }
 
   SaveFile(file: File, index: number) {
-    // Guardar el archivo en el UploadDoc correspondiente
     this.uploadDocs[index].files = [file];
     this.isAllFilesUploaded = this.ValidateAllInputs();
   }

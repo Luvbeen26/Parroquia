@@ -1,0 +1,105 @@
+<app-header-form [titulo]="'Datos de los Padrinos'" [descripcion]="'Ingrese la información de los padrinos del matrimonio'" [icono]="'../icons/two-people_blue.svg'"></app-header-form>
+
+<hr>
+
+<form [formGroup]="form" class="form">    
+    <div class="section-title">
+        <h2>Padrinos Principales</h2>
+    </div>
+    
+    <div class="Parents">
+        <h3>Padrino</h3>
+        <section class="inputs">
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_padrino1" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_padrino1" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_padrino1" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+        </section>
+    </div>
+
+    <div class="Parents">
+        <h3>Madrina</h3>
+        <section class="inputs">
+            <span class="Campo"> 
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_madrina1" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_madrina1" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_madrina1" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+        </section>
+    </div>
+
+    <!-- Botón para agregar padrinos adicionales -->
+    <div class="additional-option">
+        <button type="button" class="toggle-button" (click)="toggleAdditional()">
+            {{ showAdditional ? '− Ocultar padrinos adicionales' : '+ Agregar padrinos adicionales' }}
+        </button>
+    </div>
+
+    <!-- Padrinos adicionales (se muestran solo si showAdditional es true) -->
+    @if (showAdditional) {
+        <hr class="section-divider">
+
+        <div class="section-title">
+            <h2>Padrinos Adicionales</h2>
+        </div>
+        
+        <div class="Parents">
+            <h3>Padrino Adicional</h3>
+            <section class="inputs">
+                <span class="Campo">
+                    <h4>Nombres</h4>
+                    <input type="text" formControlName="nombres_padrino2" class="Input" placeholder="Nombres" maxlength="50">
+                </span>
+
+                <span class="Campo">
+                    <h4>Apellido Paterno</h4>
+                    <input type="text" formControlName="ap_pat_padrino2" class="Input" placeholder="Apellido paterno" maxlength="50">
+                </span>
+
+                <span class="Campo">
+                    <h4>Apellido Materno</h4>
+                    <input type="text" formControlName="ap_mat_padrino2" class="Input" placeholder="Apellido materno" maxlength="50">
+                </span>
+            </section>
+        </div>
+
+        <div class="Parents">
+            <h3>Madrina Adicional</h3>
+            <section class="inputs">
+                <span class="Campo"> 
+                    <h4>Nombres</h4>
+                    <input type="text" formControlName="nombres_madrina2" class="Input" placeholder="Nombres" maxlength="50">
+                </span>
+
+                <span class="Campo">
+                    <h4>Apellido Paterno</h4>
+                    <input type="text" formControlName="ap_pat_madrina2" class="Input" placeholder="Apellido paterno" maxlength="50">
+                </span>
+
+                <span class="Campo">
+                    <h4>Apellido Materno</h4>
+                    <input type="text" formControlName="ap_mat_madrina2" class="Input" placeholder="Apellido materno" maxlength="50">
+                </span>
+            </section>
+        </div>
+    }
+</form>

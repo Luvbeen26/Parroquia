@@ -40,7 +40,6 @@ export class FormConPrim {
     }
   }
 
-  // Método público que el padre puede llamar para guardar datos
   saveData() {
     if (this.form.valid) {
       this.eventService.saveTipoEvento(this.id_event)

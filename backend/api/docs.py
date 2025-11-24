@@ -91,8 +91,12 @@ async def upload_file(tipos_docs: str = Form(...),id_evento: int = Form(...),id_
                         id_cel = id_celebrado[1]  # novia
                         id_part = None
                     else:
-                        id_cel = None  # padrinos
-                        id_part = id_participante[cont - 10]
+                        id_cel = None
+                        participante_index = cont - 10
+                        if participante_index < len(id_participante):
+                            id_part = id_participante[participante_index]
+                        else:
+                            raise ValueError(f"Falta id_participante para el documento {cont}")
                 else:
                     if cont == 0:
                         id_cel = id_celebrado[0]

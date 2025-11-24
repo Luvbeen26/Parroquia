@@ -18,7 +18,7 @@ export interface Celebrate{
     nombres: string,
     apellido_pat: string,
     apellido_mat: string,
-    id_rol:number,
+    id_rol?:number,
     genero: string,
     fecha_nac: string, 
     edad: number

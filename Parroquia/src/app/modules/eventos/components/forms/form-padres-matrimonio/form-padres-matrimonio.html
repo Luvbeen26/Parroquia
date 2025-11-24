@@ -1,0 +1,95 @@
+<app-header-form [titulo]="'Datos de los Padres'" [descripcion]="'Ingrese la información de los padres del novio y la novia'" [icono]="'../icons/two-people_blue.svg'"></app-header-form>
+
+<hr>
+
+<form [formGroup]="form" class="form">    
+    <div class="section-title">
+        <h2>Padres del Novio</h2>
+    </div>
+    
+    <div class="Parents">
+        <h3>Padre del Novio</h3>
+        <section class="inputs">
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_padre_novio" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_padre_novio" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_padre_novio" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+        </section>
+    </div>
+
+    <div class="Parents">
+        <h3>Madre del Novio</h3>
+        <section class="inputs">
+            <span class="Campo"> 
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_madre_novio" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_madre_novio" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_madre_novio" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+        </section>
+    </div>
+
+    <hr class="section-divider">
+
+    <div class="section-title">
+        <h2>Padres de la Novia</h2>
+    </div>
+    
+    <div class="Parents">
+        <h3>Padre de la Novia</h3>
+        <section class="inputs">
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_padre_novia" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_padre_novia" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_padre_novia" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+        </section>
+    </div>
+
+    <div class="Parents">
+        <h3>Madre de la Novia</h3>
+        <section class="inputs">
+            <span class="Campo"> 
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_madre_novia" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_madre_novia" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_madre_novia" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+        </section>
+    </div>
+</form>

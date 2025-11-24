@@ -1,0 +1,65 @@
+<app-header-form [titulo]="'Datos de los Novios'" [descripcion]="'Ingrese la información personal del novio y la novia'" [icono]="'../icons/sacramentos/la_ring.svg'"></app-header-form>
+
+<hr>
+
+<form [formGroup]="form" class="form">    
+    <div class="novios">
+        <h2>Novio</h2>
+        <section class="inputs">
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_novio" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_novio" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_novio" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+
+            <span class="Campo down">
+                <h4>Fecha de Nacimiento</h4>
+                <input type="date" class="Input" formControlName="fecha_nac_novio">
+            </span>
+
+            <span class="Campo down">
+                <h4>Edad</h4>
+                <input type="number" class="Input" placeholder="Edad" formControlName="edad_novio" readonly>
+            </span>
+        </section>
+    </div>
+
+    <div class="novios">
+        <h2>Novia</h2>
+        <section class="inputs">
+            <span class="Campo">
+                <h4>Nombres</h4>
+                <input type="text" formControlName="nombres_novia" class="Input" placeholder="Nombres" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Paterno</h4>
+                <input type="text" formControlName="ap_pat_novia" class="Input" placeholder="Apellido paterno" maxlength="50">
+            </span>
+
+            <span class="Campo">
+                <h4>Apellido Materno</h4>
+                <input type="text" formControlName="ap_mat_novia" class="Input" placeholder="Apellido materno" maxlength="50">
+            </span>
+
+            <span class="Campo down">
+                <h4>Fecha de Nacimiento</h4>
+                <input type="date" class="Input" formControlName="fecha_nac_novia">
+            </span>
+
+            <span class="Campo down">
+                <h4>Edad</h4>
+                <input type="number" class="Input" placeholder="Edad" formControlName="edad_novia" readonly>
+            </span>
+        </section>
+    </div>
+</form>

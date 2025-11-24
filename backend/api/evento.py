@@ -43,13 +43,11 @@ async def create_event(
     try:
         user_id=user_data["id_usuario"]
         user_exists = db.query(User).filter_by(id_usuario=user_id).first()
-        print(1)
         if not user_exists:
             raise HTTPException(
                 status_code=400,
                 detail=f"Usuario con id {user_id} no existe en la base de datos"
             )
-        print(2)
         descripcion = ""
         #ID DE EVENTO
         id_tipo_evento = evento.id_tipo_evento
@@ -131,7 +129,6 @@ async def create_event(
             run_date=tiempo_notificacion,
             args=[user_id, f"El {descripcion} se llevará a cabo en 1 día", datetime.datetime.now(MAZATLAN_TZ), "E",db]
         )
-        print(9)
         return {"msg" : "Registrado correctamente", "res" : {
             "evento" : id_evento,
             "user" : user_id,

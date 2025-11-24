@@ -45,7 +45,8 @@ export class Eventos {
     { nombre: "Fe de primera comunion de la novia", id_doc: 4 },
     { nombre: "Copia de la credencial del novio", id_doc: 5 },
     { nombre: "Copia de la credencial de la novia", id_doc: 5 },
-    { nombre: "Copia de la credencial de padrino/madrina", id_doc: 5 }
+    { nombre: "Copia de la credencial de padrino", id_doc: 5 },
+    { nombre: "Copia de la credencial de madrina", id_doc: 5 }
   ];
 
   public files_XV: infoDoc[] = [
@@ -144,7 +145,8 @@ export class Eventos {
       id_rol=1
     else if(this.id_tipo_evento == 3)
       id_rol=6
-    //else if(this.id_tipo_evento == 4) //matrimonio
+    else if(this.id_tipo_evento == 4) //matrimonio
+      id_rol = index === 0 ? 9 : 10;
     else if(this.id_tipo_evento == 5)
       id_rol=8
     else if(this.id_tipo_evento == 7)
