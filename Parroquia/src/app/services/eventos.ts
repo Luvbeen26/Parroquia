@@ -244,6 +244,9 @@ export class Eventos {
       }));
   }
 
+  
+
+
   GetEventsReagendar(): Observable<GetEventsReagendar[]>{
     return this.http.get<GetEventsReagendar[]>(`${this.apiurl}/without/Forreagendar`)
   }
@@ -297,4 +300,6 @@ export class Eventos {
   DeleteParroquial(id_evento:number): Observable<any>{
     return this.http.delete<any>(`${this.apiurl}/delete/parroquial?id_evento=${id_evento}`)
   }
+
+  
 }

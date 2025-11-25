@@ -13,6 +13,8 @@ import { Profile } from '../../../../services/profile';
   styleUrl: './event-user.css'
 })
 export class EventUser {
+  @Input() id_tipo_evento!:number;
+  @Input() status!:string;
   @Input() id!:number;
   @Input() descripcion!:string;
   @Input() docs!:get_user_docs[];
@@ -29,9 +31,21 @@ export class EventUser {
       }
     })
 
+    console.log(this.status)
+
   }
 
   ShowRejected(){
     this.router.navigate(["/profile/reuploadDocuments", this.id])
+  }
+
+  editarParticipantes(){
+    this.router.navigate(["/profile/editEvent", this.id,"Participantes",this.id_tipo_evento])
+  }
+
+  reagendarFecha(){
+    if(this.status === "R"){
+      this.router.navigate(["/profile/editEvent", this.id,"Date",this.id_tipo_evento])
+    }
   }
 }

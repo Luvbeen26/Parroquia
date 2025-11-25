@@ -1,0 +1,50 @@
+<main class="background flex">
+    <section class="Contenedor">
+        @switch (tipo) {
+            @case ("Participantes"){
+                @if (id_tipo_evento=== 4) {
+                    @if (step === 0) {
+                        <app-form-matrimonio></app-form-matrimonio>
+                    } @else if (step === 1) {
+                        <app-form-padres-matrimonio></app-form-padres-matrimonio>
+                    } @else if (step === 2) {
+                        <app-form-padrinos-matrimonio></app-form-padrinos-matrimonio>
+                    }
+                } @else if (tipo==="Participantes"){
+                    @if (step === 0) {
+                        @if (id_tipo_evento== 1) {
+                            <app-form-bautizo></app-form-bautizo>
+                        } @else if (id_tipo_evento== 3 || id_tipo_evento== 7) {
+                            <app-form-con-prim [id_event]="id_tipo_evento"></app-form-con-prim>
+                        } @else if (id_tipo_evento== 5) {
+                            <p>XV</p>
+                        }
+                    } @else if (step === 1) {
+                        <app-form-padres></app-form-padres>
+                    }
+                }
+
+            }
+            @case ("Date"){
+                <app-form-date [id_event]="id_tipo_evento"></app-form-date>
+            }
+        }
+
+        
+        <div class="navigation-buttons">
+            @if (step > 0) {
+                <button class="two-button btn-prev" (click)="prevStep()">
+                    <mat-icon>arrow_back</mat-icon>
+                    Volver
+                </button>
+            }
+            
+            <button class="button btn-next" (click)="nextStep()" [disabled]="!canGoNext()">
+                {{ (id_tipo_evento=== 4 && step === 2) || (id_tipo_evento!== 4 && step === 1) ? 'Finalizar' : 'Continuar' }}
+                @if ((id_tipo_evento=== 4 && step < 5) || (id_tipo_evento!== 4 && step < 4)) {
+                    <mat-icon>arrow_forward</mat-icon>
+                }
+            </button>
+        </div>
+    </section>
+</main>

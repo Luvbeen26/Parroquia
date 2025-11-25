@@ -5,14 +5,14 @@
 }
 
 .ListDocs{
-    max-height: 250px;       /* 🔹 altura máxima visible */
-    overflow-y: auto;        /* 🔹 permite hacer scroll vertical */
+    max-height: 250px;
+    overflow-y: auto;
     scrollbar-width: none; 
     gap: 13px;
 }
 
 .ListDocs::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 .Doc{
@@ -56,9 +56,50 @@
 }
 
 .Description{
-    gap:10px;
+    gap: 10px;
 }
 
+/* Contenedor de botones */
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.buttons-container button {
+    width: 100%;
+    padding: 12px;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.buttons-container button mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+}
+
+
+
+/* Responsive para botones */
+@media (min-width: 768px) {
+    .buttons-container {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .buttons-container button {
+        flex: 1;
+        min-width: 150px;
+    }
+}
 
 .event-type-Bautizo { 
     border-color: #6366f1;
@@ -91,7 +132,6 @@
     max-width: fit-content;
 }
 
-/* Colores del badge según tipo */
 .tipo-badge.event-type-bautizo {
     color: #6366f1;
     border-color: #6366f1;
@@ -115,4 +155,4 @@
 .tipo-badge.event-type-XV-Años {
     color: #EC4899;
     border-color: #EC4899;
-}
+}   

@@ -28,6 +28,8 @@ export interface Celebrate{
 export interface PendientProcessClient{
     id_evento:number,
     tipo:string,
+    id_tipo:number,
+    status:string,
     descripcion:string,
     documentos:get_user_docs[]
 }

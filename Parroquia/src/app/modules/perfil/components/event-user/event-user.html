@@ -14,27 +14,36 @@
                 'estado-aceptado': d.status === 'Aceptado','estado-rechazado': d.status === 'Rechazado'}">
                     {{d.status}}
                     @if(d.status == "Aceptado"){
-                        <mat-icon> check</mat-icon>
+                        <mat-icon>check</mat-icon>
                     }@else if (d.status == "Pendiente") {
                         <mat-icon>query_builder</mat-icon>
                     }@else if(d.status == "Rechazado") {
                         <mat-icon>close</mat-icon>
                     }
-                    
                 </div>
             </div>
-            
+        }
+    </div>
+
+    <div class="buttons-container">
+        @if (rejectedFile.length > 0) {
+            <button class="red-button flex" (click)="ShowRejected()">
+                <mat-icon>description</mat-icon>
+                Ver Archivos
+            </button>
         }
         
-
-    </div>
-    @if (rejectedFile.length > 0) {
-        <button class="red-button flex" (click)="ShowRejected()">
-            <mat-icon>description</mat-icon>
-            Ver Archivos
+        <button class="button flex" (click)="editarParticipantes()">
+            <mat-icon>people</mat-icon>
+            Editar Participantes
         </button>
-    }
-    
-
-    
+        
+        @if(status === "R"){
+            <button class="two-button flex" (click)="reagendarFecha()">
+                <mat-icon>calendar_today</mat-icon>
+                Reagendar Fecha
+            </button>
+        }
+        
+    </div>
 </div>

@@ -343,7 +343,8 @@ def show_userevents(db:Session = Depends(get_db),user_data:dict=Depends(current_
 def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     try:
         eventos=(db.query(Evento).options(joinedload(Evento.documentos),joinedload(Evento.celebrados)).
-                 filter(and_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P",Evento.id_tipo_evento != 6))
+                 filter(and_(or_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P",
+                             Evento.id_usuario == user_data["id_usuario"],Evento.status == "R"),Evento.id_tipo_evento != 6))
                  .order_by(desc(Evento.id_evento)).all())
 
         result = []
@@ -360,7 +361,9 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
 
             result.append({
                 "id_evento": evento.id_evento,
+                "id_tipo": evento.id_tipo_evento,
                 "tipo" :f"{tipos[evento.id_tipo_evento-1]}",
+                "status":evento.status,
                 "descripcion": f"{descripcion}",
                 "documentos": [{"id_documento": doc.id_documento,"descripcion":f"{doc.tipo_documento.descripcion} {doc.participante.rol.descripcion if doc.participante else ''}" ,"id_tipo":doc.id_tipo_documento ,"ruta": doc.ruta,"motivo":doc.motivo_rechazo,"status":doc.status} for doc in evento.documentos]
             })

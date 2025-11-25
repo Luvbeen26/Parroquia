@@ -65,7 +65,6 @@ export class CreateEvent implements AfterViewInit {
 
   canGoNext(): boolean {
     if (this.eventoId === 4) {
-      // Lógica especial para matrimonio (6 steps)
       switch (this.step) {
         case 0: // Datos de novios
           return this.formMatrimonioRef?.form?.valid || false;

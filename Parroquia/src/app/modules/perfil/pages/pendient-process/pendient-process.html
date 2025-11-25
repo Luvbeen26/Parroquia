@@ -2,7 +2,7 @@
     @if (Process$ | async; as Process) {
         @if (Process && Process.length > 0) {
             @for (p of Process; track $index) {
-                <app-event-user [id]="p.id_evento" [descripcion]="p.descripcion" [tipo]="p.tipo" [docs]="p.documentos" ></app-event-user>
+                <app-event-user [id_tipo_evento]="p.id_tipo" [status]="p.status" [id]="p.id_evento" [descripcion]="p.descripcion" [tipo]="p.tipo" [docs]="p.documentos" ></app-event-user>
             }
         }@else {
             <div class="no-events">

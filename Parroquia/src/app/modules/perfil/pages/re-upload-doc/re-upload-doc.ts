@@ -42,8 +42,6 @@ export class ReUploadDoc {
         if(error.status == 401){
           this.rout.navigate(["/"]);
         }
-
-        
         return of([]);
       })
     )
