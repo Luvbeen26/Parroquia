@@ -1,4 +1,3 @@
-
 <div class="Contenedor carding flex-column">
     <div class="events-filter">
         <button class="filter-btn" [class.active]="activeFilter === 'proximos'" (click)="changeFilter('proximos')">
@@ -8,35 +7,87 @@
             Eventos Pasados
         </button>
     </div>
+
     <div class="events-container">
         @if (activeFilter === 'proximos') {
             @for (evento of proxEvents$ | async; track evento.id_evento) {
-                <app-card-events 
-                [eventInfo]="evento"
-                >
-                </app-card-events>
+                <app-card-events [eventInfo]="evento"></app-card-events>
             }
             
             @if ((proxEvents$ | async)?.length === 0) {
                 <div class="empty-state">
-                <mat-icon>event_busy</mat-icon>
-                <p>No hay próximos eventos programados</p>
+                    <mat-icon>event_busy</mat-icon>
+                    <p>No hay próximos eventos programados</p>
+                </div>
+            }
+
+            <!-- Paginación para próximos eventos -->
+            @if (totalPagesProx > 1) {
+                <div class="pagination flex">
+                    <button 
+                        class="page-btn" 
+                        (click)="previousPageProx()" 
+                        [disabled]="currentPageProx === 1">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+
+                    @for (page of pagesProx; track page) {
+                        <button 
+                            class="page-btn" 
+                            [class.active]="currentPageProx === page"
+                            (click)="changePageProx(page)">
+                            {{ page }}
+                        </button>
+                    }
+
+                    <button 
+                        class="page-btn" 
+                        (click)="nextPageProx()" 
+                        [disabled]="currentPageProx === totalPagesProx">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
                 </div>
             }
         } @else {
-        <!-- Eventos pasados -->
-        @for (evento of pastEvents$ | async; track evento.id_evento) {
-            <app-card-events 
-            [eventInfo]="evento">
-            </app-card-events>
-        }
-        
-        @if ((pastEvents$ | async)?.length === 0) {
-            <div class="empty-state">
-            <mat-icon>history</mat-icon>
-            <p>No hay eventos pasados</p>
-            </div>
-        }
+            <!-- Eventos pasados -->
+            @for (evento of pastEvents$ | async; track evento.id_evento) {
+                <app-card-events [eventInfo]="evento"></app-card-events>
+            }
+            
+            @if ((pastEvents$ | async)?.length === 0) {
+                <div class="empty-state">
+                    <mat-icon>history</mat-icon>
+                    <p>No hay eventos pasados</p>
+                </div>
+            }
+
+            <!-- Paginación para eventos pasados -->
+            @if (totalPagesPast > 1) {
+                <div class="pagination flex">
+                    <button 
+                        class="page-btn" 
+                        (click)="previousPagePast()" 
+                        [disabled]="currentPagePast === 1">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+
+                    @for (page of pagesPast; track page) {
+                        <button 
+                            class="page-btn" 
+                            [class.active]="currentPagePast === page"
+                            (click)="changePagePast(page)">
+                            {{ page }}
+                        </button>
+                    }
+
+                    <button 
+                        class="page-btn" 
+                        (click)="nextPagePast()" 
+                        [disabled]="currentPagePast === totalPagesPast">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </div>
+            }
         }
     </div>
 </div>

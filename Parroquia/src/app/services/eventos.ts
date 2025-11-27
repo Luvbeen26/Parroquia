@@ -1,8 +1,8 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../environment/environment';
-import { Celebrate, CreateEvent, DateTime, GetAParroquialEvent, GetEventsReagendar, GetMonthEvents, MarkNorealized, MarkRealized, Parents, ParroquialEvent} from '../models/event';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Celebrate, CreateEvent, DateTime, GetALLAEvent, GetAParroquialEvent, GetEventsReagendar, GetMonthEvents, MarkNorealized, MarkRealized, Parents, ParroquialEvent} from '../models/event';
+import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { document, infoDoc, UploadDoc } from '../models/document';
 
@@ -14,7 +14,13 @@ export class Eventos {
   private apiurl=`${environment.apiurl}/event`
   private apiurldocs=`${environment.apiurl}/docs`
   
+  private isEditMode: boolean = false;
   private id_tipo_evento:number=0;
+  private eventDataLoaded$ = new BehaviorSubject<boolean>(false);
+  get eventDataLoadedObservable(): Observable<boolean> {
+    return this.eventDataLoaded$.asObservable();
+  }
+
     
   public files_Bautizo: infoDoc[] = [
     { nombre: "Acta de nacimiento", id_doc: 1 },
@@ -80,6 +86,7 @@ export class Eventos {
     this.parents_form=[];
     this.padrinos_form=[];
     this.files_form=[];
+    this.eventDataLoaded$.next(false); 
   }
 
   saveTipoEvento(id_tipo_evento: number) {
@@ -301,5 +308,83 @@ export class Eventos {
     return this.http.delete<any>(`${this.apiurl}/delete/parroquial?id_evento=${id_evento}`)
   }
 
+  GetInfoEventForEdit(id_evento: number): Observable<GetALLAEvent> {
+    return this.http.get<GetALLAEvent>(`${this.apiurl}/Celebrants/User?id_evento=${id_evento}`)
+  }
+
+  loadEventForEdit(eventData: GetALLAEvent) {
+    this.isEditMode = true;
+    this.id_tipo_evento = eventData.id_tipo_evento;
+    
+    const fechaHoraInicio = new Date(eventData.fecha_hora_inicio);
+    this.fecha = fechaHoraInicio.toISOString().split('T')[0];
+    this.hora = fechaHoraInicio.toTimeString().slice(0, 8);
+    
+    // Cargar celebrados CON SUS IDs
+    this.celebrado_form = eventData.celebrados.map(celebrado => ({
+      id_celebrado: celebrado.id_celebrado,  // ¡IMPORTANTE! Mantener el ID
+      nombres: celebrado.nombres,
+      apellido_pat: celebrado.apellido_pat,
+      apellido_mat: celebrado.apellido_mat,
+      id_rol: celebrado.id_rol,
+      genero: celebrado.genero,
+      fecha_nac: celebrado.fecha_nacimiento,
+      edad: celebrado.edad
+    }));
+    
+    // Cargar participantes CON SUS IDs
+    this.parents_form = eventData.evento_participante
+      .filter(p => p.id_rol === 2 || p.id_rol === 3)
+      .map(p => ({
+        id_evento_participante: p.id_evento_participante,  // ¡IMPORTANTE!
+        nombres: p.nombres,
+        apellido_pat: p.apellido_pat,
+        apellido_mat: p.apellido_mat,
+        id_rol: p.id_rol
+      }));
+    
+    this.padrinos_form = eventData.evento_participante
+      .filter(p => p.id_rol === 4 || p.id_rol === 5)
+      .map(p => ({
+        id_evento_participante: p.id_evento_participante,  // ¡IMPORTANTE!
+        nombres: p.nombres,
+        apellido_pat: p.apellido_pat,
+        apellido_mat: p.apellido_mat,
+        id_rol: p.id_rol
+      }));
+
+      this.eventDataLoaded$.next(true);
+  }
+
+  UpdateEvent(id_evento: number): Observable<any> {
+    const fecha_inicio = `${this.fecha} ${this.hora}`;
+    
+    const fechaobj = new Date(fecha_inicio);
+    fechaobj.setHours(fechaobj.getHours() + 1);
+    
+    const nuevaHora = fechaobj.toTimeString().slice(0, 8);
+    const nuevaFecha = fechaobj.toISOString().split("T")[0];
+    
+    const participantes = [...this.parents_form, ...this.padrinos_form];
+    
+    const body = {
+      "id_evento": id_evento,
+      "id_tipo_evento": this.id_tipo_evento,
+      "fecha_inicio": fecha_inicio,
+      "fecha_fin": `${nuevaFecha} ${nuevaHora}`,
+      "celebrados": this.celebrado_form,  // Incluyen id_celebrado si existen
+      "participantes": participantes  // Incluyen id_evento_participante si existen
+    };
+
+    console.log('Body para UPDATE:', body);
+    return this.http.put(`${this.apiurl}/update/Event`, body);
+  }
+
+  isInEditMode(): boolean {
+    return this.isEditMode;
+  }
   
+  getAllCelebrados(): Celebrate[] {
+    return this.celebrado_form;
+  }
 }

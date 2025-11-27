@@ -65,9 +65,12 @@
             <label class="Campo">
                 <h4>Codigo</h4>
                 <div class="contenedor-code">
-                    <input type="number" class="Input code" formControlName="codigo" oninput="if(this.value.length > 6) this.value = this.value.slice(0, 6);"
-                     onkeydown="return event.key !== 'e' && event.key !== 'E' && event.key !== '+' && event.key !== '-';">
-                    <button class="code-button" [disabled]="register_form.get('correo')?.invalid" (click)="Send_code()">{{ text_codebtn }}</button>
+                    <input type="text" placeholder="Ingrese el codigo de validacion" class="Input code" formControlName="codigo" inputmode="numeric" pattern="[0-9]*"
+                    maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                    
+                    <button type="button" class="code-button" [disabled]="register_form.get('correo')?.invalid || code_disabled" (click)="Send_code()">
+                        {{ text_codebtn() }}
+                    </button>
                 </div>
                 
 

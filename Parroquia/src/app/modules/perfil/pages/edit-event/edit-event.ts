@@ -9,6 +9,9 @@ import { FormPadrinosMatrimonio } from '../../../eventos/components/forms/form-p
 import { FormDate } from '../../../eventos/components/forms/form-date/form-date';
 import { MatIconModule } from '@angular/material/icon';
 import { Eventos } from '../../../../services/eventos';
+import { Auth } from '../../../../services/auth';
+import { GetALLAEvent } from '../../../../models/event';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-event',
@@ -22,10 +25,13 @@ export class EditEvent {
   router=inject(Router)
   route=inject(ActivatedRoute)
   eventService=inject(Eventos)
+  authService=inject(Auth)
+  toast=inject(ToastrService)
   id_evento!:number
   id_tipo_evento!:number
   tipo!:string
   step = 0;
+  Eventdata!:GetALLAEvent
 
   @ViewChild(FormBautizo) formBautizoRef!: FormBautizo;
   @ViewChild(FormConPrim) formConPrimRef!: FormConPrim;
@@ -41,9 +47,33 @@ export class EditEvent {
     this.id_tipo_evento = Number(this.route.snapshot.paramMap.get('id_tipo'));
     this.id_evento = Number(this.route.snapshot.paramMap.get('id'));
     this.tipo = String(this.route.snapshot.paramMap.get('tipo'));
-    if(!(this.id_evento || this.id_evento || this.tipo)){
+    
+    //const id_user=this.authService.get_UserID();
+
+    if(!(this.id_evento && this.id_tipo_evento && this.tipo)){
       this.router.navigate(["/profile"])
+      return; // ¡Importante! Detener la ejecución
     }
+
+    this.eventService.GetInfoEventForEdit(this.id_evento).subscribe({
+      next: (res:GetALLAEvent) =>{
+        this.eventService.loadEventForEdit(res)
+      },
+      error: err =>{
+         if (err.status === 403) {
+          this.toast.error('No tienes permisos para editar este evento');
+          this.router.navigate(["/"]);
+        } else if (err.status === 404) {
+          this.toast.error('El evento no existe');
+          this.router.navigate(["/profile"]);
+        } else {
+          this.toast.error('Error al cargar el evento');
+          this.router.navigate(["/profile"]);
+        }
+      }
+    })
+
+  
   }
 
   nextStep() {

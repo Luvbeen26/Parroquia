@@ -8,6 +8,7 @@ export interface parroquial{
 }
 
 export interface Parents{
+    id_evento_participante?: number;
     nombres: string,
     apellido_pat: string,
     apellido_mat: string,
@@ -15,6 +16,7 @@ export interface Parents{
 }
 
 export interface Celebrate{
+    id_celebrado?: number;
     nombres: string,
     apellido_pat: string,
     apellido_mat: string,
@@ -112,4 +114,42 @@ export interface ParroquialEvent{
 
 export interface GetAParroquialEvent extends ParroquialEvent{
     id_evento:number
+}
+
+
+export interface CelebradoDetalle {
+    id_celebrado: number;
+    nombres: string;
+    apellido_pat: string;
+    apellido_mat: string;
+    id_rol: number;
+    fecha_nacimiento: string;
+    genero: string;
+    edad: number;
+    id_evento: number;
+}
+
+
+export interface ParticipanteDetalle {
+    id_evento_participante: number;
+    nombres: string;
+    apellido_pat: string;
+    apellido_mat: string;
+    id_rol: number;
+    id_evento: number;
+}
+
+export interface GetALLAEvent {
+    id_evento: number;
+    id_usuario: number;
+    fecha_hora_inicio: string;
+    fecha_hora_fin: string;
+    id_tipo_evento: number;
+    folio: string;
+    status: string;
+    descripcion: string | null;
+    evidencia: string | null;
+    reagendar: number | null;
+    celebrados:CelebradoDetalle[], //añadir id_celebrado
+    evento_participante:ParticipanteDetalle[]
 }

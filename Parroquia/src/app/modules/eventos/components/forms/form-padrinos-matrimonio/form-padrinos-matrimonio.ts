@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { HeaderForm } from '../../header-form/header-form';
 import { Eventos } from '../../../../../services/eventos';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-form-padrinos-matrimonio',
@@ -13,6 +14,11 @@ export class FormPadrinosMatrimonio {
   eventService = inject(Eventos)
   form!: FormGroup;
   showAdditional: boolean = false;
+  private dataLoadedSubscription?: Subscription;
+
+  get isEditMode(): boolean {
+    return this.eventService.isInEditMode();
+  }
 
   constructor(private frm: FormBuilder) {
     this.form = frm.group({
@@ -43,8 +49,24 @@ export class FormPadrinosMatrimonio {
 
 
   ngOnInit(){
-    const padrinos = this.eventService.getParents_form('Padrinos');
+    this.dataLoadedSubscription = this.eventService.eventDataLoadedObservable.subscribe(
+      (loaded) => {
+        if (loaded) {
+          this.loadFormData();
+        }
+      }
+    );
+    
+    // También intentar cargar inmediatamente por si ya están disponibles
+    if (this.eventService.isInEditMode()) {
+      this.loadFormData();
+    }
+  }
 
+
+  loadFormData(){
+    const padrinos = this.eventService.getParents_form('Padrinos');
+    console.log(padrinos)
 
     if (padrinos[0]) {
       this.form.patchValue({
@@ -85,7 +107,6 @@ export class FormPadrinosMatrimonio {
         ap_mat_madrina2: padrinos[3].apellido_mat,
       });
     }
-
 
   }
 
@@ -144,10 +165,12 @@ export class FormPadrinosMatrimonio {
   toggleAdditional() {
     this.showAdditional = !this.showAdditional;
     
-    // Si se oculta, limpiar los campos opcionales y quitar validaciones
     if (!this.showAdditional) {
       const padrinos = this.eventService.getParents_form('Padrinos');
-      padrinos.splice(2, 2);
+      if (padrinos.length > 2) {
+        padrinos.splice(2, padrinos.length - 2);
+      }
+
 
       this.form.patchValue({
         nombres_padrino2: '',
@@ -215,4 +238,9 @@ export class FormPadrinosMatrimonio {
         }, 'Padrinos', 3);
     }
   }
+
+  ngOnDestroy() {
+    this.dataLoadedSubscription?.unsubscribe();
+  }
 }
+

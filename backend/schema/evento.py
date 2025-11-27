@@ -59,3 +59,30 @@ class ResponseHrsDisponibles(BaseModel):
     hrs_disponibles:List[str]
 
 
+
+class CelebradoUpdate(BaseModel):
+    id_celebrado: Optional[int] = None  # Si viene, es UPDATE; si no, es INSERT
+    nombres: str
+    apellido_pat: str
+    apellido_mat: str
+    id_rol: int
+    genero: str
+    fecha_nac: str
+    edad: int
+
+class ParticipanteUpdate(BaseModel):
+    id_evento_participante: Optional[int] = None  # Si viene, es UPDATE; si no, es INSERT
+    nombres: str
+    apellido_pat: str
+    apellido_mat: str
+    id_rol: int
+
+
+class EventoUpdate(BaseModel):
+    id_evento: int
+    id_tipo_evento: int
+    fecha_inicio: str
+    fecha_fin: str
+    celebrados: List[CelebradoUpdate]
+    participantes: List[ParticipanteUpdate]
+

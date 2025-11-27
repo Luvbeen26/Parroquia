@@ -47,14 +47,14 @@
         </section>
     </div>
 
-    <!-- Botón para agregar padrinos adicionales -->
-    <div class="additional-option">
-        <button type="button" class="toggle-button" (click)="toggleAdditional()">
-            {{ showAdditional ? '− Ocultar padrinos adicionales' : '+ Agregar padrinos adicionales' }}
-        </button>
-    </div>
-
-    <!-- Padrinos adicionales (se muestran solo si showAdditional es true) -->
+    @if (!isEditMode) {
+        <div class="additional-option">
+            <button type="button" class="toggle-button" (click)="toggleAdditional()">
+                {{ showAdditional ? '− Ocultar padrinos adicionales' : '+ Agregar padrinos adicionales' }}
+            </button>
+        </div>
+    }
+    
     @if (showAdditional) {
         <hr class="section-divider">
 

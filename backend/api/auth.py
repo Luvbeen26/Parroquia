@@ -1,3 +1,4 @@
+import re
 from schema import users as schema_users
 from models import codigo_verificacion,users as models_users
 import random
@@ -20,43 +21,39 @@ bearer_scheme = HTTPBearer()
 
 @router.post("/create_user")
 def create_user(user:schema_users.RegisterUser,db:Session = Depends(get_db)):
-    db_user=security.check_email(db,correo=user.correo)
+    try:
+        db_user=security.check_email(db,correo=user.correo)
+        if db_user:
+            raise HTTPException(status_code=400, detail="Correo ya Existente")
+
+        db_code=security.check_code(db,code=user.code,correo=user.correo)
+        if user.contra != user.confirm_pswd:
+            raise HTTPException(status_code=400,detail="Las Contraseñas no coinciden")
+
+        if not db_code:
+            raise HTTPException(status_code=400, detail="Codigo no valido (incorrecto o expirado)")
 
 
-    if db_user:
-        raise HTTPException(status_code=400, detail="Correo ya Existente")
-    db_code=security.check_code(db,code=user.code,correo=user.correo)
+        pswd = bcrypt.hashpw(user.contra.encode(), bcrypt.gensalt(rounds=12))
+        db_user= models_users.User(nombres=user.nombres,apellidos=user.apellidos,correo=user.correo,contrasena=pswd)
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
 
+        token_data={
+            "id_usuario": db_user.id_usuario,
+            "correo": db_user.correo,
+            "es_admin": db_user.es_admin,
+            "nombre": f"{db_user.nombres} {db_user.apellidos}"
+        }
 
-    if user.contra != user.confirm_pswd:
-        raise HTTPException(status_code=400,detail="Las Contraseñas no coinciden")
+        access_token=security.write_access_token(token_data)
+        refresh_token=security.write_refresh_token(token_data)
 
-
-    if not db_code:
-        raise HTTPException(status_code=400, detail="Codigo no valido (incorrecto o expirado)")
-
-
-    pswd = bcrypt.hashpw(user.contra.encode(), bcrypt.gensalt(rounds=12))
-    db_user= models_users.User(nombres=user.nombres,apellidos=user.apellidos,correo=user.correo,contrasena=pswd)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-
-
-
-    token_data={
-        "id_usuario": db_user.id_usuario,
-        "correo": db_user.correo,
-        "es_admin": db_user.es_admin,
-        "nombre": f"{db_user.nombres} {db_user.apellidos}"
-    }
-    print(token_data)
-
-    access_token=security.write_access_token(token_data)
-    refresh_token=security.write_refresh_token(token_data)
-
-    return { "access_token" : access_token, "refresh_token" : refresh_token}
-
+        return { "access_token" : access_token, "refresh_token" : refresh_token}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Error al registrar usuario")
 
 
 
@@ -90,45 +87,53 @@ async def send_code_verification(user:schema_users.Get_email,db:Session = Depend
 
 @router.post("/login")
 def login_user(user:schema_users.LoginUser,db:Session = Depends(get_db)):
-    db_user=security.check_email(db,correo=user.correo)
-    if not db_user:
-        raise HTTPException(status_code=400, detail="Correo no Existente")
+    try:
+        db_user=security.check_email(db,correo=user.correo)
+        if not db_user:
+            raise HTTPException(status_code=400, detail="Correo no Existente")
 
-    if not bcrypt.checkpw(user.contra.encode(), db_user.contrasena.encode()):
-        raise HTTPException(status_code=400,detail="La contraseña no coinciden")
+        if not bcrypt.checkpw(user.contra.encode(), db_user.contrasena.encode()):
+            raise HTTPException(status_code=400,detail="La contraseña no coinciden")
 
-    token_data={
-        "id_usuario": db_user.id_usuario,
-        "correo": db_user.correo,
-        "es_admin": db_user.es_admin,
-        "nombre": f"{db_user.nombres} {db_user.apellidos}"
-    }
+        token_data={
+            "id_usuario": db_user.id_usuario,
+            "correo": db_user.correo,
+            "es_admin": db_user.es_admin,
+            "nombre": f"{db_user.nombres} {db_user.apellidos}"
+        }
 
-    access_token=security.write_access_token(token_data)
-    refresh_token=security.write_refresh_token(token_data)
+        access_token=security.write_access_token(token_data)
+        refresh_token=security.write_refresh_token(token_data)
 
-    return { "access_token" : access_token, "refresh_token" : refresh_token}
-
+        return { "access_token" : access_token, "refresh_token" : refresh_token}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="Error al iniciar sesión")
 
 
 
 @router.put("/restore_password")
 def restore_password(user:schema_users.ChangePassword,db:Session = Depends(get_db)):
-    db_user = security.check_email(db, correo=user.correo)
-    if not db_user:
-        raise HTTPException(status_code=400, detail="Correo no Existente")
+    try:
+        db_user = security.check_email(db, correo=user.correo)
+        if not db_user:
+            raise HTTPException(status_code=400, detail="Correo no Existente")
 
-    db_code = security.check_code(db, code=user.code, correo=user.correo)
+        if not validar_password(user.contra):
+            raise HTTPException(status_code=404,detail="Contraseña invalida: 1 Mayuscula, 1 minuscula y de 8-25 caracteres")
 
-    if not db_code:
-        raise HTTPException(status_code=400, detail="Codigo no valido (incorrecto o expirado)")
+        db_code = security.check_code(db, code=user.code, correo=user.correo)
 
-    hashed_password=bcrypt.hashpw(user.contra.encode(),bcrypt.gensalt(rounds=12))
-    #db_user.correo=user.correo
-    db_user.contrasena=hashed_password
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+        if not db_code:
+            raise HTTPException(status_code=400, detail="Codigo no valido (incorrecto o expirado)")
+
+        hashed_password=bcrypt.hashpw(user.contra.encode(),bcrypt.gensalt(rounds=12))
+        #db_user.correo=user.correo
+        db_user.contrasena=hashed_password
+        db.commit()
+        db.refresh(db_user)
+        return db_user
+    except Exception as e:
+        raise HTTPException(status_code=404,details=str(e))
 
 
 @router.post("/verify_token")
@@ -150,3 +155,7 @@ def refresh_token(refresh:schema_users.Refresh):
 
     new_access_token=write_access_token({"id_usuario" : data["id_usuario"],"correo" : data["correo"], "es_admin" : data["es_admin"], "nombre" : data["nombre"]})
     return {"access_token" : new_access_token}
+
+def validar_password(password: str) -> bool:
+    pattern = r"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,25}$"
+    return bool(re.match(pattern, password))

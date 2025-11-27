@@ -1,3 +1,4 @@
 backend/.env
 /backend/Images
 /backend/Documents
+/backend/api/__pycache__

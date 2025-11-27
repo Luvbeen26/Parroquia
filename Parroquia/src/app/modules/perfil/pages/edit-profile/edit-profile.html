@@ -1,49 +1,62 @@
 <main class="main flex-column">
     <div class="personal carding">
         <h2>Informacion Personal</h2>
-        <form action="submit">
+        <form [formGroup]="personal_form" (submit)="ChangePersonalInfo()">
             <div class="campos-name flex">
                 <div class="campo flex-column">
                     <h3>Nombre</h3>
-                    <input type="text" class="Input">
+                    <input type="text" class="Input" formControlName="nombre">
+                    @if (nombre.hasError('required') && nombre.touched) {
+                        <p class="error">Ingrese su nombre</p>
+                    }
                 </div>
                 <div class="campo flex-column">
                     <h3>Apellidos</h3>
-                    <input type="text" class="Input">
+                    <input type="text" class="Input" formControlName="apellidos">
+                    @if (apellidos.hasError('required') && apellidos.touched) {
+                        <p class="error">Ingrese sus apellidos</p>
+                    }
                 </div>
             </div>
             
-            <div class="campo-correo flex-column">
-                <h3>Correo</h3>
-                <input type="email" class="Input">
-            </div>
             <div class="buttons flex">
-                <button class="button">Guardar</button>
-                <button class="two-button">Cancelar</button>
+                <button type="submit" class="button" [disabled]="personal_form.invalid">Guardar</button>
+                
             </div>
         </form>
     </div>
 
     <div class="password carding">
         <h2>Cambiar Contraseña</h2>
-        <form action="submit">
+        <form [formGroup]="password_form" (submit)="ChangePassword()">
             <div class="campo flex-column">
                 <h3>Contraseña Actual</h3>
-                <input type="password" placeholder="Ingrese su contraseña Actual" class="Input">
+                <input type="password" placeholder="Ingrese su contraseña Actual" class="Input" formControlName="contrasena_actual">
+                @if (contrasena_actual.hasError('required') && contrasena_actual.touched) {
+                    <p class="error">Ingrese su contraseña actual</p>
+                }
             </div>
             <div class="campo flex-column">
                 <h3>Contraseña Nueva</h3>
-                <input type="password" placeholder="Ingrese su nueva contraseña" class="Input">
+                <input type="password" placeholder="Ingrese su nueva contraseña" class="Input" formControlName="contrasena_nueva" maxlength="25">
+                @if (contrasena_nueva.hasError('required') && contrasena_nueva.touched) {
+                    <p class="error">Ingrese una contraseña</p>
+                } @else if ((contrasena_nueva.hasError('minlength') || contrasena_nueva.hasError('maxlength')) && contrasena_nueva.touched) {
+                    <p class="error">La contraseña debe contener mínimo 8 caracteres y máximo 25</p>
+                } @else if (contrasena_nueva.hasError('pattern') && contrasena_nueva.touched) {
+                    <p class="error">La contraseña debe contener una mayúscula, minúscula y un número</p>
+                }
             </div>
             <div class="campo flex-column">
                 <h3>Confirmar Contraseña Nueva</h3>
-                <input type="password" placeholder="Confirme su contraseña " class="Input">
+                <input type="password" placeholder="Confirme su contraseña" class="Input" formControlName="confirmar_contrasena" maxlength="25">
+                @if (password_form.hasError('notmatch') && confirmar_contrasena.touched) {
+                    <p class="error">Las contraseñas deben coincidir</p>
+                }
             </div>
             <div class="buttons flex">
-                <button class="button">Actualizar Contraseña</button>
+                <button type="submit" [disabled]="password_form.invalid" class="button">Actualizar Contraseña</button>
             </div>
-            
         </form>
-        
     </div>
 </main>

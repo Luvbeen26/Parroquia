@@ -70,8 +70,9 @@ export class Auth {
     return this.http.post<Send_codeResponse>(`${this.apiurl}/send_code`,{correo});
   }
 
-  public restore_password(change:ChangePassword): Observable<Send_codeResponse>{
-    return this.http.put<Send_codeResponse>(`${this.apiurl}/restore_password`,{change})
+  public restore_password(email:string,password:string,code:string): Observable<ChangePassword>{
+    const body={correo:email,contra:password, code:code}
+    return this.http.put<ChangePassword>(`${this.apiurl}/restore_password`,body)
   }
 
   private decodeToken(token:string): UserData | null{
@@ -127,6 +128,7 @@ export class Auth {
     }
   }
 
+ 
   public get_userRol(): boolean | null{
     if(!this.isBrowser) 
       return null;

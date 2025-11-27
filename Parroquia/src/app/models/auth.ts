@@ -1,3 +1,5 @@
+import { Login } from "../modules/auth/components/pages/login/login";
+
 export interface UserData{
     id_usuario:number,
     correo:string,
@@ -20,8 +22,6 @@ export interface LoginUser{
     correo:string;
     contra:string;
 }
-
-
 
 
 export interface ChangePassword extends LoginUser{

@@ -34,10 +34,9 @@ export class Login {
 
   Submit(){
     if(this.login_form.valid){
-      const {correo,contrasena} = this.login_form.value; //extrae los valores haciendo desestructuracion
+      const {correo,contrasena} = this.login_form.value;
       this.authservice.login(correo,contrasena).subscribe({ 
         next: (res) =>{
-
           this.toast.success("Inicio de Sesion Exitoso", "Bienvenido")
           
           if(!this.authservice.get_userRol())

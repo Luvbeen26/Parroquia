@@ -4,12 +4,12 @@ from typing import Optional
 class UserBase(BaseModel):
     nombres: str
     apellidos: str
-    correo: EmailStr
     es_admin: Optional[bool] = False
 
 
 class RegisterUser(UserBase):
     contra: str
+    correo: EmailStr
     confirm_pswd: str
     code: str
 

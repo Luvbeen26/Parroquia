@@ -6,11 +6,9 @@ from sqlalchemy import and_, func, cast, Date, or_, extract, desc
 from sqlalchemy.orm import Session, joinedload
 import datetime
 
-from schema.finanzas import Transaccion_class
-from utils.scheduler import scheduler
-from watchfiles import Change
 
-import schema.evento
+from utils.scheduler import scheduler
+
 from api.notif import send_notification
 from models.celebrado import Celebrado
 from schema import evento as schema_event
@@ -603,3 +601,103 @@ def forreagendar(db: Session = Depends(get_db)):
         return result
     except Exception as error:
         raise HTTPException(status_code=404, detail=str(error))
+
+@router.get("/Celebrants/User")
+def Get_celebrantUser(id_evento:int,db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
+    print(user_data["id_usuario"])
+    try:
+        event=db.query(Evento).options(joinedload(Evento.celebrados),joinedload(Evento.evento_participante)).filter(Evento.id_evento == id_evento).first()
+        if event is None:
+            raise HTTPException(status_code=404, detail="Evento not found")
+        if event.id_usuario != user_data["id_usuario"]:
+            raise HTTPException(status_code=403, detail="El evento no es del usuario")
+
+
+        return event
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+
+
+
+@router.put("/update/Event")
+def update_event(
+        evento_data: schema_event.EventoUpdate,
+        db: Session = Depends(get_db),
+        user_data: dict = Depends(current_user)
+):
+    try:
+        # 1. Verificar que el evento existe y pertenece al usuario
+        evento = db.query(Evento).filter(Evento.id_evento == evento_data.id_evento).first()
+        if not evento:
+            raise HTTPException(status_code=404, detail="Evento no encontrado")
+
+        if evento.id_usuario != user_data["id_usuario"]:
+            raise HTTPException(status_code=403, detail="No autorizado")
+
+        # 2. Actualizar datos del evento
+        evento.fecha_hora_inicio = evento_data.fecha_inicio
+        evento.fecha_hora_fin = evento_data.fecha_fin
+
+        # 3. Actualizar o crear celebrados
+        for celebrado_data in evento_data.celebrados:
+            if celebrado_data.id_celebrado:
+                # UPDATE - el celebrado ya existe
+                celebrado = db.query(Celebrado).filter(
+                    Celebrado.id_celebrado == celebrado_data.id_celebrado
+                ).first()
+
+                if celebrado:
+                    celebrado.nombres = celebrado_data.nombres
+                    celebrado.apellido_pat = celebrado_data.apellido_pat
+                    celebrado.apellido_mat = celebrado_data.apellido_mat
+                    celebrado.genero = celebrado_data.genero
+                    celebrado.fecha_nacimiento = celebrado_data.fecha_nac
+                    celebrado.edad = celebrado_data.edad
+            else:
+                # INSERT - nuevo celebrado
+                nuevo_celebrado = Celebrado(
+                    id_evento=evento_data.id_evento,
+                    nombres=celebrado_data.nombres,
+                    apellido_pat=celebrado_data.apellido_pat,
+                    apellido_mat=celebrado_data.apellido_mat,
+                    id_rol=celebrado_data.id_rol,
+                    genero=celebrado_data.genero,
+                    fecha_nacimiento=celebrado_data.fecha_nac,
+                    edad=celebrado_data.edad
+                )
+                db.add(nuevo_celebrado)
+
+        # 4. Actualizar o crear participantes
+        for participante_data in evento_data.participantes:
+            if participante_data.id_evento_participante:
+                # UPDATE - el participante ya existe
+                participante = db.query(event_part).filter(
+                    event_part.id_evento_participante == participante_data.id_evento_participante
+                ).first()
+
+                if participante:
+                    participante.nombres = participante_data.nombres
+                    participante.apellido_pat = participante_data.apellido_pat
+                    participante.apellido_mat = participante_data.apellido_mat
+                    participante.id_rol = participante_data.id_rol
+            else:
+                # INSERT - nuevo participante
+                nuevo_participante = event_part(
+                    id_evento=evento_data.id_evento,
+                    nombres=participante_data.nombres,
+                    apellido_pat=participante_data.apellido_pat,
+                    apellido_mat=participante_data.apellido_mat,
+                    id_rol=participante_data.id_rol
+                )
+                db.add(nuevo_participante)
+
+        db.commit()
+        return {"message": "Evento actualizado exitosamente"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(e))

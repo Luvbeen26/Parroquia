@@ -2,13 +2,47 @@
     @if (Process$ | async; as Process) {
         @if (Process && Process.length > 0) {
             @for (p of Process; track $index) {
-                <app-event-user [id_tipo_evento]="p.id_tipo" [status]="p.status" [id]="p.id_evento" [descripcion]="p.descripcion" [tipo]="p.tipo" [docs]="p.documentos" ></app-event-user>
+                <app-event-user 
+                    [id_tipo_evento]="p.id_tipo" 
+                    [status]="p.status" 
+                    [id]="p.id_evento" 
+                    [descripcion]="p.descripcion" 
+                    [tipo]="p.tipo" 
+                    [docs]="p.documentos">
+                </app-event-user>
             }
-        }@else {
+
+            <!-- Paginación -->
+            @if (totalPages > 1) {
+                <div class="pagination flex">
+                    <button 
+                        class="page-btn" 
+                        (click)="previousPage()" 
+                        [disabled]="currentPage === 1">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+
+                    @for (page of pages; track page) {
+                        <button 
+                            class="page-btn" 
+                            [class.active]="currentPage === page"
+                            (click)="changePage(page)">
+                            {{ page }}
+                        </button>
+                    }
+
+                    <button 
+                        class="page-btn" 
+                        (click)="nextPage()" 
+                        [disabled]="currentPage === totalPages">
+                        <mat-icon>chevron_right</mat-icon>
+                    </button>
+                </div>
+            }
+        } @else {
             <div class="no-events">
                 <mat-icon>event_busy</mat-icon>
                 <h3>No hay eventos pendientes</h3>
-                
             </div>
         }
     }

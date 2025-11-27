@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { AuthSideDecoration } from '../../auth-side-decoration/auth-side-decoration';
 import { Form, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -15,15 +15,15 @@ import { ToastrService } from 'ngx-toastr';
   styleUrl: './restore-password.css'
 })
 export class RestorePassword {
-  text_codebtn:string="Enviar Codigo"
-  
+  text_codebtn = signal<string>("Enviar Codigo");
+  cooldown = signal<number>(0);
   show_pass:boolean=false;
-
   restore_form:FormGroup;
-
   correo:FormControl;
   contrasena:FormControl;
   code:FormControl;
+
+  code_disabled: boolean = false;
 
   constructor(private authservice:Auth,private router:Router,private toast:ToastrService){
     this.correo=new FormControl("",[
@@ -38,7 +38,7 @@ export class RestorePassword {
       Validators.pattern('(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,25}')
     ]);
     
-    this.code = new FormControl("",[Validators.required,Validators.min(100000),Validators.max(999999)]);
+    this.code = new FormControl("",[Validators.required,Validators.maxLength(6)]);
 
     this.restore_form=new FormGroup({
       correo:this.correo,
@@ -53,28 +53,65 @@ export class RestorePassword {
         const correoCtrl = this.restore_form.get('correo')!;
         correoCtrl.valid ? codigoCtrl.enable() : codigoCtrl.disable();
       }); 
-      this.restore_form.statusChanges.subscribe(status => {
-        console.log("Estado del formulario:", status);
+      
+
+    effect(() => {
+      const currentCooldown = this.cooldown();
+      if (currentCooldown > 0) {
+        this.text_codebtn.set(`Reenviar en ${currentCooldown} seg`);
+      } else if (currentCooldown === 0 && this.code_disabled) {
+        this.text_codebtn.set("Reenviar Codigo");
+        this.code_disabled = false;
+      }
     });
+
   }
 
   
   Send_code(){
     const correo=this.restore_form.get("correo")?.value;
+    this.code_disabled = true;  
+    this.cooldown.set(30);
     this.authservice.send_code(correo).subscribe({
       next: (res) =>{
         this.toast.success("Codigo Enviado Exitosamente")
+        this.start_cooldown(); 
+
       },
       error: (err) =>{
+        this.code_disabled = false;
+        this.cooldown.set(0);
         this.toast.error(err.error.detail,"Error")        
       }
     });
-    this.text_codebtn="Reenviar Codigo";
   }
 
+  start_cooldown(){
+    const intervalo=setInterval(() => {
+      const current = this.cooldown();
+      if(current <= 0){
+        clearInterval(intervalo);
+        return;
+      }
+      this.cooldown.set(current - 1);
+    }, 1000);
+  }
 
   Change_password(){
+    const email=this.restore_form.get("correo")?.value
+    const password=this.restore_form.get("contrasena")?.value
+    const code=this.restore_form.get("code")?.value
 
+    const body={correo:email,contra:password, code:code}
+
+    this.authservice.restore_password(email,password,code).subscribe({
+      next: res =>{
+        this.toast.success("Contaseña Cambiada");
+        this.router.navigate(["/auth/login"])
+      },
+      error: err=>{        
+          this.toast.error(err.error.detail,"Error")}
+  })
 
   }
 

@@ -10,6 +10,18 @@ import bcrypt
 router=APIRouter(prefix="/users", tags=["users"])
 
 
+@router.get("/info_user")
+def get_into(db: Session = Depends(get_db),user_data:dict=Depends(current_user)):
+
+    try:
+        user_id=user_data["id_usuario"]
+        print(user_id)
+        user=db.query(models_users.User).get(user_id)
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+
 @router.put("/change_password")
 def change_password(password:schema_users.ChangePasswordOnSession,db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     db_user=security.check_email(db,correo=user_data["correo"])
@@ -31,21 +43,24 @@ def change_password(password:schema_users.ChangePasswordOnSession,db:Session = D
 
 @router.put("/change_personal")
 def change_personalinfo(personal_info:schema_users.UserBase, db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
-    db_user=security.check_email(db,correo=personal_info.correo)
+    try:
+        db_user=db.query(models_users.User).get(user_data["id_usuario"])
+        user_id=user_data["id_usuario"]
+        if not db_user:
+            raise HTTPException(status_code=406,detail="Usuario no encontrado")
 
-    user_id=user_data["id_usuario"]
+        if not personal_info.nombres or not personal_info.nombres.strip():
+            raise HTTPException(status_code=400, detail="El nombre no puede estar vacío")
 
-    if db_user and db_user.id_usuario != user_id:
-        raise HTTPException(status_code=406,detail="Correo no aceptado, ya esta en uso")
+        if not personal_info.apellidos or not personal_info.apellidos.strip():
+            raise HTTPException(status_code=400, detail="Los apellidos no pueden estar vacíos")
 
-    db_user=db.query(models_users.User).filter(models_users.User.id_usuario == user_id).first()
-    if not db_user:
-        raise HTTPException(status_code=404,detail="User not found")
+        db_user.nombres = personal_info.nombres
+        db_user.apellidos = personal_info.apellidos
 
-    db_user.nombres = personal_info.nombres
-    db_user.apellidos = personal_info.apellidos
-    db_user.correo = personal_info.correo
-
-    db.commit()
-    db.refresh(db_user)
-    return {"msg" : "Usuario actualizado correctamente", "user" : personal_info}
+        db.commit()
+        db.refresh(db_user)
+        return {"msg" : "Usuario actualizado correctamente", "user" : personal_info}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=404,detail="Usuario no encontrado")

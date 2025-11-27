@@ -1,15 +1,11 @@
 <main class="Contenedor flex">
     <div class="wrapper flex">
-
-        
         <div class="SideProfile flex-column">
             <div class="UserName flex-column carding">
                 <div class="nophoto flex">
-                    <h1>{{ getInitials(name) }}</h1>
+                    <h1>{{ getInitials(name()) }}</h1>
                 </div>
-                <h3>{{name}}</h3>
-    
-                
+                <h3>{{name()}}</h3>
             </div>    
             <div class="menu carding">
                 <div class="menu-options flex" (click)="optionMenu(1)">
@@ -24,16 +20,17 @@
                 <div class="menu-options flex" (click)="auth.logout()">
                     <mat-icon>logout</mat-icon> <b>Cerrar Sesion</b>
                 </div>
-                
             </div>
         </div>
         <div class="Content">
-            @if(option==2){
+            @if(option()==2){
                 <app-pendient-process></app-pendient-process>
-            }@else if(option==3){
+            }@else if(option()==3){
                 <app-all-events></app-all-events>
             }@else{
-                <app-edit-profile></app-edit-profile>
+                @if(user_data()) {
+                    <app-edit-profile [user_data]="user_data()!"></app-edit-profile>
+                }
             }
         </div>
     </div>

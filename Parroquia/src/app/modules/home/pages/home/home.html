@@ -4,7 +4,7 @@
         <section class="contenedor-cards-eventos" [class.void_events]="errors_Exists" [class.loading]="isloading">
             <span><img src="icons/calendary_blue.svg" alt=""><h3>Proximos Eventos</h3></span>
             
-            <div class="cards" >
+            <div class="cards">
                 @if (isloading) {
                     <p>Cargando eventos...</p>
                 }
@@ -29,7 +29,6 @@
                         <h4>No hay Eventos Planificados</h4>
                     </div>
                 }
-                
             </div>
         </section>
 
@@ -47,13 +46,12 @@
         <section class="search">
             <div class="contenedor-search">
                 <span class="contenedor-lupa"><img src="icons/lupa.svg" class="lupa" alt="Buscar"></span>
-                    <input type="search" 
+                <input type="search" 
                     [(ngModel)]="searchText" 
                     (ngModelChange)="searchSubject.next($event)"
                     [readonly]="isSearching"
                     placeholder="Buscar..." 
                     class="input-search"/>
-
             </div>
             @if (searchText) {
                 <div class="search-results-info">
@@ -75,6 +73,34 @@
                         [image]="public.img" 
                         [contenido]="public.contenido">
                     </app-publications>    
+                }
+
+                <!-- Paginación -->
+                @if (totalPages > 1) {
+                    <div class="pagination-publications flex">
+                        <button 
+                            class="page-btn" 
+                            (click)="previousPage()" 
+                            [disabled]="currentPage === 1">
+                            <mat-icon>chevron_left</mat-icon>
+                        </button>
+
+                        @for (page of pages; track page) {
+                            <button 
+                                class="page-btn" 
+                                [class.active]="currentPage === page"
+                                (click)="changePage(page)">
+                                {{ page }}
+                            </button>
+                        }
+
+                        <button 
+                            class="page-btn" 
+                            (click)="nextPage()" 
+                            [disabled]="currentPage === totalPages">
+                            <mat-icon>chevron_right</mat-icon>
+                        </button>
+                    </div>
                 }
             } @else if (!isSearching && searchText) {
                 <div class="no-results">

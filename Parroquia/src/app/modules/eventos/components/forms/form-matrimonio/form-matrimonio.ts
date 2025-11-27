@@ -3,6 +3,7 @@ import { HeaderForm } from '../../header-form/header-form';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Eventos } from '../../../../../services/eventos';
 import { Celebrate } from '../../../../../models/event';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-form-matrimonio',
@@ -12,6 +13,8 @@ import { Celebrate } from '../../../../../models/event';
 })
 export class FormMatrimonio {
   eventService = inject(Eventos)
+  private dataLoadedSubscription?: Subscription;
+
   form!: FormGroup;
 
   constructor(private frm: FormBuilder) {
@@ -41,15 +44,27 @@ export class FormMatrimonio {
         this.form.get('edad_novia')?.setValue(edad, { emitEvent: false });
       }
     });
-
-    this.form.statusChanges.subscribe(status => {
-      console.log('Estado del formulario:', status);
-      console.log('Valores:', this.form.value);
-      console.log('Errores:', this.getFormErrors());
-    });
   }
 
   ngOnInit(){
+    this.dataLoadedSubscription = this.eventService.eventDataLoadedObservable.subscribe(
+      (loaded) => {
+        if (loaded) {
+          this.loadFormData();
+        }
+      }
+    );
+    
+    // También intentar cargar inmediatamente por si ya están disponibles
+    if (this.eventService.isInEditMode()) {
+      this.loadFormData();
+    }
+
+
+    
+  }
+
+  loadFormData(){
     const novio = this.eventService.getCelebrado_form(0);
     
     const novia = this.eventService.getCelebrado_form(1);
@@ -73,7 +88,6 @@ export class FormMatrimonio {
       });
     }
   }
-
 
   getFormErrors() {
     const errors: any = {};
@@ -124,5 +138,9 @@ export class FormMatrimonio {
       this.eventService.saveCelebradoform(novio, 0)
       this.eventService.saveCelebradoform(novia, 1)
     }
+  }
+
+  ngOnDestroy() {
+    this.dataLoadedSubscription?.unsubscribe();
   }
 }

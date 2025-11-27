@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../environment/environment';
 import { PendientProcessClient, ProxPastEventsClient } from '../models/event';
 import { docs_event } from '../models/document';
+import { Change_password, ChangeInfo, Userbase } from '../models/user';
 
 @Injectable({
   providedIn: 'root'
@@ -51,9 +52,21 @@ export class Profile {
       formData.append('files',d)
     })
     
-    
-
     return this.http.put<File[]>(`${this.apiurl}/docs/re_update_file`,formData,{headers})
   }
 
+  getUserData(): Observable<Userbase>{
+    return this.http.get<Userbase>(`${this.apiurl}/users/info_user`)
+  }
+
+
+  ChangePersonalInfo(nombres:string, apellidos:string):Observable<ChangeInfo>{
+    const body={nombres:nombres, apellidos:apellidos}
+    return this.http.put<ChangeInfo>(`${this.apiurl}/users/change_personal`,body)
+  }
+
+  ChangePassword(actual:string,new_pass:string): Observable<Change_password>{
+    const body={password: new_pass,old_password:actual}
+    return this.http.put<Change_password>(`${this.apiurl}/change_password`,body)
+  }
 }
