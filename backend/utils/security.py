@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 from schema import users as schema_users
 from sqlalchemy.orm import Session
-from jwt import encode,decode, exceptions
+import jwt
 from datetime import datetime,timedelta
 from fastapi.responses import JSONResponse
 from models import codigo_verificacion,users as models_users
@@ -44,7 +44,7 @@ def check_code(db:Session,code:str,correo:str):
             db.commit()
             return True
         else:
-            print("❌ No se encontró código")
+            print("No se encontró código")
             return False
     except Exception as e:
 
@@ -66,19 +66,19 @@ def expire_minutes(minutes : int):
     return new_date
 
 def write_access_token(data:dict):
-    token=encode(payload={**data,"exp" : expire_minutes(1440) }, key=access_key,algorithm="HS256")
+    token=jwt.encode(payload={**data,"exp" : expire_minutes(1440) }, key=access_key,algorithm="HS256")
     return token
 
 def write_refresh_token(data:dict):
-    token=encode(payload={**data,"exp":expire_minutes(10080)},key=refresh_key)
+    token=jwt.encode(payload={**data,"exp":expire_minutes(10080)},key=refresh_key)
     return token
 
 def validate_token(token,output=False):
     try:
-        decode(token,key=access_key,algorithms=["HS256"])
-        return decode(token, key=access_key, algorithms=["HS256"])
-    except exceptions.DecodeError:
+        jwt.decode(token,key=access_key,algorithms=["HS256"])
+        return jwt.decode(token, key=access_key, algorithms=["HS256"])
+    except jwt.exceptions.DecodeError:
         raise HTTPException(status_code=401, detail="Token inválido")
-    except exceptions.ExpiredSignatureError:
+    except jwt.exceptions.ExpiredSignatureError:
         raise HTTPException(status_code=401, detail="Token expirado")
 
