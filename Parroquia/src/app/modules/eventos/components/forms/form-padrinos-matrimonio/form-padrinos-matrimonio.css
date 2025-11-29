@@ -64,6 +64,10 @@ h3 {
     margin: 20px 0;
 }
 
+.error{
+    color: red;
+}
+
 .toggle-button {
     background: white;
     border: 2px dashed var(--color-principal);

@@ -39,7 +39,7 @@ export class Auth {
       tap(response=>{
 
         if(this.isBrowser){
-          this.cookies.set('access_token',response.access_token,1/96);
+          this.cookies.set('access_token',response.access_token,1);
           this.cookies.set('refresh_token',response.refresh_token,7);
         }
         const userdata=this.decodeToken(response.access_token);
@@ -55,7 +55,7 @@ export class Auth {
     return this.http.post<AuthTokens>(`${this.apiurl}/create_user`,body).pipe(
       tap(response =>{
         if(this.isBrowser){
-          this.cookies.set('access_token',response.access_token,1/96);
+          this.cookies.set('access_token',response.access_token,1);
           this.cookies.set('refresh_token',response.refresh_token,7);
         }
         const userdata=this.decodeToken(response.access_token);
@@ -166,9 +166,8 @@ export class Auth {
     }
 
       return this.http.post<{access_token:string}>(`${this.apiurl}/refresh`,{refresh_token:refresh_token}).pipe(
-      //Se establece el nuevo access token en la cookie
       tap(response =>{
-        this.cookies.set('access_token',response.access_token,1/96);
+        this.cookies.set('access_token',response.access_token,1);
         const userdata=this.decodeToken(response.access_token);
         if(userdata){
           this.currentUserSubject.next(userdata);

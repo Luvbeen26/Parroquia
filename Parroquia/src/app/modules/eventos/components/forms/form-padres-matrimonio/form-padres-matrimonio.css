@@ -5,6 +5,10 @@ hr {
     border: none;
 }
 
+.error{
+    color: red;
+}
+
 .section-divider {
     margin-block: 30px;
     height: 2px;

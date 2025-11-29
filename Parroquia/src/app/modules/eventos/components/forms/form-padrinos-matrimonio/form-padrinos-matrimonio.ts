@@ -58,9 +58,9 @@ export class FormPadrinosMatrimonio {
     );
     
     // También intentar cargar inmediatamente por si ya están disponibles
-    if (this.eventService.isInEditMode()) {
+   // if (this.eventService.isInEditMode()) {
       this.loadFormData();
-    }
+    //}
   }
 
 
@@ -241,6 +241,20 @@ export class FormPadrinosMatrimonio {
 
   ngOnDestroy() {
     this.dataLoadedSubscription?.unsubscribe();
+  }
+
+  onlyLetters(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const sanitized = input.value.replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, '');
+    
+    if (input.value !== sanitized) {
+      input.value = sanitized;
+
+      const controlName = input.getAttribute('formControlName');
+      if (controlName) {
+        this.form.get(controlName)?.setValue(sanitized, { emitEvent: false });
+      }
+    }
   }
 }
 

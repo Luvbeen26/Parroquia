@@ -104,6 +104,7 @@ def login_user(user:schema_users.LoginUser,db:Session = Depends(get_db)):
 
         access_token=security.write_access_token(token_data)
         refresh_token=security.write_refresh_token(token_data)
+        print(f"✅ TOKENS GENERADOS - Access: {access_token[:20]}... Refresh: {refresh_token[:20]}...")  # ← Agregar
 
         return { "access_token" : access_token, "refresh_token" : refresh_token}
     except Exception as e:

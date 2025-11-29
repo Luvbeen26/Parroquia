@@ -12,17 +12,30 @@
         <section class="inputs">
             <span class="Campo">
                 <h4>Nombres</h4>
-                <input type="text" formControlName="nombres_padre_novio" class="Input" placeholder="Nombres" maxlength="50">
+                <input type="text" formControlName="nombres_padre_novio" class="Input" placeholder="Nombres" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('nombres_padre_novio')?.invalid && form.get('nombres_padre_novio')?.touched) {
+                    <div class="error">
+                        <span>El nombre del padre del novio es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Paterno</h4>
-                <input type="text" formControlName="ap_pat_padre_novio" class="Input" placeholder="Apellido paterno" maxlength="50">
+                <input type="text" formControlName="ap_pat_padre_novio" class="Input" placeholder="Apellido paterno" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('ap_pat_padre_novio')?.invalid && form.get('ap_pat_padre_novio')?.touched) {
+                    <div class="error">
+                        <span>El apellido paterno del padre del novio es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Materno</h4>
-                <input type="text" formControlName="ap_mat_padre_novio" class="Input" placeholder="Apellido materno" maxlength="50">
+                <input type="text" formControlName="ap_mat_padre_novio" class="Input" placeholder="Apellido materno" maxlength="50"
+                (input)="onlyLetters($event)">
             </span>
         </section>
     </div>
@@ -32,17 +45,30 @@
         <section class="inputs">
             <span class="Campo"> 
                 <h4>Nombres</h4>
-                <input type="text" formControlName="nombres_madre_novio" class="Input" placeholder="Nombres" maxlength="50">
+                <input type="text" formControlName="nombres_madre_novio" class="Input" placeholder="Nombres" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('nombres_madre_novio')?.invalid && form.get('nombres_madre_novio')?.touched) {
+                    <div class="error">
+                        <span>El nombre de la madre del novio es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Paterno</h4>
-                <input type="text" formControlName="ap_pat_madre_novio" class="Input" placeholder="Apellido paterno" maxlength="50">
+                <input type="text" formControlName="ap_pat_madre_novio" class="Input" placeholder="Apellido paterno" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('ap_pat_madre_novio')?.invalid && form.get('ap_pat_madre_novio')?.touched) {
+                    <div class="error">
+                        <span>El apellido paterno de la madre del novio es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Materno</h4>
-                <input type="text" formControlName="ap_mat_madre_novio" class="Input" placeholder="Apellido materno" maxlength="50">
+                <input type="text" formControlName="ap_mat_madre_novio" class="Input" placeholder="Apellido materno" maxlength="50"
+                (input)="onlyLetters($event)">
             </span>
         </section>
     </div>
@@ -58,17 +84,30 @@
         <section class="inputs">
             <span class="Campo">
                 <h4>Nombres</h4>
-                <input type="text" formControlName="nombres_padre_novia" class="Input" placeholder="Nombres" maxlength="50">
+                <input type="text" formControlName="nombres_padre_novia" class="Input" placeholder="Nombres" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('nombres_padre_novia')?.invalid && form.get('nombres_padre_novia')?.touched) {
+                    <div class="error">
+                        <span>El nombre del padre de la novia es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Paterno</h4>
-                <input type="text" formControlName="ap_pat_padre_novia" class="Input" placeholder="Apellido paterno" maxlength="50">
+                <input type="text" formControlName="ap_pat_padre_novia" class="Input" placeholder="Apellido paterno" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('ap_pat_padre_novia')?.invalid && form.get('ap_pat_padre_novia')?.touched) {
+                    <div class="error">
+                        <span>El apellido paterno del padre de la novia es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Materno</h4>
-                <input type="text" formControlName="ap_mat_padre_novia" class="Input" placeholder="Apellido materno" maxlength="50">
+                <input type="text" formControlName="ap_mat_padre_novia" class="Input" placeholder="Apellido materno" maxlength="50"
+                (input)="onlyLetters($event)">
             </span>
         </section>
     </div>
@@ -78,17 +117,30 @@
         <section class="inputs">
             <span class="Campo"> 
                 <h4>Nombres</h4>
-                <input type="text" formControlName="nombres_madre_novia" class="Input" placeholder="Nombres" maxlength="50">
+                <input type="text" formControlName="nombres_madre_novia" class="Input" placeholder="Nombres" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('nombres_madre_novia')?.invalid && form.get('nombres_madre_novia')?.touched) {
+                    <div class="error">
+                        <span>El nombre de la madre de la novia es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Paterno</h4>
-                <input type="text" formControlName="ap_pat_madre_novia" class="Input" placeholder="Apellido paterno" maxlength="50">
+                <input type="text" formControlName="ap_pat_madre_novia" class="Input" placeholder="Apellido paterno" maxlength="50"
+                (input)="onlyLetters($event)">
+                @if (form.get('ap_pat_madre_novia')?.invalid && form.get('ap_pat_madre_novia')?.touched) {
+                    <div class="error">
+                        <span>El apellido paterno de la madre de la novia es requerido</span>
+                    </div>
+                }
             </span>
 
             <span class="Campo">
                 <h4>Apellido Materno</h4>
-                <input type="text" formControlName="ap_mat_madre_novia" class="Input" placeholder="Apellido materno" maxlength="50">
+                <input type="text" formControlName="ap_mat_madre_novia" class="Input" placeholder="Apellido materno" maxlength="50"
+                (input)="onlyLetters($event)">
             </span>
         </section>
     </div>

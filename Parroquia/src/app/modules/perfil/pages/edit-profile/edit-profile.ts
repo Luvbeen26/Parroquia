@@ -18,8 +18,7 @@ export class EditProfile {
   
   private _user_data: Userbase | null = null;
   
-  @Input() 
-  set user_data(value: Userbase | null) {
+  @Input() set user_data(value: Userbase | null) {
     
     this._user_data = value;
     
@@ -104,7 +103,10 @@ export class EditProfile {
     this.profileService.ChangePersonalInfo(nombre, ap).subscribe({
       next: res => {
         this.toast.success("Datos Cambiados Correctamente");
-        window.location.reload();
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
       },
       error: err => {
         this.toast.error(err.error.detail, "Error");
@@ -123,7 +125,10 @@ export class EditProfile {
     this.profileService.ChangePassword(old,nueva).subscribe({
       next: res=>{
         this.toast.success("La contraseña a sido cambiada")
-        window.location.reload()
+        const currentUrl = this.router.url;
+        this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+          this.router.navigate([currentUrl]);
+        });
       },
       error: err=>{
         this.toast.error(err.error.detail,"Error")

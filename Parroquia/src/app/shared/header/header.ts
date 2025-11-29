@@ -2,19 +2,20 @@ import { httpResource } from '@angular/common/http';
 import { Component, ElementRef, PLATFORM_ID, ViewChild,inject,input} from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { isPlatformBrowser } from '@angular/common';
+import { AsyncPipe, isPlatformBrowser } from '@angular/common';
 import { Auth } from '../../services/auth';
 
 @Component({
   selector: 'app-header',
   standalone:true,
-  imports: [RouterLink,MatIconModule],
+  imports: [RouterLink,MatIconModule, AsyncPipe],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
 export class Header {
   private auth=inject(Auth)
   private platformId=inject(PLATFORM_ID)
+  currentUser$ = this.auth.currentUser$;
 
   
   isauth=false;

@@ -4,6 +4,7 @@ from models import users as models_users
 from utils.database import get_db
 from fastapi import APIRouter,Depends, HTTPException
 from utils.dependencies import current_user
+from api.auth import validar_password
 import utils.security as security
 import bcrypt
 
@@ -24,22 +25,33 @@ def get_into(db: Session = Depends(get_db),user_data:dict=Depends(current_user))
 
 @router.put("/change_password")
 def change_password(password:schema_users.ChangePasswordOnSession,db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
-    db_user=security.check_email(db,correo=user_data["correo"])
+    try:
+        db_user=security.check_email(db,correo=user_data["correo"])
+        print(password.password)
+        print(password.old_password)
 
-    if not db_user:
-        raise HTTPException(status_code=404,detail="User not found")
+        if not db_user:
+            raise HTTPException(status_code=404,detail="Usuario no encontrado")
 
-    check=security.check_password(db,password.old_password,user_data["id_usuario"])
+        check=security.check_password(db,password.old_password,user_data["id_usuario"])
+        print(check)
 
-    if check:
-        hashed_password = bcrypt.hashpw(password.password.encode(), bcrypt.gensalt(rounds=12))
-        db_user.contrasena = hashed_password
-        db.commit()  # Confirma el usar el objeto
-        db.refresh(db_user)  # refrescar bd para incluir objeto añadido
-        return db_user
-    else:
-        return HTTPException(status_code=406,detail="Contraseña no coincide")
-
+        if check is True:
+            print(validar_password(password.password))
+            if not validar_password(password.password):
+                raise HTTPException(status_code=404,detail="Contraseña invalida: 1 Mayuscula, 1 minuscula y de 8-25 caracteres")
+            print("a")
+            hashed_password = bcrypt.hashpw(password.password.encode(), bcrypt.gensalt(rounds=12))
+            db_user.contrasena = hashed_password
+            db.commit()  # Confirma el usar el objeto
+            db.refresh(db_user)  # refrescar bd para incluir objeto añadido
+            return db_user
+        else:
+            raise HTTPException(status_code=406,detail="Contraseña no coincide")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=404,detail="Error al cambiar la contraseña")
 
 @router.put("/change_personal")
 def change_personalinfo(personal_info:schema_users.UserBase, db:Session = Depends(get_db),user_data:dict=Depends(current_user)):

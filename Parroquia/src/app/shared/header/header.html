@@ -3,24 +3,24 @@
         <img src="../img/logo.png" alt="Nuestra Señora del Rosario" class="logo" (click)="logout()">
     </div>
     <div class="Items" id="items" #items>
-        <div class="User-options">
-        @if(isauth === true){
-            <a routerLink="/" class="options">
-                <mat-icon class="icons">home</mat-icon>
-                <span>Inicio</span>
-            </a>
-            <a routerLink="/eventos/ver" class="options">
-                <mat-icon class="icons">event</mat-icon>
-                <span>Eventos</span>
-            </a>
-            <a routerLink="/profile" class="options">
-                <mat-icon class="icons">person</mat-icon>
-                <span>Perfil</span>
-            </a>
-        }
-        </div>
-        @if (isauth===false) {
-            <div class="Nologin-options">
+        @if (currentUser$ | async; as user) {
+            <div class="User-options">
+
+                <a routerLink="/" class="options">
+                    <mat-icon class="icons">home</mat-icon>
+                    <span>Inicio</span>
+                </a>
+                <a routerLink="/eventos/ver" class="options">
+                    <mat-icon class="icons">event</mat-icon>
+                    <span>Eventos</span>
+                </a>
+                <a routerLink="/profile" class="options">
+                    <mat-icon class="icons">person</mat-icon>
+                    <span>Perfil</span>
+                </a>
+            </div>
+        }@else{
+                <div class="Nologin-options">
                 <a routerLink="/" class="options">
                     <mat-icon class="icons">home</mat-icon>
                     <span>Inicio</span>
@@ -35,9 +35,8 @@
                 </a>
             </div>   
         }
-        
     </div>  
-    @if (isauth===true) {
+    @if (currentUser$ | async; as user) {
         <div class="Notif">
             <mat-icon class="icons">notifications</mat-icon>
         </div>

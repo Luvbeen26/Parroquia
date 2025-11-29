@@ -82,4 +82,17 @@ export class FormPadres {
         id_rol: 4
       }, 'Padrinos', 0);
   }
+  onlyLetters(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const sanitized = input.value.replace(/[^a-zA-ZÀ-ÿ\u00f1\u00d1\s]/g, '');
+    
+    if (input.value !== sanitized) {
+      input.value = sanitized;
+
+      const controlName = input.getAttribute('formControlName');
+      if (controlName) {
+        this.form.get(controlName)?.setValue(sanitized, { emitEvent: false });
+      }
+    }
+  }
 }

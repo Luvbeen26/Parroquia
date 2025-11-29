@@ -19,21 +19,11 @@ export class Profile {
   constructor(private http:HttpClient,public cookies:CookieService){}
 
   GetPendientEventsUser(): Observable<PendientProcessClient[]>{
-    const token=this.cookies.get('access_token')
-    const headers=new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-
-    return this.http.get<PendientProcessClient[]>(`${this.apiurl}/event/show/user/pendientes_eventos`,{ headers });
+    return this.http.get<PendientProcessClient[]>(`${this.apiurl}/event/show/user/pendientes_eventos`);
   }
 
   GetPendientAndPastEvents(): Observable<ProxPastEventsClient>{
-    const token=this.cookies.get('access_token')
-    const headers=new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
-
-    return this.http.get<ProxPastEventsClient>(`${this.apiurl}/event/show/user/past&prox`,{ headers });
+    return this.http.get<ProxPastEventsClient>(`${this.apiurl}/event/show/user/past&prox`);
   }
 
   GetRejectedDocs(id_evento:number): Observable<docs_event[]>{
@@ -67,6 +57,6 @@ export class Profile {
 
   ChangePassword(actual:string,new_pass:string): Observable<Change_password>{
     const body={password: new_pass,old_password:actual}
-    return this.http.put<Change_password>(`${this.apiurl}/change_password`,body)
+    return this.http.put<Change_password>(`${this.apiurl}/users/change_password`,body)
   }
 }

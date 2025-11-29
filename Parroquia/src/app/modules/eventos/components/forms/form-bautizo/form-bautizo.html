@@ -6,17 +6,30 @@
         
         <span class="Campo">
             <h4>Nombres</h4>
-            <input type="text" formControlName="nombres" class="Input" placeholder="Nombres" maxlength="50">
+            <input type="text" formControlName="nombres" class="Input" placeholder="Nombres" maxlength="50"
+                (input)="onlyLetters($event)">
+            @if (form.get('nombres')?.invalid && form.get('nombres')?.touched) {
+                <div class="error">
+                    <span>El nombre es requerido</span>
+                </div>
+            }
         </span>
 
         <span class="Campo">
             <h4>Apellido Paterno</h4>
-            <input type="text" formControlName="apellido_pat" class="Input" placeholder="Apellido paterno" maxlength="50">
+            <input type="text" formControlName="apellido_pat" class="Input" placeholder="Apellido paterno" maxlength="50"
+            (input)="onlyLetters($event)">
+            @if (form.get('apellido_pat')?.invalid && form.get('apellido_pat')?.touched) {
+                <div class="error">
+                    <span>El apellido paterno es requerido</span>
+                </div>
+            }
         </span>
 
         <span class="Campo">
             <h4>Apellido Materno</h4>
-            <input type="text" formControlName="apellido_mat" class="Input" placeholder="Apellido materno" maxlength="50">
+            <input type="text" formControlName="apellido_mat" class="Input" placeholder="Apellido materno" 
+            maxlength="50"  (input)="onlyLetters($event)">
         </span>
     
         <span class="genero down">
@@ -33,16 +46,26 @@
                     Femenino
                 </label>
             </div>
+            @if (form.get('genero')?.invalid && form.get('genero')?.touched) {
+                <div class="error">
+                    <span>Seleccione un género</span>
+                </div>
+            }
         </span>
 
         <span class="Campo down">
             <h4>Fecha de Nacimiento</h4>
             <input type="date" class="Input" formControlName="fecha_nac">
+            @if (form.get('fecha_nac')?.invalid && form.get('fecha_nac')?.touched) {
+                <span class="error">
+                    Seleccione una fecha
+                </span>
+            }
         </span>
 
         <span class="Campo down">
             <h4>Edad</h4>
-            <input type="number" class="Input" placeholder="Edad" formControlName="edad">
+            <input type="number" class="Input" placeholder="Edad" formControlName="edad" readonly>
         </span>
     </section>
     
@@ -66,5 +89,10 @@
                 </div>
             </label>
         </span>
+        @if (form.get('tipo')?.invalid && form.get('tipo')?.touched) {
+            <div class="error">
+                <span>Seleccione un tipo de ceremonia</span>
+            </div>
+        }
     </section>
 </form>

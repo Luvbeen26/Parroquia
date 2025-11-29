@@ -42,10 +42,7 @@ async def create_event(
         user_id=user_data["id_usuario"]
         user_exists = db.query(User).filter_by(id_usuario=user_id).first()
         if not user_exists:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Usuario con id {user_id} no existe en la base de datos"
-            )
+            raise HTTPException(status_code=400,detail=f"Usuario con id {user_id} no existe en la base de datos")
         descripcion = ""
         #ID DE EVENTO
         id_tipo_evento = evento.id_tipo_evento
@@ -66,7 +63,6 @@ async def create_event(
         elif id_tipo_evento == 5:
             descripcion = "XV Años - "
 
-        print(3)
         for celebrado in evento.celebrado:
             if len(celebrado.apellido_mat) > 50 or len(celebrado.apellido_pat) > 50 or len(celebrado.nombres) > 50:
                 raise HTTPException(status_code=404,detail="Nombres demasiados largos")
@@ -82,7 +78,6 @@ async def create_event(
             fecha_fin=evento.fecha_fin,
             id_tipo_evento=id_tipo_evento
         )
-        print(4)
         #CREAR EVENTO
         id_evento=register_event(register,user_id,db)
         celebrado_list=[]
@@ -100,13 +95,11 @@ async def create_event(
 
 
         price = db.query(TipoEvento).filter_by(id_tipo_evento=id_tipo_evento).first().costo_programar
-        print(6)
 
         metodo_pago(user_id,price,6,descripcion,db)
 
         name=user_data["nombre"]
         email=user_data["correo"]
-        print(7)
         #SACAR EL MONTO DE LA BD PARA EVITAR QUE LO EDITEN EN FRONT
         comproba = schema_finanzas.Comprobante(
             id_evento=id_evento,
@@ -116,9 +109,9 @@ async def create_event(
             monto=float(price),
             fecha=datetime.datetime.now(MAZATLAN_TZ).strftime("%Y-%m-%d %H:%M:%S")
         )
-        print("7.5")
+
         await finanzas.generar_comprobante_pago(comproba,db)
-        print(8)
+
         fecha_inicio_dt = datetime.datetime.strptime(evento.fecha_inicio, "%Y-%m-%d %H:%M:%S")
         tiempo_notificacion = fecha_inicio_dt  - datetime.timedelta(days=1)
         scheduler.add_job(
@@ -341,8 +334,8 @@ def show_userevents(db:Session = Depends(get_db),user_data:dict=Depends(current_
 def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_user)):
     try:
         eventos=(db.query(Evento).options(joinedload(Evento.documentos),joinedload(Evento.celebrados)).
-                 filter(and_(or_(Evento.id_usuario == user_data["id_usuario"],Evento.status == "P",
-                             Evento.id_usuario == user_data["id_usuario"],Evento.status == "R"),Evento.id_tipo_evento != 6))
+                 filter(and_(Evento.id_usuario == user_data["id_usuario"],or_(Evento.status == "P",
+                             Evento.status == "R"),Evento.id_tipo_evento != 6))
                  .order_by(desc(Evento.id_evento)).all())
 
         result = []
@@ -355,7 +348,7 @@ def show_pendients(db:Session = Depends(get_db),user_data:dict=Depends(current_u
                 descripcion = " & ".join(nombres)
             else:
                 descripcion = " ".join(nombres)
-
+            print(evento.id_evento)
 
             result.append({
                 "id_evento": evento.id_evento,
